@@ -1,0 +1,246 @@
+CREATE TABLE `member` (
+	`no`	int	NOT NULL AUTO_INCREMENT,
+	`id`	varchar(255)	NOT NULL,
+	`name`	varchar(255)	NULL,
+	`birthday`	Timestamp	NOT NULL,
+	`reigsterdate`	Timestamp	NOT NULL,
+	`usercode`	varchar(255)	NULL,
+	`point`	int	NULL,
+	`photo`	varchar(255)	NULL
+, PRIMARY KEY(`no`));
+
+CREATE TABLE `payment` (
+	`no`	int	NOT NULL AUTO_INCREMENT,
+	`member_no`	int	NOT NULL,
+	`payment_type`	int	NOT NULL	COMMENT '계좌 (0)
+신용카드 (1)',
+	`company`	int	NOT NULL,
+	`account`	varchar(255)	NOT NULL	COMMENT '계좌면 계좌번호
+카드면 카드번호
+
+예시를 들꺼면 신한은행의 계좌번호 포멧으로 들자!',
+	`valid_date`	varchar(255)	NULL,
+	`cvc`	varchar(255)	NULL
+, PRIMARY KEY(`no`));
+
+CREATE TABLE `friend` (
+	`no`	int	NOT NULL AUTO_INCREMENT,
+	`member_no`	int	NOT NULL,
+	`friend_no`	int	NOT NULL,
+	`friend_name`	varchar(255)	NULL,
+	`friend_photo`	varchar(255)	NULL,
+	`friend_usercode`	varchar(255)	NULL,
+	`friend_date`	Timestamp	NULL
+, PRIMARY KEY(`no`));
+
+CREATE TABLE `funding` (
+	`no`	int	NOT NULL AUTO_INCREMENT,
+	`start_member_no`	int	NOT NULL,
+	`fungdig_type`	int	NOT NULL	COMMENT '0 - 행사
+1 - 챌린지
+2 - 자유주제',
+	`title`	varchar(255)	NOT NULL,
+	`description`	varchar(255)	NOT NULL,
+	`photo`	varchar(255)	NULL,
+	`start_date`	Timestamp	NULL,
+	`funding_due_day`	Timestamp	NOT NULL,
+	`vote_due_date`	Timestamp	NULL	COMMENT '마감이 된 상태에서 투표
+전체포기 된 상태에서 투표',
+	`settlement_due_date`	Timestamp	NULL,
+	`candidate`	int	NULL,
+	`expected_payment_amount`	int	NOT NULL	COMMENT '결제예정액',
+	`collected_point`	int	NULL,
+	`goal_amount`	int	NULL	COMMENT '행사시 목표금액',
+	`monthly_payment_amount`	int	NULL	COMMENT '챌린지/자유여행시 매달 납입금',
+	`monthly_payment_date`	Timestamp	NULL	COMMENT '31일같은 경우는 30, 28일등을 포함하도록',
+	`state`	int	NULL	COMMENT '0 - 진행중
+1- 전체포기요청 (챌린지) - 투표가 필요할 경우
+2 - 정산상태
+3- 종료',
+	`complete_interest`	int	NULL
+, PRIMARY KEY(`no`));
+
+CREATE TABLE `funding_member` (
+	`no`	int	NOT NULL AUTO_INCREMENT,
+	`payment_no`	int	NOT NULL,
+	`member_no`	int	NOT NULL,
+	`funding_no`	int	NOT NULL,
+	`funding_type`	int	NULL	COMMENT '0 - 행사
+1 - 챌린지
+2 - 자유주제',
+	`monthly_pay_amount`	int	NULL,
+	`total_pay_amount`	int	NULL,
+	`giveup`	boolean	NULL,
+	`participation_date`	Timestamp	NULL,
+	`vote`	int	NULL	COMMENT '0 - 투표 안함
+1 - 성공
+2 - 실패'
+, PRIMARY KEY(`no`));
+
+CREATE TABLE `fund_transaction_history` (
+	`no`	int	NOT NULL AUTO_INCREMENT,
+	`member_no`	int	NOT NULL,
+	`funding_no`	int	NOT NULL,
+	`transaction_date`	Timestamp	NULL,
+	`amount`	int	NULL	COMMENT '회원 -> 펀딩이면 음수
+펀딩 -> 회원이면 양수로',
+	`direction`	boolean	NULL
+, PRIMARY KEY(`no`));
+
+CREATE TABLE `point_transaction_history` (
+	`no`	int	NOT NULL AUTO_INCREMENT,
+	`member_no`	int	NOT NULL,
+	`fund_no`	int	NULL,
+	`amount`	int	NULL,
+	`transaction_date`	Timestamp	NULL,
+	`direction`	boolean	NULL,
+	`success`	boolean	NULL
+, PRIMARY KEY(`no`));
+
+CREATE TABLE `board` (
+	`no`	int	NOT NULL AUTO_INCREMENT,
+	`member_no`	int	NULL,
+	`title`	varchar(255)	NULL,
+	`contents`	varchar(255)	NULL,
+	`name`	varchar(255)	NULL,
+	`photo`	varchar(255)	NULL,
+	`type`	boolean	NULL	COMMENT '0 - 공지사항
+1- QnA',
+	`date`	Timestamp	NULL,
+	`update`	Timestamp	NULL
+, PRIMARY KEY(`no`));
+
+CREATE TABLE `funding_comment` (
+	`no`	int	NOT NULL AUTO_INCREMENT,
+	`funding_no`	int	NOT NULL,
+	`name`	varchar(255)	NULL,
+	`contents`	varchar(255)	NULL,
+	`photo`	varchar(255)	NULL,
+	`regist_date`	Timestamp	NULL,
+	`update_date`	Timestamp	NULL
+, PRIMARY KEY(`no`));
+
+CREATE TABLE `board_reply` (
+	`no`	int	NOT NULL AUTO_INCREMENT,
+	`board_no`	int	NOT NULL,
+	`name`	varchar(255)	NULL,
+	`contents`	varchar(255)	NULL,
+	`regist_date`	Timestamp	NULL,
+	`update_date`	Timestamp	NULL
+, PRIMARY KEY(`no`));
+
+CREATE TABLE `alarm` (
+	`no`	int	NOT NULL AUTO_INCREMENT,
+	`user_no`	int	NOT NULL,
+	`content`	varchar(255)	NULL,
+	`link`	varchar(255)	NULL,
+	`alarm_date`	Timestamp	NULL,
+	`state`	int	NULL	COMMENT '0 - 미확인
+1- 확인'
+, PRIMARY KEY(`no`));
+
+ALTER TABLE `payment` ADD CONSTRAINT `FK_member_TO_payment_1` FOREIGN KEY (
+	`member_no`
+)
+REFERENCES `member` (
+	`no`
+);
+
+ALTER TABLE `friend` ADD CONSTRAINT `FK_member_TO_friend_1` FOREIGN KEY (
+	`user_no`
+)
+REFERENCES `member` (
+	`no`
+);
+
+ALTER TABLE `friend` ADD CONSTRAINT `FK_member_TO_friend_2` FOREIGN KEY (
+	`friend_no`
+)
+REFERENCES `member` (
+	`no`
+);
+
+ALTER TABLE `funding` ADD CONSTRAINT `FK_member_TO_funding_1` FOREIGN KEY (
+	`start_member_no`
+)
+REFERENCES `member` (
+	`no`
+);
+
+ALTER TABLE `funding_member` ADD CONSTRAINT `FK_payment_TO_funding_member_1` FOREIGN KEY (
+	`payment_no`
+)
+REFERENCES `payment` (
+	`no`
+);
+
+ALTER TABLE `funding_member` ADD CONSTRAINT `FK_member_TO_funding_member_1` FOREIGN KEY (
+	`member_no`
+)
+REFERENCES `member` (
+	`no`
+);
+
+ALTER TABLE `funding_member` ADD CONSTRAINT `FK_funding_TO_funding_member_1` FOREIGN KEY (
+	`funding_no`
+)
+REFERENCES `funding` (
+	`no`
+);
+
+ALTER TABLE `fund_transaction_history` ADD CONSTRAINT `FK_member_TO_fund_transaction_history_1` FOREIGN KEY (
+	`member_no`
+)
+REFERENCES `member` (
+	`no`
+);
+
+ALTER TABLE `fund_transaction_history` ADD CONSTRAINT `FK_funding_TO_fund_transaction_history_1` FOREIGN KEY (
+	`funding_no`
+)
+REFERENCES `funding` (
+	`no`
+);
+
+ALTER TABLE `point_transaction_history` ADD CONSTRAINT `FK_member_TO_point_transaction_history_1` FOREIGN KEY (
+	`member_no`
+)
+REFERENCES `member` (
+	`no`
+);
+
+ALTER TABLE `point_transaction_history` ADD CONSTRAINT `FK_funding_TO_point_transaction_history_1` FOREIGN KEY (
+	`fund_no`
+)
+REFERENCES `funding` (
+	`no`
+);
+
+ALTER TABLE `board` ADD CONSTRAINT `FK_member_TO_board_1` FOREIGN KEY (
+	`member_no`
+)
+REFERENCES `member` (
+	`no`
+);
+
+ALTER TABLE `funding_comment` ADD CONSTRAINT `FK_funding_TO_funding_comment_1` FOREIGN KEY (
+	`funding_no`
+)
+REFERENCES `funding` (
+	`no`
+);
+
+ALTER TABLE `board_reply` ADD CONSTRAINT `FK_board_TO_board_reply_1` FOREIGN KEY (
+	`board_no`
+)
+REFERENCES `board` (
+	`no`
+);
+
+ALTER TABLE `alarm` ADD CONSTRAINT `FK_member_TO_alarm_1` FOREIGN KEY (
+	`member_no`
+)
+REFERENCES `member` (
+	`no`
+);
+
