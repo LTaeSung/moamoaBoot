@@ -47,6 +47,7 @@ public class StartFundingTest {
 	
 	@Test
 	public void getFriendList() {
+		//
 		List<FriendEntity> list = friendRepo.findByMemberno(4);
 		for (FriendEntity fe : list) {
 			MemberEntity friend = fe.getFriend(); 
