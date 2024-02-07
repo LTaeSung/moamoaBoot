@@ -38,7 +38,6 @@ public class MemberApplicationTest {
 	public void addFriend() {
 		
 		// 흐름 
-		// 먼저 친구가 등록이 되어있는지 확인하고 없으면 등록이 되게 해야한다...
 		int member_no = 2;
 		
 		FriendEntity friend = new FriendEntity();
