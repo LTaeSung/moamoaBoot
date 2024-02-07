@@ -2,6 +2,8 @@ package don.us.member;
 
 import java.sql.Timestamp;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,10 +29,14 @@ public class FriendEntity {
 	@Column(name="member_no")
 	private int memberno;
 	
+	
 	@ManyToOne
 	@JoinColumn(name="friend_no")
 	private MemberEntity friend;
 	
+	// 친구를 추가한다... 
+	
 	@Column(name="friend_date")
+	@CreationTimestamp
 	private Timestamp frienddate;
 }
