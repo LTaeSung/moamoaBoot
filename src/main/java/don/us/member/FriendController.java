@@ -23,17 +23,17 @@ public class FriendController {
 	@Autowired
 	private MemberRepository meRepo;
 	
-	
+	// 친구 정보 불러오기 (신정훈 작업 2024 - 02 - 07)
 	@GetMapping("/list")
 	public List friendList(@RequestParam("member_no") int member_no) {
-		List<FriendEntity> ls = frRepo.findByMemberno(member_no);
+		List<FriendEntity> friendList = frRepo.findByMemberno(member_no);
 		
-			System.out.println("잘나온다 병천아~~~ " + ls.toString());
+			System.out.println("잘나온다 병천아~~~ " + friendList.toString());
 			
-			return ls;
+			return friendList;
 	}
 	
-		
+	// 친구 추가 기능 (신정훈 작업 2024 - 02 - 07)	
 	@PostMapping("/input")
 	@Transactional
 	public FriendEntity friendAdd(@RequestParam("member_no") int member_no, @RequestParam("friend_no") int friend_no) {
@@ -43,7 +43,6 @@ public class FriendController {
 	    
 	    friend.setMemberno(member_no);
 	    friend.setFriend(member);
-	    
 	    
 		System.out.println("친구 출력 : " + friend);
 		FriendEntity entity = frRepo.save(friend);
