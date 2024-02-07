@@ -18,17 +18,17 @@ public class MemberApplicationTest {
 	@Autowired
 	private FriendRepository friendRepo;
 	
-	@Test
-	public void searchMember() {
-		List <MemberEntity> ls = memberRepo.findByEmail("rlaqudcjs96@naver.com");
-		for (MemberEntity me : ls) {
-			
-			System.out.println("유저 번호: "+ me.getNo());
-			System.out.println("    이름: "+ me.getName());
-			System.out.println("   이메일: "+ me.getEmail());
-		}
-	}
-	
+//	@Test
+//	public void searchMember() {
+//		List <MemberEntity> ls = memberRepo.findByEmail("rlaqudcjs96@naver.com");
+//		for (MemberEntity me : ls) {
+//			
+//			System.out.println("유저 번호: "+ me.getNo());
+//			System.out.println("    이름: "+ me.getName());
+//			System.out.println("   이메일: "+ me.getEmail());
+//		}
+//	}
+//	
 	@Test
 	@Transactional
 	public void addFriend() {
