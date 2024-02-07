@@ -33,7 +33,7 @@ public class MemberEntity {
    private int point;
    private String photo;
    
-   @OneToMany
-   private List<PaymentEntity> payment;
+//   @OneToMany
+//   private List<PaymentEntity> payment;
    
 }
