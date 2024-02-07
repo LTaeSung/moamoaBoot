@@ -23,13 +23,13 @@ public class MemberApplicationTest {
 	//신원 조회
 	@Test
 	public void searchMember() {
-		List <MemberEntity> ls = memberRepo.findByEmail("rlaqudcjs96@naver.com");
-		for (MemberEntity me : ls) {
+		MemberEntity ls = memberRepo.findByEmail("rlaqudcjs96@naver.com").get();
+		
 			
-			System.out.println("유저 번호: "+ me.getNo());
-			System.out.println("    이름: "+ me.getName());
-			System.out.println("   이메일: "+ me.getEmail());
-		}
+			System.out.println("유저 번호: "+ ls.getNo());
+			System.out.println("    이름: "+ ls.getName());
+			System.out.println("   이메일: "+ ls.getEmail());
+
 	}
 	
 	//친구 추가 기능
