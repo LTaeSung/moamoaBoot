@@ -1,0 +1,36 @@
+ALTER TABLE `moamoaDonDon`.`funding` 
+CHANGE COLUMN `funding_due_day` `funding_due_date` TIMESTAMP NOT NULL ;
+ALTER TABLE `moamoaDonDon`.`friend` 
+DROP COLUMN `friend_usercode`,
+DROP COLUMN `friend_photo`,
+DROP COLUMN `friend_name`;
+ALTER TABLE `moamoaDonDon`.`board` 
+CHANGE COLUMN `type` `board_type` TINYINT(1) NULL DEFAULT NULL COMMENT '0 - 공지사항\\n1- QnA' ,
+CHANGE COLUMN `date` `regist_date` TIMESTAMP NULL DEFAULT NULL ,
+CHANGE COLUMN `update` `update_date` TIMESTAMP NULL DEFAULT NULL ;
+ALTER TABLE `moamoaDonDon`.`board` 
+CHANGE COLUMN `name` `writer` VARCHAR(255) NULL DEFAULT NULL ;
+ALTER TABLE `moamoaDonDon`.`board_reply` 
+CHANGE COLUMN `name` `writer` VARCHAR(255) NULL DEFAULT NULL ;
+ALTER TABLE `moamoaDonDon`.`funding` 
+CHANGE COLUMN `fungdig_type` `funding_type` INT NOT NULL COMMENT '0 - 행사\\n1 - 챌린지\\n2 - 자유주제' ;
+ALTER TABLE `moamoaDonDon`.`funding` 
+CHANGE COLUMN `monthly_payment_amount` `monthly_payment_amount` INT NOT NULL COMMENT '챌린지/자유여행시 매달 납입금' ,
+CHANGE COLUMN `monthly_payment_date` `monthly_payment_date` INT NOT NULL COMMENT '31일같은 경우는 30, 28일등을 포함하도록' ,
+CHANGE COLUMN `state` `state` INT NOT NULL COMMENT '0 - 진행중\\n1- 전체포기요청 (챌린지) - 투표가 필요할 경우\\n2 - 정산상태\\n3- 종료' ;
+ALTER TABLE `moamoaDonDon`.`member` 
+CHANGE COLUMN `point` `point` INT NULL DEFAULT 0 ;
+ALTER TABLE `moamoaDonDon`.`member` 
+CHANGE COLUMN `point` `point` INT NOT NULL DEFAULT '0' ;
+ALTER TABLE `moamoaDonDon`.`member` 
+CHANGE COLUMN `usercode` `email` VARCHAR(255) NULL DEFAULT NULL ;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+ADD COLUMN `monthly_payment_date` INT NOT NULL AFTER `monthly_payment_amount`,
+CHANGE COLUMN `monthly_pay_amount` `monthly_payment_amount` INT NOT NULL ,
+CHANGE COLUMN `total_pay_amount` `total_pay_amount` INT NOT NULL DEFAULT 0 ,
+CHANGE COLUMN `giveup` `giveup` TINYINT(1) NOT NULL DEFAULT 0 ,
+CHANGE COLUMN `participation_date` `participation_date` TIMESTAMP NOT NULL ,
+CHANGE COLUMN `vote` `vote` INT NOT NULL DEFAULT 0 COMMENT '0 - 투표 안함\\n1 - 성공\\n2 - 실패' ;
+ALTER TABLE `moamoaDonDon`.`member` 
+DROP COLUMN `id`,
+CHANGE COLUMN `email` `email` VARCHAR(255) NULL DEFAULT NULL AFTER `no`;
