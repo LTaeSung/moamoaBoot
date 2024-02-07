@@ -34,3 +34,15 @@ CHANGE COLUMN `vote` `vote` INT NOT NULL DEFAULT 0 COMMENT '0 - 투표 안함\\n
 ALTER TABLE `moamoaDonDon`.`member` 
 DROP COLUMN `id`,
 CHANGE COLUMN `email` `email` VARCHAR(255) NULL DEFAULT NULL AFTER `no`;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+CHANGE COLUMN `participation_date` `participation_date` TIMESTAMP NULL DEFAULT NULL ;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+DROP FOREIGN KEY `FK_payment_TO_funding_member_1`;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+DROP INDEX `FK_payment_TO_funding_member_1` ;
+;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+CHANGE COLUMN `payment_no` `payment_no` INT NOT NULL AFTER `funding_no`;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+CHANGE COLUMN `payment_no` `payment_no` INT NULL DEFAULT NULL ;
+
