@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +40,7 @@ public class FriendController {
 	
 	// 친구 추가 기능 (신정훈 작업 2024 - 02 - 07)	
 	@Transactional
-	@PostMapping("/input")
+	@GetMapping("/input")
 	public FriendEntity friendAdd(@RequestParam("member_no") int member_no, @RequestParam("friend_no") int friend_no) {
 		
 		FriendEntity friend = new FriendEntity();
@@ -54,7 +56,7 @@ public class FriendController {
 	
 	// 친구 삭제 기능 (신정훈 작업 2024 - 02 - 07)	
 	@Transactional
-	@PostMapping("/delete")
+	@GetMapping("/delete")
 	public Map friendDel(@RequestParam("member_no") int member_no, @RequestParam("friend_no") int friend_no){
 		
 		frRepo.findByMemberno(member_no);
