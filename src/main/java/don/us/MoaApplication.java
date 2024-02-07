@@ -8,6 +8,8 @@ public class MoaApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MoaApplication.class, args);
+		
+		//test
 	}
 
 }
