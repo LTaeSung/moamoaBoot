@@ -50,7 +50,6 @@ public class FundingMemberEntity {
 	
 	private boolean giveup;
 	
-	@CurrentTimestamp
 	@Column(name="participation_date")
 	private Timestamp participation_date;
 	
