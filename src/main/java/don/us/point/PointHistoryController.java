@@ -44,12 +44,16 @@ public class PointHistoryController {
 	@PostMapping("/chargeIamport")
     public void paymentByImpUid() throws IamportResponseException, IOException {
 		PointHistoryEntity pointHistory = new PointHistoryEntity();
-		pointHistory.setMemberno(1); //현재 접속한 사람 memberno를 받아와 넣어주면 됨
-		pointHistory.setAmount(100);
+		pointHistory.setMemberno(1); //현재 접속한 사람 memberno를 받아와 넣어주기
+		pointHistory.setAmount(100); //이것도 프론트에서 받아와야 함(결제된 금액만큼)
+		//그 외 시간 등은 erd에 맞춰서
 		repo.save(pointHistory);
 		
+		//결제되었으니 해당 멤버의 포인트 증가시켜주기
 		MemberEntity member = memberRepo.findById(pointHistory.getMemberno()).orElseThrow(RuntimeException::new);
 		member.setPoint(member.getPoint() + pointHistory.getAmount());
 		memberRepo.save(member);
+		
+		//결제취소
 	}
 }
