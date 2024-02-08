@@ -49,15 +49,11 @@ public class MemberController {
 
 	@PostMapping("devlogin")
 	public Map<String, String> myLogin(@RequestBody Map<String, String> map) {
-		System.out.println(map);
-		System.out.println(map.get("name"));
-		String input_email = map.get("name");
+		System.out.println("map: " + map);
+		String input_email = map.get("email");
 		Map<String, String> result = new HashMap<>();
 		if(repo.findByEmail(input_email).isPresent()/*map.get("name").equals("myID")*/) {
 			MemberEntity target = repo.findByEmail(input_email).get();
-			
-			System.out.println("ㅎㅇ");
-			
 			result.put("result", "success");
 			result.put("no", String.valueOf(target.getNo()));
             result.put("email", target.getEmail());
@@ -109,7 +105,6 @@ public class MemberController {
 			// 토큰 값을 사용하여 NaverLogin 클래스의 get_token 메서드 호출
 			String user_data = naverLogin.get_token(accessToken);
 
-			System.out.println("유저정보요 ㅇㅇㅇ: " + user_data);
 			JSONParser parser = new JSONParser();
 			JSONObject jsonObject = (JSONObject) parser.parse(user_data);
 			JSONObject responseObject = (JSONObject) jsonObject.get("response");
