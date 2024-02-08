@@ -34,8 +34,8 @@ public class FundingService {
 		
 		FundingEntity funding = fundingRepo.findById(fund.getNo()).get();
 		fundMember.setFundingtype(funding.getFundingtype());
-		fundMember.setMonthlypaymentamount(funding.getMonthly_payment_amount());
-		fundMember.setMonthlypaymentdate(funding.getMonthly_payment_date());
+		fundMember.setMonthlypaymentamount(funding.getMonthlypaymentamount());
+		fundMember.setMonthlypaymentdate(funding.getMonthlypaymentdate());
 		fundMember.setTotalpayamount(0);
 		fundMember.setGiveup(false);
 		if(fund.getStartmemberno() == member_no) {

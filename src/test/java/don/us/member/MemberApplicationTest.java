@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
@@ -50,5 +52,18 @@ public class MemberApplicationTest {
 		friendRepo.save(friend);
 
 	}
-	
+//	// 친구 정보 불러오기 (신정훈 작업 2024 - 02 - 07)
+//	@GetMapping("/list")
+//	public List friendList(@RequestParam("member_no") int member_no) {
+//		List<FriendEntity> friendList = frRepo.findByMemberno(member_no);
+//		
+//			System.out.println("잘나온다 병천아~~~ " + friendList.toString());
+//			
+//			return friendList;
+//	}
+	@Test
+	public void getFriend() {
+		List<FriendEntity> friendList = friendRepo.findByMemberno(6);
+		System.out.println("list " + friendList.toString());
+	}
 }

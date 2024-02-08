@@ -57,19 +57,25 @@ public class FundingEntity {
 	
 	private int candidate;
 	
-	private int expected_payment_amount;
+	@Column(name="expected_payment_amount")
+	private int expectedpaymentamount;
 	
-	private int collected_point;
+	@Column(name="collected_point")
+	private int collectedpoint;
 	
-	private int goal_amount;
+	@Column(name="goal_amount")
+	private int goalamount;
 	
-	private int monthly_payment_amount;
+	@Column(name="monthly_payment_amount")
+	private int monthlypaymentamount;
 	
-	private int monthly_payment_date;
+	@Column(name="monthly_payment_date")
+	private String monthlypaymentdate;
 	
 	private int state;
 	
-	private int complete_interest;
+	@Column(name="complete_interest")
+	private int completeinterest;
 	
 	@OneToMany
 	private List<FundingCommentEntity> comments;
