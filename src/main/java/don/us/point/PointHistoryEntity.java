@@ -23,7 +23,7 @@ public class PointHistoryEntity {
 	@Column(name="member_no")
 	private int memberno;
 	
-	@Column(name="funding_no")
+	@Column(name="fund_no")
 	private int fundingno;
 	
 	@Column(name="transaction_date")
