@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
+import jakarta.websocket.Session;
 
 @CrossOrigin(origins = {"*"})
 @RestController
@@ -28,15 +29,28 @@ public class FriendController {
 	private MemberRepository meRepo;
 	
 	
+	
 	// 친구 정보 불러오기 (신정훈 작업 2024 - 02 - 07)
 	@GetMapping("/list")
-	public List friendList(@RequestParam("member_no") int member_no) {
+	public List<FriendEntity> friendList(@RequestParam("member_no") int member_no) {
 		List<FriendEntity> friendList = frRepo.findByMemberno(member_no);
 		
-			System.out.println("잘나온다 병천아~~~ " + friendList.toString());
+			System.out.println("친구 리스트 " + friendList.toString());
 			
 			return friendList;
 	}
+	
+	// 친구 검색 기능 
+	// 개발 의도: 한번에 멤버 목록을 다 가져오면 시간 소요 검색한 멤버만 나오게 하려함
+	@PostMapping("/search")
+	public List<MemberEntity> MemberList (@RequestParam("name") String name) {
+		
+		List<MemberEntity> memberList = meRepo.findByName(name);
+		
+		System.out.println("검색된 멤버 리스트" + memberList.toString());
+		return memberList;
+	}
+	
 	
 	// 친구 추가 기능 (신정훈 작업 2024 - 02 - 07)	
 	@Transactional

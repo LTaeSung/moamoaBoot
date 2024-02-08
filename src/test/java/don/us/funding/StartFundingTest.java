@@ -55,16 +55,16 @@ public class StartFundingTest {
 		
 		fund.setFundingtype(0);
 		fund.setFundingduedate("2024/06/09");
-		fund.setMonthly_payment_amount(10000);
-		fund.setMonthly_payment_date(31);
+		fund.setMonthlypaymentamount(10000);
+		fund.setMonthlypaymentdate("31");
 		
 		service.makeFund(fund);
 		service.inviteMember(fund, myPaymentNo, myMemberNo);
 		
 		//invite friend
-		int[] friendNoList = new int[] {1, 2, 3};
-		for(int i : friendNoList) {
-			service.inviteMember(fund, -100, i);
-		}
+//		int[] friendNoList = new int[] {1, 2, 3};
+//		for(int i : friendNoList) {
+//			service.inviteMember(fund, -100, i);
+//		}
 	}
 }

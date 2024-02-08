@@ -9,25 +9,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = {"*"})
+@CrossOrigin(origins = { "*" })
 @RestController
 @RequestMapping("/fund")
 public class FundingController {
 	@Autowired
 	private FundingRepository repo;
-	
+
 	@Autowired
 	private FundingService service;
-	
+
 	@PostMapping("/regist")
 	public void makeFund(@RequestBody Map map) {
-		//임시로 member_no를 4로 설정
-		int member_no = 4;
-		
-		
-		//임시로 payment_no를 1로 설정
+		FundingEntity fund = new FundingEntity();
+
+		fund.setStartmemberno(Integer.valueOf((String) (map.get("member_no"))));
+		fund.setTitle((String)map.get("title"));
+		//마감일 추가해야함
+		fund.setDescription((String)map.get("description"));
+		fund.setMonthlypaymentamount(Integer.valueOf((String) (map.get("monthly_payment_amount"))));
+		fund.setMonthlypaymentdate((String)map.get("monthly_payment_date"));
+		System.out.println("fund: " + fund);
+
+		// 임시로 payment_no를 1로 설정
 		int payment_no = 1;
-		
+
 		System.out.println("ㅇㅇ");
 		System.out.println(map);
 	}
