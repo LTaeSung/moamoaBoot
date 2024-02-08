@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
+import jakarta.websocket.Session;
 
 @CrossOrigin(origins = {"*"})
 @RestController
@@ -26,6 +27,7 @@ public class FriendController {
 	
 	@Autowired
 	private MemberRepository meRepo;
+	
 	
 	
 	// 친구 정보 불러오기 (신정훈 작업 2024 - 02 - 07)

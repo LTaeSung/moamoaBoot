@@ -46,3 +46,7 @@ CHANGE COLUMN `payment_no` `payment_no` INT NOT NULL AFTER `funding_no`;
 ALTER TABLE `moamoaDonDon`.`funding_member` 
 CHANGE COLUMN `payment_no` `payment_no` INT NULL DEFAULT NULL ;
 
+ALTER TABLE `moamoaDonDon`.`point_transaction_history` 
+DROP FOREIGN KEY `FK_funding_TO_point_transaction_history_1`;
+ALTER TABLE `moamoaDonDon`.`point_transaction_history` 
+DROP INDEX `FK_funding_TO_point_transaction_history_1` ;

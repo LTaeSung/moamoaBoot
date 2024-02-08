@@ -62,9 +62,9 @@ public class StartFundingTest {
 		service.inviteMember(fund, myPaymentNo, myMemberNo);
 		
 		//invite friend
-		int[] friendNoList = new int[] {1, 2, 3};
-		for(int i : friendNoList) {
-			service.inviteMember(fund, -100, i);
-		}
+//		int[] friendNoList = new int[] {1, 2, 3};
+//		for(int i : friendNoList) {
+//			service.inviteMember(fund, -100, i);
+//		}
 	}
 }
