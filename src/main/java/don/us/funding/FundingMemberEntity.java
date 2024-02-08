@@ -43,7 +43,7 @@ public class FundingMemberEntity {
 	private int monthlypaymentamount;
 	
 	@Column(name="monthly_payment_date")
-	private int monthlypaymentdate;
+	private String monthlypaymentdate;
 	
 	@Column(name="total_pay_amount")
 	private int totalpayamount;
