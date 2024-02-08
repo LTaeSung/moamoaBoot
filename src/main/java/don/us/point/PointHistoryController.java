@@ -47,10 +47,8 @@ public class PointHistoryController {
 		pointHistory.setMemberno(1); //현재 접속한 사람 memberno를 받아와 넣어주면 됨
 		pointHistory.setAmount(100);
 		repo.save(pointHistory);
-		//해당 멤버의 포인트 업데이트 처리 필요
-		//멤버번호 가져오고(아예 처음 리액트에서 멤버번호 받아오고 바로 생성해도 될듯)
-		MemberEntity member = memberRepo.findById(1).orElseThrow();
-		//결제된 금액이랑 더해서 업데이트
+		
+		MemberEntity member = memberRepo.findById(pointHistory.getMemberno()).orElseThrow(RuntimeException::new);
 		member.setPoint(member.getPoint() + pointHistory.getAmount());
 		memberRepo.save(member);
 	}
