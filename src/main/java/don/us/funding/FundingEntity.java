@@ -6,16 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.CurrentTimestamp;
 
 import don.us.member.MemberEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,7 +18,7 @@ import lombok.ToString;
 @Setter
 @Entity
 @Table(name = "funding")
-@ToString(exclude = "comments")
+@ToString(exclude = "comment")
 public class FundingEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,7 +66,8 @@ public class FundingEntity {
 	private int complete_interest;
 	
 	@OneToMany
-	private List<FundingCommentEntity> comments;
+	@JoinColumn(name = "funding_no")
+	private List<FundingCommentEntity> comment;
 	
 	
 	public void setFundingduedate(String currentTimestampToString) {
