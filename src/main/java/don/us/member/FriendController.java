@@ -45,9 +45,10 @@ public class FriendController {
 	@PostMapping("/search")
 	public List<MemberEntity> MemberList (@RequestParam("name") String name) {
 		
-		List<MemberEntity> memberList = meRepo.findByName(name);
+		List<MemberEntity> memberList = meRepo.findByNameContaining(name);
 		
 		System.out.println("검색된 멤버 리스트" + memberList.toString());
+		
 		return memberList;
 	}
 	
@@ -74,7 +75,7 @@ public class FriendController {
 	public Map friendDel(@RequestParam("member_no") int member_no, @RequestParam("friend_no") int friend_no){
 		
 		frRepo.findByMemberno(member_no);
-		frRepo.deleteByFriendNo(friend_no);
+	//	frRepo.deleteByFriendNo(friend_no);
 		
 		Map<String, Object> result = new HashMap<>();
 		result.put("result", "success");
