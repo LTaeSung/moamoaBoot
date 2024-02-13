@@ -34,7 +34,6 @@ public class FriendEntity {
 	@JoinColumn(name="friend_no")
 	private MemberEntity friend;
 	
-	// 친구를 추가한다... 
 	
 	@Column(name="friend_date")
 	@CreationTimestamp
