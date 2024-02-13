@@ -81,7 +81,7 @@ public class MemberController {
 		requestBody.add("code", code);
 		requestBody.add("redirect_uri", REDIRECT_URI);
 
-		// RestTemplate 객체 생성
+		// RestTemplate 객체 생성 .
 		RestTemplate restTemplate = new RestTemplate();
 
 		// POST 요청 및 응답 받기
