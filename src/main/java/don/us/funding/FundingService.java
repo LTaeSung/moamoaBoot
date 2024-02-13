@@ -1,12 +1,14 @@
 package don.us.funding;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import don.us.member.FriendRepository;
-import don.us.member.MemberRepository;
 
 @Service
 public class FundingService {
@@ -15,18 +17,11 @@ public class FundingService {
 	@Autowired
 	private FundingMemberRepository fundingMemberRepo;
 	
-	@Autowired
-	private FriendRepository friendRepo;
-	
-	@Autowired
-	private MemberRepository memberRepo;
-	
-	
 	public void makeFund(FundingEntity fund) {
 		fundingRepo.save(fund);
 	}
 	
-	public FundingMemberEntity makeFundingMemberEntity(FundingEntity fund, int member_no) {
+	private FundingMemberEntity makeFundingMemberEntity(FundingEntity fund, int member_no) {
 		FundingMemberEntity fundMember = new FundingMemberEntity();
 		fundMember.setFundingno(fund.getNo());
 		fundMember.setMemberno(member_no);
@@ -48,7 +43,30 @@ public class FundingService {
 		return fundMember;
 	}
 	
-	public void inviteMember(FundingEntity fund, FundingMemberEntity fundingMember) {
+	public Timestamp getTimestamp(String date) throws ParseException{
+		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", java.util.Locale.ENGLISH);
+		Date answer = inputFormat.parse(date);
+		return new Timestamp(answer.getTime());
+	}
+	
+	public void inviteMembers (FundingEntity fund, String memberListString, int starterPaymentNo) {
+		FundingMemberEntity me = makeFundingMemberEntity(fund, fund.getStartmemberno());
+		me.setPaymentno(starterPaymentNo);
+		me.setParticipation_date(new Timestamp(System.currentTimeMillis()));
+		inviteMember(fund, me);
+		
+		if (memberListString != null) {
+			List<String> memberList = Arrays.asList(memberListString.split(","));
+			System.out.println("memberList: " + memberList);
+
+			for (String i : memberList) {
+				int member_no = Integer.valueOf(i);
+				inviteMember(fund, makeFundingMemberEntity(fund, member_no));
+			}
+		}
+	}
+	
+	private void inviteMember(FundingEntity fund, FundingMemberEntity fundingMember) {
 		fund.setCandidate(fund.getCandidate() + 1);
 		fundingRepo.save(fund);
 		fundingMemberRepo.save(fundingMember);
