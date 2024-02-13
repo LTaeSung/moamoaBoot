@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -28,7 +29,6 @@ import lombok.extern.java.Log;
 
 @Log
 @SpringBootTest
-@EnableTransactionManagement
 public class MemberApplicationTest {
 	@Autowired
 	private PointHistoryRepository repo;
@@ -57,6 +57,13 @@ public class MemberApplicationTest {
 		}
 		
 	}
+	
+	@Test
+	public int memberpoint() {
+    	MemberEntity member = memberRepo.findById(7).orElseThrow();
+    	System.out.println("확인"+member.getPoint());
+    	return member.getPoint();
+    }
 	
 	
 	

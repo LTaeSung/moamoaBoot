@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,6 +49,13 @@ public class PointHistoryController {
     public void init() {
         this.iamportClient = new IamportClient(restApiKey, restApiSecret);
     }
+    
+    @GetMapping("/mypoint")
+    public int memberpoint(@RequestParam(value="member_no") int member_no) {
+    	MemberEntity member = memberRepo.findById(member_no).orElseThrow();
+    	System.out.println("확인"+member);
+    	return member.getPoint();
+    }
 	
     @Transactional
 	@PostMapping("/chargeIamport")
@@ -56,8 +64,7 @@ public class PointHistoryController {
     		@RequestParam(value="merchant_uid") String merchant_uid, 
     		@RequestParam(value="paid_amount") int paid_amount,
     		@RequestParam(value="buyer_no") int buyer_no) throws Exception {
-    	
-    	System.out.println("확인 : "+imp_uid+" "+merchant_uid+" "+paid_amount+" "+buyer_no);
+
     	String result = "success";
     	
 		PointHistoryEntity pointHistory = new PointHistoryEntity();
@@ -81,7 +88,7 @@ public class PointHistoryController {
     	refundRequest(accessToken, imp_uid, "서버 등록 오류");
     }
     
-    public String getToken() throws IOException {
+    private String getToken() throws IOException {
         URL url = new URL("https://api.iamport.kr/users/getToken");
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
  
@@ -112,7 +119,25 @@ public class PointHistoryController {
         return accessToken;
     }
     
-    public void refundRequest(String accessToken, String imp_uid, String reason) throws IOException {
+    @Transactional
+    @PostMapping("/payBack")
+    public String payBack(@RequestParam(value="member_no") int member_no, @RequestParam(value="amount") int amount) {
+    	String result = "success";
+    	
+		PointHistoryEntity pointHistory = new PointHistoryEntity();
+		pointHistory.setMemberno(member_no);
+		pointHistory.setAmount(amount);
+		//그 외 시간 등은 erd에 맞춰서
+		repo.save(pointHistory);
+			
+		MemberEntity member = memberRepo.findById(pointHistory.getMemberno()).orElseThrow(RuntimeException::new);
+		member.setPoint(member.getPoint() - pointHistory.getAmount());
+		memberRepo.save(member);
+			
+		return result;	
+    }
+    
+    private void refundRequest(String accessToken, String imp_uid, String reason) throws IOException {
         URL url = new URL("https://api.iamport.kr/payments/cancel");
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
  
