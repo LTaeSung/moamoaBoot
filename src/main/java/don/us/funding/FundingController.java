@@ -46,6 +46,7 @@ public class FundingController {
 		FundingEntity fund = new FundingEntity();
 
 		fund.setStartmemberno(Integer.valueOf((String) (map.get("member_no"))));
+
 		fund.setTitle((String) map.get("title"));
 		// 마감일 추가해야함
 		fund.setDescription((String) map.get("description"));
@@ -53,8 +54,7 @@ public class FundingController {
 		fund.setMonthlypaymentdate((String) map.get("monthly_payment_date"));
 
 		String dueDateString = (String) map.get("dueDate");
-		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z",
-				java.util.Locale.ENGLISH);
+		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", java.util.Locale.ENGLISH);
 		try {
 			Date date = inputFormat.parse(dueDateString);
 			Timestamp timestamp = new Timestamp(date.getTime());
