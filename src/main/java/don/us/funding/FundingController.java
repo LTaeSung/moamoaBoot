@@ -9,15 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import don.us.board.BoardEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-<<<<<<< HEAD
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-=======
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import util.file.FileController;
 import util.file.FileNameVO;
->>>>>>> 09fd34a50770e1785fbb57549617be9a1f65c524
+
 
 @CrossOrigin(origins = { "*" })
 @RestController
@@ -103,8 +100,6 @@ public class FundingController {
 
 		return fundingEntityList;
 	}
-
-<<<<<<< HEAD
 	@GetMapping("/list/{no}")
 		public ResponseEntity<FundingEntity> show(@PathVariable int no) {
 			Optional<FundingEntity> optionalFundingEntity = repo.findById(no);
@@ -112,22 +107,4 @@ public class FundingController {
 					ResponseEntity.notFound().build());
 		}
 
-	@PostMapping("/reg")
-	public Map<String, Object> fundList(@RequestBody Map map){
-		FundingEntity fundingEntity = new FundingEntity();
-		fundingEntity.setNo(Integer.parseInt((String)map.get("no")));
-		fundingEntity.setTitle((String) map.get("title"));
-		fundingEntity.setDescription((String) map.get("description"));
-		fundingEntity.setPhoto((String) map.get("photo")); // 추후에 추가 예정
-		fundingEntity.setCandidate((Integer) map.get("candidate"));
-		FundingEntity entity = repo.save(fundingEntity);
-		Map<String, Object> result = new HashMap<>();
-		result.put("entity", entity);
-		result.put("result", entity == null ? "fail" : "success");
-		return result;
-	}
-
-=======
-	
->>>>>>> 09fd34a50770e1785fbb57549617be9a1f65c524
 }
