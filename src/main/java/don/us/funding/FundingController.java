@@ -7,15 +7,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import don.us.board.BoardEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = { "*" })
 @RestController
@@ -56,6 +54,14 @@ public class FundingController {
 
 		return fundingEntityList;
 	}
+
+	@GetMapping("/list/{no}")
+		public ResponseEntity<FundingEntity> show(@PathVariable int no) {
+			Optional<FundingEntity> optionalFundingEntity = repo.findById(no);
+			return optionalFundingEntity.map(ResponseEntity::ok).orElseGet(() ->
+					ResponseEntity.notFound().build());
+		}
+
 	@PostMapping("/reg")
 	public Map<String, Object> fundList(@RequestBody Map map){
 		FundingEntity fundingEntity = new FundingEntity();
