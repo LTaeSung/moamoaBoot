@@ -25,18 +25,19 @@ public class FundingService {
 		FundingMemberEntity fundMember = new FundingMemberEntity();
 		fundMember.setFundingno(fund.getNo());
 		fundMember.setMemberno(member_no);
+		fundMember.setInviteddate(new Timestamp(System.currentTimeMillis()));
 
 		
-		FundingEntity funding = fundingRepo.findById(fund.getNo()).get();
-		fundMember.setFundingtype(funding.getFundingtype());
-		fundMember.setMonthlypaymentamount(funding.getMonthlypaymentamount());
-		fundMember.setMonthlypaymentdate(funding.getMonthlypaymentdate());
+		fundMember.setFundtitle(fund.getTitle());
+		fundMember.setFundingtype(fund.getFundingtype());
+		fundMember.setMonthlypaymentamount(fund.getMonthlypaymentamount());
+		fundMember.setMonthlypaymentdate(fund.getMonthlypaymentdate());
 		fundMember.setTotalpayamount(0);
 		fundMember.setGiveup(false);
 		if(fund.getStartmemberno() == member_no) {
-			fundMember.setParticipation_date(new Timestamp(System.currentTimeMillis()));
+			fundMember.setParticipationdate(new Timestamp(System.currentTimeMillis()));
 		}else {
-			fundMember.setParticipation_date(null);
+			fundMember.setParticipationdate(null);
 		}
 		
 		fundMember.setVote(0);
@@ -52,7 +53,7 @@ public class FundingService {
 	public void inviteMembers (FundingEntity fund, String memberListString, int starterPaymentNo) {
 		FundingMemberEntity me = makeFundingMemberEntity(fund, fund.getStartmemberno());
 		me.setPaymentno(starterPaymentNo);
-		me.setParticipation_date(new Timestamp(System.currentTimeMillis()));
+		me.setParticipationdate(new Timestamp(System.currentTimeMillis()));
 		inviteMember(fund, me);
 		
 		if (memberListString != null) {
