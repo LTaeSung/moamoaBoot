@@ -50,3 +50,7 @@ ALTER TABLE `moamoaDonDon`.`point_transaction_history`
 DROP FOREIGN KEY `FK_funding_TO_point_transaction_history_1`;
 ALTER TABLE `moamoaDonDon`.`point_transaction_history` 
 DROP INDEX `FK_funding_TO_point_transaction_history_1` ;
+
+ALTER TABLE `moamoaDonDon`.`point_transaction_history` 
+ADD COLUMN `merchant_uid` VARCHAR(40) NULL DEFAULT NULL AFTER `success`,
+ADD COLUMN `imp_uid` VARCHAR(45) NULL DEFAULT NULL AFTER `merchant_uid`;
