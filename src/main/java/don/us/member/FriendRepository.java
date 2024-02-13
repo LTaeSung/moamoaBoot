@@ -15,6 +15,8 @@ public interface FriendRepository extends JpaRepository<FriendEntity, Integer>{
 	
 
 	public List<FriendEntity> findByMemberno(int member_no);
+
+
 	
 
 

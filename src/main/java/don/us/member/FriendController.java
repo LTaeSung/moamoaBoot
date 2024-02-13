@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.transaction.Transactional;
 import jakarta.websocket.Session;
+import retrofit2.http.DELETE;
 
 @CrossOrigin(origins = {"*"})
 @RestController
@@ -42,14 +44,12 @@ public class FriendController {
 	
 	// 친구 검색 기능 
 	// 개발 의도: 한번에 멤버 목록을 다 가져오면 시간 소요 검색한 멤버만 나오게 하려함
-	@PostMapping("/search")
-	public List<MemberEntity> MemberList (@RequestParam("name") String name) {
-		
-		List<MemberEntity> memberList = meRepo.findByNameContaining(name);
-		
-		System.out.println("검색된 멤버 리스트" + memberList.toString());
-		
-		return memberList;
+	@Transactional
+	@GetMapping("/search")
+	public List<MemberEntity> searchMember(@RequestParam("name") String name) {
+	    List<MemberEntity> memberList = meRepo.findByNameContaining(name);
+	    System.out.println("검색된 멤버 리스트" + memberList.toString());
+	    return memberList;
 	}
 	
 	
@@ -66,20 +66,25 @@ public class FriendController {
 	    
 		System.out.println("친구 출력 : " + friend);
 		FriendEntity entity = frRepo.save(friend);
+		
 		return entity;
 	}
 	
 	// 친구 삭제 기능 (신정훈 작업 2024 - 02 - 07)	
 	@Transactional
 	@GetMapping("/delete")
-	public Map friendDel(@RequestParam("member_no") int member_no, @RequestParam("friend_no") int friend_no){
+	public List<FriendEntity> friendDel(@RequestParam("member_no") int member_no, @RequestParam("friend_no") int friend_no){
 		
-		frRepo.findByMemberno(member_no);
-	//	frRepo.deleteByFriendNo(friend_no);
+		List <FriendEntity> friendLost = frRepo.deleteByMembernoAndFriend_No(member_no,friend_no);
+		
+		System.out.print("삭제된 친구 리스트: " + friendLost.toString());
 		
 		Map<String, Object> result = new HashMap<>();
 		result.put("result", "success");
-		return result;
+	
+		List<FriendEntity> updatedFriendList = frRepo.findByMemberno(member_no);
+	
+		return updatedFriendList;
 		
 	}
 }

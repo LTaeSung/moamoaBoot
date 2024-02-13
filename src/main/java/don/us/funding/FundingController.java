@@ -27,7 +27,7 @@ public class FundingController {
 		fund.setTitle((String)map.get("title"));
 		//마감일 추가해야함
 		fund.setDescription((String)map.get("description"));
-		fund.setMonthlypaymentamount(Integer.valueOf((String) (map.get("monthly_payment_amount"))));
+		fund.setMonthlypaymentamount(Integer.valueOf((String)(map.get("monthly_payment_amount"))));
 		fund.setMonthlypaymentdate((String)map.get("monthly_payment_date"));
 		System.out.println("fund: " + fund);
 
