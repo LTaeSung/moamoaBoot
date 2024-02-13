@@ -144,5 +144,6 @@ public class MemberController {
 //        System.out.println("세션에 이메일: " + userEmail);
 //        return "redirect:/localhost:3000/board/list";
 //    }
+	
 
 }
