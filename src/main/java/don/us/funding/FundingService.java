@@ -26,7 +26,7 @@ public class FundingService {
 		fundingRepo.save(fund);
 	}
 	
-	public void inviteMember(FundingEntity fund, int payment_no, int member_no) {
+	public FundingMemberEntity makeFundingMemberEntity(FundingEntity fund, int member_no) {
 		FundingMemberEntity fundMember = new FundingMemberEntity();
 		fundMember.setFundingno(fund.getNo());
 		fundMember.setMemberno(member_no);
@@ -40,14 +40,18 @@ public class FundingService {
 		fundMember.setGiveup(false);
 		if(fund.getStartmemberno() == member_no) {
 			fundMember.setParticipation_date(new Timestamp(System.currentTimeMillis()));
-			fundMember.setPaymentno(payment_no);
 		}else {
 			fundMember.setParticipation_date(null);
 		}
 		
 		fundMember.setVote(0);
-		
-		fundingMemberRepo.save(fundMember);
+		return fundMember;
+	}
+	
+	public void inviteMember(FundingEntity fund, FundingMemberEntity fundingMember) {
+		fund.setCandidate(fund.getCandidate() + 1);
+		fundingRepo.save(fund);
+		fundingMemberRepo.save(fundingMember);
 	}
 	
 	
