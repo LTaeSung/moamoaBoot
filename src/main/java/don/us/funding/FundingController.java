@@ -1,13 +1,21 @@
 package don.us.funding;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import don.us.board.BoardEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = { "*" })
 @RestController
@@ -21,6 +29,7 @@ public class FundingController {
 
 	@PostMapping("/regist")
 	public void makeFund(@RequestBody Map map) {
+		System.out.println(map);
 		FundingEntity fund = new FundingEntity();
 
 		fund.setStartmemberno(Integer.valueOf((String) (map.get("member_no"))));
@@ -29,13 +38,16 @@ public class FundingController {
 		fund.setDescription((String)map.get("description"));
 		fund.setMonthlypaymentamount(Integer.valueOf((String) (map.get("monthly_payment_amount"))));
 		fund.setMonthlypaymentdate((String)map.get("monthly_payment_date"));
+		
+		String dueDate = ((String)map.get("dueDate")).substring(0, 10);
+		
+	    LocalDate localDate = LocalDate.parse(dueDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		fund.setFundingduedate(Timestamp.valueOf(localDate.atStartOfDay()));
 		System.out.println("fund: " + fund);
 
 		// 임시로 payment_no를 1로 설정
 		int payment_no = 1;
-
-		System.out.println("ㅇㅇ");
-		System.out.println(map);
+		repo.save(fund);
 	}
 	@GetMapping("/list")
 	public List index (Model model) {
@@ -44,7 +56,7 @@ public class FundingController {
 
 		return fundingEntityList;
 	}
-	@GetMapping("/reg")
+	@PostMapping("/reg")
 	public Map<String, Object> fundList(@RequestBody Map map){
 		FundingEntity fundingEntity = new FundingEntity();
 		fundingEntity.setNo(Integer.parseInt((String)map.get("no")));
