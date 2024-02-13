@@ -26,6 +26,7 @@ public class PointHistoryEntity {
 	@Column(name="fund_no")
 	private int fundingno;
 	
+//	@CreationTimestamp
 	@Column(name="transaction_date")
 	private int transactiondate;
 	
@@ -34,4 +35,10 @@ public class PointHistoryEntity {
 	private boolean direction;
 	
 	private boolean success;
+	
+	@Column(name="merchant_uid")
+	private String merchantuid;
+	
+	@Column(name="imp_uid")
+	private String impuid;
 }

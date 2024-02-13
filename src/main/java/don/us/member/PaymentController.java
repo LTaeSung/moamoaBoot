@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,13 +25,19 @@ public class PaymentController {
 	@Autowired
 	private MemberRepository Memrepo;
 	
-	@Transactional
-	@GetMapping(value = "/add")
-	public Map/*Map<String, String>*/ paymentAdd(@RequestParam int member_no, int payment_type, int company, String account, String valid_date, String cvc/*@RequestBody Map<String, String> map*/){
-//		System.out.println("map:" +  email);
-//		Map<String, String> payment_info = new HashMap<>();
+	
+	@PostMapping(value = "/add")
+	public Map<String, Object> paymentAdd(@RequestBody Map<String, String> request) {
+	    Map<String, Object> result = new HashMap<>();
 		
-		Map<String, Object> result = new HashMap<>();
+	    int member_no = Integer.parseInt(request.get("memberno"));
+
+	    int payment_type = Integer.parseInt(request.get("paymenttype"));
+	    int company = Integer.parseInt(request.get("company"));
+	    String account = request.get("account");
+	    String valid_date = request.get("validdate");
+	    String cvc = request.get("cvc");
+	    
 
 		// PaymentEntity가 이미 존재하는지 확인
 	    if (Payrepo.findByMembernoAndAccount(member_no, account).isEmpty()) {
@@ -107,6 +114,7 @@ public class PaymentController {
 		List<PaymentEntity> payment_list = Payrepo.findByMemberno(member_no);
 		
 		System.out.println("유저의 결제수단 리스트" + payment_list);
+		
 		
 		return payment_list;
 	}
