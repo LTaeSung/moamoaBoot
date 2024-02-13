@@ -4,6 +4,9 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import don.us.alarm.AlarmService;
 import util.file.FileController;
 import util.file.FileNameVO;
 
@@ -34,65 +38,50 @@ public class FundingController {
 	private FileController fileController;
 	@Autowired
 	private FundingService service;
-	
+	@Autowired
+	private AlarmService alarmService;
+
 	@Value("${realPath.registed_img_path}")
 	private String registed_img_path;
-	
+
 	@PostMapping("/regist")
 	public void makeFund(@RequestParam Map map, @RequestParam(name = "file", required = false) MultipartFile photo) {
-//		System.out.println("map: " + map);
-		System.out.println("photo: " + photo);
 		FundingEntity fund = new FundingEntity();
 
 		fund.setStartmemberno(Integer.valueOf((String) (map.get("member_no"))));
-		fund.setTitle((String)map.get("title"));
-		//마감일 추가해야함
-		fund.setDescription((String)map.get("description"));
+
+		fund.setTitle((String) map.get("title"));
+		fund.setDescription((String) map.get("description"));
 		fund.setMonthlypaymentamount(Integer.valueOf((String) (map.get("monthly_payment_amount"))));
-		fund.setMonthlypaymentdate((String)map.get("monthly_payment_date"));
-		
-		String dueDateString = (String)map.get("dueDate");
-		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", java.util.Locale.ENGLISH);
+		fund.setMonthlypaymentdate((String) map.get("monthly_payment_date"));
+
 		try {
-			Date date = inputFormat.parse(dueDateString);
-            Timestamp timestamp = new Timestamp(date.getTime());
-            fund.setFundingduedate(timestamp);
-		}catch(ParseException e) {
+			Timestamp timestamp = service.getTimestamp((String) map.get("dueDate"));
+			fund.setFundingduedate(timestamp);
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 
-		if(photo != null) {
+		if (photo != null) {
 			FileNameVO fvo = fileController.upload(photo, registed_img_path);
 			fund.setPhoto(fvo.getSaved_filename());
 		}
-		
-		
+
 		repo.save(fund);
-		System.out.println("fund: " + fund);
-		System.out.println("map: " + map);
 
 //		// 임시로 payment_no를 1로 설정
 		int payment_no = 1;
-		FundingMemberEntity me = service.makeFundingMemberEntity(fund, fund.getStartmemberno());
-		me.setPaymentno(payment_no);
-		me.setParticipation_date(new Timestamp(System.currentTimeMillis()));
-		service.inviteMember(fund, me);
 		
-		if(map.get("memberList") != null) {
-			List<String> memberList = Arrays.asList(((String)map.get("memberList")).split(","));
-			System.out.println("memberList: " + memberList);
-			
-			
-			for(String i : memberList) {
-				int member_no = Integer.valueOf(i);
-				service.inviteMember(fund, service.makeFundingMemberEntity(fund, member_no));
-			}
-		}
-
+		service.inviteMembers(fund, (String)map.get("memberList"), payment_no);
+		alarmService.makeAlarm(fund);
+		
 	}
+
 	@GetMapping("/list")
-	public List index (Model model) {
-		List <FundingEntity>  fundingEntityList = repo.findAll();
+	public List index(Model model) {
+
+		List<FundingEntity> fundingEntityList = repo.findAll();
+
 		return fundingEntityList;
 	}
 
@@ -108,7 +97,6 @@ public class FundingController {
 		repo.findById(no).ifPresent((data) -> {
 			result.add(data);
 		});
-
 		System.out.println("result: " + result);
 		return result;
 	}

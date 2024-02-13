@@ -50,3 +50,17 @@ ALTER TABLE `moamoaDonDon`.`point_transaction_history`
 DROP FOREIGN KEY `FK_funding_TO_point_transaction_history_1`;
 ALTER TABLE `moamoaDonDon`.`point_transaction_history` 
 DROP INDEX `FK_funding_TO_point_transaction_history_1` ;
+<<<<<<< HEAD
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+ADD COLUMN `fund_name` VARCHAR(255) NOT NULL AFTER `vote`,
+ADD COLUMN `photo` VARCHAR(255) NULL DEFAULT NULL AFTER `fund_name`,
+ADD COLUMN `invited_date` TIMESTAMP NOT NULL AFTER `photo`;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+CHANGE COLUMN `fund_name` `fund_title` VARCHAR(255) NOT NULL ;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+CHANGE COLUMN `fund_title` `fund_title` VARCHAR(255) NOT NULL AFTER `funding_no`,
+CHANGE COLUMN `photo` `photo` VARCHAR(255) NULL DEFAULT NULL AFTER `fund_title`,
+CHANGE COLUMN `invited_date` `invited_date` TIMESTAMP NOT NULL AFTER `giveup`;
+ALTER TABLE `moamoaDonDon`.`point_transaction_history` 
+ADD COLUMN `merchant_uid` VARCHAR(40) NULL DEFAULT NULL AFTER `success`,
+ADD COLUMN `imp_uid` VARCHAR(45) NULL DEFAULT NULL AFTER `merchant_uid`;
