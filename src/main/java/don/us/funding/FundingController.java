@@ -50,13 +50,13 @@ public class FundingController {
 		fundingEntity.setNo(Integer.parseInt((String)map.get("no")));
 		fundingEntity.setTitle((String) map.get("title"));
 		fundingEntity.setDescription((String) map.get("description"));
-//		fundingEntity.setPhoto((String) map.get("photo")); // 추후에 추가 예정
+		fundingEntity.setPhoto((String) map.get("photo")); // 추후에 추가 예정
 		fundingEntity.setCandidate((Integer) map.get("candidate"));
-
 		FundingEntity entity = repo.save(fundingEntity);
 		Map<String, Object> result = new HashMap<>();
 		result.put("entity", entity);
 		result.put("result", entity == null ? "fail" : "success");
 		return result;
 	}
+
 }
