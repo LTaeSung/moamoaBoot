@@ -2,14 +2,19 @@ package don.us.funding;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -80,10 +85,19 @@ public class FundingController {
 		return fundingEntityList;
 	}
 
+//	@GetMapping("/list/{no}")
+//		public ResponseEntity<FundingEntity> show(@PathVariable int no) {
+//			Optional<FundingEntity> optionalFundingEntity = repo.findById(no);
+//			return optionalFundingEntity.map(ResponseEntity::ok).orElseGet(() ->
+//					ResponseEntity.notFound().build());
+//		}
 	@GetMapping("/list/{no}")
-	public ResponseEntity<FundingEntity> show(@PathVariable int no) {
-		Optional<FundingEntity> optionalFundingEntity = repo.findById(no);
-		return optionalFundingEntity.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+	public List<FundingEntity> show(@PathVariable int no) {
+		List<FundingEntity> result = new ArrayList<>();
+		repo.findById(no).ifPresent((data) -> {
+			result.add(data);
+		});
+		System.out.println("result: " + result);
+		return result;
 	}
-
 }
