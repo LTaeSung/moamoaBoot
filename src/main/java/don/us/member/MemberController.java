@@ -81,7 +81,7 @@ public class MemberController {
 		requestBody.add("code", code);
 		requestBody.add("redirect_uri", REDIRECT_URI);
 
-		// RestTemplate 객체 생성
+		// RestTemplate 객체 생성 .
 		RestTemplate restTemplate = new RestTemplate();
 
 		// POST 요청 및 응답 받기
@@ -144,5 +144,6 @@ public class MemberController {
 //        System.out.println("세션에 이메일: " + userEmail);
 //        return "redirect:/localhost:3000/board/list";
 //    }
+	
 
 }
