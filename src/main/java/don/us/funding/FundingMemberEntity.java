@@ -51,7 +51,15 @@ public class FundingMemberEntity {
 	private boolean giveup;
 	
 	@Column(name="participation_date")
-	private Timestamp participation_date;
+	private Timestamp participationdate;
 	
 	private int vote;
+	
+	@Column(name="fund_title")
+	private String fundtitle;
+	
+	private String photo;
+	
+	@Column(name="invited_date")
+	private Timestamp inviteddate;
 }

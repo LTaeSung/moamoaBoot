@@ -11,10 +11,12 @@ import jakarta.transaction.Transactional;
 public interface FriendRepository extends JpaRepository<FriendEntity, Integer>{
 	
 
-	public void deleteByFriendNo(Integer friend_no);
+	public List<FriendEntity> deleteByMembernoAndFriend_No(int memberNo , int friendNo);
 	
 
 	public List<FriendEntity> findByMemberno(int member_no);
+
+
 	
 
 
