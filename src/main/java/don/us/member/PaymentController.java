@@ -3,6 +3,7 @@ package don.us.member;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -84,15 +85,25 @@ public class PaymentController {
 		}
 	}
 	
-	
-	@GetMapping("/modify")
-	public Map paymentUpdate(@RequestParam int no, int payment_type, int company, String account, String valid_date, String cvc){
+	@Transactional
+	@PostMapping("/modify")
+	public Map paymentUpdate(@RequestBody Map<String, String> request){
 
 		Map<String, Object> result = new HashMap<>();
+
+		int no = Integer.parseInt(request.get("no"));
+		int member_no = Integer.parseInt(request.get("memberno"));
+	    int payment_type = Integer.parseInt(request.get("paymenttype"));
+	    int company = Integer.parseInt(request.get("company"));
+	    String account = request.get("account");
+	    String valid_date = request.get("validdate");
+	    String cvc = request.get("cvc");
 		
 		Payrepo.findById(no).ifPresentOrElse(
 	            origin -> {
-	                origin.setPaymenttype(payment_type);
+//	            	
+//	            	origin.setMemberno(member_no);
+//	                origin.setPaymenttype(payment_type);
 	                origin.setCompany(company);
 	                origin.setAccount(account);
 	                origin.setValiddate(valid_date);
@@ -117,6 +128,17 @@ public class PaymentController {
 		
 		
 		return payment_list;
+	}
+	
+	@GetMapping("/getinfo")
+	public PaymentEntity PaymentGetInfo (@RequestParam int no) {
+		
+		PaymentEntity payment_info = Payrepo.findByNo(no);
+		
+		System.out.println("내가 선택한 계좌/카드의 no에 대한 상세정보" + payment_info);
+		
+		
+		return payment_info;
 	}
 	
 }
