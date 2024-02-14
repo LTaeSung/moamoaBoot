@@ -17,9 +17,17 @@ public class FundingService {
 	@Autowired
 	private FundingMemberRepository fundingMemberRepo;
 	
+
+	public void increaseCandidate(int fund_no) {
+		FundingEntity fund = fundingRepo.findById(fund_no).get();
+		fund.setCandidate(fund.getCandidate() + 1);
+		fundingRepo.save(fund);
+	}
+	
 	public void makeFund(FundingEntity fund) {
 		fundingRepo.save(fund);
 	}
+	
 	
 	private FundingMemberEntity makeFundingMemberEntity(FundingEntity fund, int member_no) {
 		FundingMemberEntity fundMember = new FundingMemberEntity();
@@ -73,7 +81,6 @@ public class FundingService {
 	}
 	
 	private void inviteMember(FundingEntity fund, FundingMemberEntity fundingMember) {
-		fund.setCandidate(fund.getCandidate() + 1);
 		fundingRepo.save(fund);
 		fundingMemberRepo.save(fundingMember);
 	}

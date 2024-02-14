@@ -63,18 +63,29 @@ public class FundingMemberController {
 	public String accept(@RequestBody Map map) {
 		Map<String, String> result = new HashMap<>();
 		System.out.println("map: " + map);
-		int fundMemberNo = Integer.valueOf((String)map.get("no"));
+		int fundMemberNo = (int)map.get("fundingMemberNo");
 		FundingMemberEntity fundMemberEntity = repo.findById(fundMemberNo).get();
+		System.out.println("fundMemberEntity: " + fundMemberEntity);
 		fundMemberEntity.setParticipationdate(new Timestamp(System.currentTimeMillis()));
+		
+		int payment_no = Integer.valueOf((String)map.get("payment_no"));
+		fundMemberEntity.setPaymentno(payment_no);
 		try {
 			repo.save(fundMemberEntity);
 			System.out.println("참여 완료");
 			return "success";
+			
+//			FundingEntity 
+			//참여인원 늘리고
+			//펀딩 시작하나 체크하고
 		}catch(Exception e) {
 			System.out.println("참여 실패");
 			return "fail";
 		}
 	}
+	
+	
+	
 	@PostMapping("refuse")
 	public String refuse(@RequestBody Map map) {
 		Map<String, String> result = new HashMap<>();
