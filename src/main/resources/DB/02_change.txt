@@ -64,3 +64,11 @@ CHANGE COLUMN `invited_date` `invited_date` TIMESTAMP NOT NULL AFTER `giveup`;
 ALTER TABLE `moamoaDonDon`.`point_transaction_history` 
 ADD COLUMN `merchant_uid` VARCHAR(40) NULL DEFAULT NULL AFTER `success`,
 ADD COLUMN `imp_uid` VARCHAR(45) NULL DEFAULT NULL AFTER `merchant_uid`;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+ADD COLUMN `start_member_no` INT NOT NULL AFTER `vote`,
+ADD COLUMN `start_member_name` VARCHAR(255) NOT NULL AFTER `start_member_no`;
+ALTER TABLE `moamoaDonDon`.`funding` 
+ADD COLUMN `start_member_name` VARCHAR(255) NOT NULL AFTER `start_member_no`;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+CHANGE COLUMN `start_member_no` `start_member_no` INT NOT NULL AFTER `funding_no`,
+CHANGE COLUMN `start_member_name` `start_member_name` VARCHAR(255) NOT NULL AFTER `start_member_no`;

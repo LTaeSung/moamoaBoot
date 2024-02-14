@@ -49,7 +49,7 @@ public class FundingController {
 		FundingEntity fund = new FundingEntity();
 
 		fund.setStartmemberno(Integer.valueOf((String) (map.get("member_no"))));
-
+		fund.setStartmembername((String)map.get("member_name"));
 		fund.setTitle((String) map.get("title"));
 		fund.setDescription((String) map.get("description"));
 		fund.setMonthlypaymentamount(Integer.valueOf((String) (map.get("monthly_payment_amount"))));
