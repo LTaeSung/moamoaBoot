@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import don.us.board.BoardEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -83,6 +84,12 @@ public class FundingController {
 		List <FundingEntity> myFundinglist = repo.findBystartmemberno(start_member_no);
 		
 		return myFundinglist;
+	}
+
+	@GetMapping("/list/test")
+	public List funding (Model model) {
+		List <FundingEntity>  fundingEntityList = repo.findAll();
+		return fundingEntityList;
 	}
 
 
