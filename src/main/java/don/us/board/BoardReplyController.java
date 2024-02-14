@@ -44,7 +44,7 @@ public class BoardReplyController {
     }
 
     // 댓글 수정
-    @PutMapping("/update/{no}")
+    @PutMapping("/update")
     public ResponseEntity<BoardReplyEntity> updateReply(
     		@RequestParam int no, @RequestBody BoardReplyEntity updatedReply) {
         BoardReplyEntity existingReply = repo.findById(no).orElse(null);
@@ -58,7 +58,7 @@ public class BoardReplyController {
     }
 
     // 댓글 삭제
-    @DeleteMapping("/delete/{no}")
+    @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteReply(@RequestParam int no) {
         BoardReplyEntity existingReply = repo.findById(no).orElse(null);
         if (existingReply == null) {

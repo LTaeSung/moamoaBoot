@@ -42,6 +42,4 @@ public class BoardReplyEntity {
 	@Column(name="update_date")
 	private Timestamp updatedate;
 	
-
-
 }
