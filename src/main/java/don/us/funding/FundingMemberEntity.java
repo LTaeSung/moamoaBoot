@@ -62,4 +62,10 @@ public class FundingMemberEntity {
 	
 	@Column(name="invited_date")
 	private Timestamp inviteddate;
+	
+	@Column(name="start_member_no")
+	private int startmemberno;
+	
+	@Column(name="start_member_name")
+	private String startmembername;
 }

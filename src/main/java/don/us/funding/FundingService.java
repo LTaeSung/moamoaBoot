@@ -25,8 +25,10 @@ public class FundingService {
 		FundingMemberEntity fundMember = new FundingMemberEntity();
 		fundMember.setFundingno(fund.getNo());
 		fundMember.setMemberno(member_no);
+		fundMember.setStartmemberno(fund.getStartmemberno());
+		fundMember.setStartmembername(fund.getStartmembername());
 		fundMember.setInviteddate(new Timestamp(System.currentTimeMillis()));
-
+		fundMember.setPhoto(fund.getPhoto());
 		
 		fundMember.setFundtitle(fund.getTitle());
 		fundMember.setFundingtype(fund.getFundingtype());
@@ -49,10 +51,13 @@ public class FundingService {
 		Date answer = inputFormat.parse(date);
 		return new Timestamp(answer.getTime());
 	}
-	
+
 	public void inviteMembers (FundingEntity fund, String memberListString, int starterPaymentNo) {
 		FundingMemberEntity me = makeFundingMemberEntity(fund, fund.getStartmemberno());
+		me.setStartmemberno(fund.getStartmemberno());
+		me.setStartmembername(fund.getStartmembername());
 		me.setPaymentno(starterPaymentNo);
+		me.setPhoto(fund.getPhoto());
 		me.setParticipationdate(new Timestamp(System.currentTimeMillis()));
 		inviteMember(fund, me);
 		

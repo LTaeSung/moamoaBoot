@@ -1,27 +1,12 @@
 package don.us.point;
 
-
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import don.us.member.MemberEntity;
 import don.us.member.MemberRepository;
@@ -59,12 +44,9 @@ public class MemberApplicationTest {
 	}
 	
 	@Test
-	public int memberpoint() {
-    	MemberEntity member = memberRepo.findById(7).orElseThrow();
-    	System.out.println("확인"+member.getPoint());
-    	return member.getPoint();
+	public void pointHistory() {
+    	List<PointHistoryEntity> pointList = repo.findByMemberno(7);
+    	System.out.println("확인"+pointList);
     }
-	
-	
 	
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -56,6 +57,12 @@ public class PointHistoryController {
     	System.out.println("확인"+member);
     	return member.getPoint();
     }
+    
+    @GetMapping("/mypointHistory")
+    public List<PointHistoryEntity> pointHistory(@RequestParam(value="member_no") int member_no) {
+    	List<PointHistoryEntity> pointList = repo.findByMemberno(member_no);
+    	return pointList;
+    }
 	
     @Transactional
 	@PostMapping("/chargeIamport")
@@ -88,45 +95,18 @@ public class PointHistoryController {
     	refundRequest(accessToken, imp_uid, "서버 등록 오류");
     }
     
-    private String getToken() throws IOException {
-        URL url = new URL("https://api.iamport.kr/users/getToken");
-        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
- 
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/json");
-        conn.setRequestProperty("Accept", "application/json");
-        conn.setDoOutput(true);
- 
-        JsonObject json = new JsonObject();
-        json.addProperty("imp_key", restApiKey);
-        json.addProperty("imp_secret", restApiSecret);
- 
-        // 출력 스트림으로 해당 conn에 요청
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-        bw.write(json.toString()); // json 객체를 문자열 형태로 HTTP 요청 본문에 추가
-        bw.flush();
-        bw.close();
- 
-        // 입력 스트림으로 conn 요청에 대한 응답 반환
-        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        Gson gson = new Gson(); // 응답 데이터를 자바 객체로 변환
-        String response = gson.fromJson(br.readLine(), Map.class).get("response").toString();
-        String accessToken = gson.fromJson(response, Map.class).get("access_token").toString();
-        br.close(); // BufferedReader 종료
- 
-        conn.disconnect();
- 
-        return accessToken;
-    }
-    
     @Transactional
     @PostMapping("/payBack")
-    public String payBack(@RequestParam(value="member_no") int member_no, @RequestParam(value="amount") int amount) {
+    public String payBack(@RequestParam(value="member_no") int member_no, @RequestParam(value="amount") int amount,
+    		@RequestParam(value="merchant_id") String merchant_id) {
     	String result = "success";
     	
 		PointHistoryEntity pointHistory = new PointHistoryEntity();
 		pointHistory.setMemberno(member_no);
 		pointHistory.setAmount(amount);
+		pointHistory.setBank(Integer.parseInt(merchant_id.split("_")[0]));
+		pointHistory.setAccount(merchant_id.split("_")[1]);
+		pointHistory.setDirection(true);
 		//그 외 시간 등은 erd에 맞춰서
 		repo.save(pointHistory);
 			
@@ -137,6 +117,41 @@ public class PointHistoryController {
 		return result;	
     }
     
+    
+    
+    
+    
+    
+    private String getToken() throws IOException {
+    	URL url = new URL("https://api.iamport.kr/users/getToken");
+    	HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+    	
+    	conn.setRequestMethod("POST");
+    	conn.setRequestProperty("Content-Type", "application/json");
+    	conn.setRequestProperty("Accept", "application/json");
+    	conn.setDoOutput(true);
+    	
+    	JsonObject json = new JsonObject();
+    	json.addProperty("imp_key", restApiKey);
+    	json.addProperty("imp_secret", restApiSecret);
+    	
+    	// 출력 스트림으로 해당 conn에 요청
+    	BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+    	bw.write(json.toString()); // json 객체를 문자열 형태로 HTTP 요청 본문에 추가
+    	bw.flush();
+    	bw.close();
+    	
+    	// 입력 스트림으로 conn 요청에 대한 응답 반환
+    	BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+    	Gson gson = new Gson(); // 응답 데이터를 자바 객체로 변환
+    	String response = gson.fromJson(br.readLine(), Map.class).get("response").toString();
+    	String accessToken = gson.fromJson(response, Map.class).get("access_token").toString();
+    	br.close(); // BufferedReader 종료
+    	
+    	conn.disconnect();
+    	
+    	return accessToken;
+    }
     private void refundRequest(String accessToken, String imp_uid, String reason) throws IOException {
         URL url = new URL("https://api.iamport.kr/payments/cancel");
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
