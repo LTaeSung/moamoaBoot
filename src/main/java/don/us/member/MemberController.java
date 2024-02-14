@@ -1,7 +1,9 @@
 package don.us.member;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -146,6 +148,20 @@ public class MemberController {
 //        System.out.println("세션에 이메일: " + userEmail);
 //        return "redirect:/localhost:3000/board/list";
 //    }
+	
+	// 회원 정보 (신정훈 작업 02 - 14)
+	@GetMapping("/info")
+	public Optional<MemberEntity> getUserInfo(@RequestParam("member_no") int member_no){
+		
+		Optional<MemberEntity> memberInfo = repo.findById(member_no);
+		
+		return memberInfo;
+	}
+	
+	
+	
+	
+	
 	
 
 }
