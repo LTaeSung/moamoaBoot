@@ -27,6 +27,9 @@ public class FundingEntity {
 	@Column(name="start_member_no")
 	private int startmemberno;
 	
+	@Column(name="start_member_name")
+	private String startmembername;
+	
 	@Column(name="funding_type")
 	private int fundingtype;
 	

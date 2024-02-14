@@ -34,6 +34,5 @@ public class BoardController {
 	        Optional<BoardEntity> optionalBoardEntity = repo.findById(no);
 	        return optionalBoardEntity.map(ResponseEntity::ok).orElseGet(() -> 
 	        													ResponseEntity.notFound().build());
-		
 	}
 }
