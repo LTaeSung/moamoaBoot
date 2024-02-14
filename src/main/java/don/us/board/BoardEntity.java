@@ -45,4 +45,8 @@ public class BoardEntity {
 	@UpdateTimestamp
 	@Column(name="update_date")
 	private Timestamp updatedate;
+	
+	public boolean BoardTypeList() {
+		return !boardtype;
+	}
 }
