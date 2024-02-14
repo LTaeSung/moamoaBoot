@@ -57,6 +57,7 @@ public class MemberController {
 			result.put("result", "success");
 			result.put("no", String.valueOf(target.getNo()));
             result.put("email", target.getEmail());
+            result.put("name", target.getName());
 		}else {
 			result.put("result", "fail");
 		}
@@ -119,6 +120,7 @@ public class MemberController {
                 result.put("result", "success");
                 result.put("no", String.valueOf(target.getNo()));
                 result.put("email", target.getEmail());
+                result.put("name", target.getName());
 				
 			} else {
 				System.out.println("유저없음");
