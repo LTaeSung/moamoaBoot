@@ -9,5 +9,6 @@ import don.us.member.MemberEntity;
 public interface FundingMemberRepository extends JpaRepository<FundingMemberEntity, Integer>{
 	//List<MemberEntity> findByNameContaining(String name);
 	List<FundingMemberEntity> findByFundingno(int fund_no);
+
 	List<FundingMemberEntity> findByMemberno(int member_no);
 }
