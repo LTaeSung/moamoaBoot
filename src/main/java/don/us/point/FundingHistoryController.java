@@ -18,7 +18,7 @@ public class FundingHistoryController {
 	
 	@GetMapping("/mypointHistory")
     public List<FundingHistoryEntity> pointHistory(@RequestParam(value="member_no") int member_no) {
-    	List<FundingHistoryEntity> pointList = repo.findByMemberno(member_no);
+    	List<FundingHistoryEntity> pointList = repo.findByMembernoOrderByTransactiondateDesc(member_no);
     	return pointList;
     }
 }

@@ -45,7 +45,7 @@ public class MemberApplicationTest {
 	
 	@Test
 	public void pointHistory() {
-    	List<PointHistoryEntity> pointList = repo.findByMemberno(7);
+    	List<PointHistoryEntity> pointList = repo.findByMembernoOrderByTransactiondateDesc(7);
     	System.out.println("확인"+pointList);
     }
 	
