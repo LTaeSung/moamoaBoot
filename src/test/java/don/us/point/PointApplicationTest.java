@@ -14,7 +14,7 @@ import lombok.extern.java.Log;
 
 @Log
 @SpringBootTest
-public class MemberApplicationTest {
+public class PointApplicationTest {
 	@Autowired
 	private PointHistoryRepository repo;
 	
@@ -48,5 +48,10 @@ public class MemberApplicationTest {
     	List<PointHistoryEntity> pointList = repo.findByMembernoOrderByTransactiondateDesc(7);
     	System.out.println("확인"+pointList);
     }
+	
+	@Test
+	public void paylisttest() {
+		
+	}
 	
 }

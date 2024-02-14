@@ -3,6 +3,7 @@ package don.us.funding;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -78,5 +79,14 @@ public class FundingService {
 		fundingMemberRepo.save(fundingMember);
 	}
 	
+	
+	public ArrayList<List<FundingMemberEntity>> needPayMemberList(){
+		ArrayList<List<FundingMemberEntity>> memberlist = new ArrayList<>();
+		List<FundingEntity> fundlist = fundingRepo.needPayFundList();
+		for(int i=0; i<fundlist.size(); i++) {
+			memberlist.add( fundingMemberRepo.needPayFundMemberList(fundlist.get(i).getNo()) );
+		}
+		return memberlist;
+	}
 	
 }
