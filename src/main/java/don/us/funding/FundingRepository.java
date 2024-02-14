@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface FundingRepository extends JpaRepository<FundingEntity, Integer>{
+
 	
 	@Query(value = "SELECT *"
 			+ " FROM funding"
@@ -14,4 +15,8 @@ public interface FundingRepository extends JpaRepository<FundingEntity, Integer>
 			+ " AND monthly_payment_date = DATE_FORMAT(NOW(),'%d')"
 			, nativeQuery = true)
 	public List<FundingEntity> needPayFundList();
+
+
+	List<FundingEntity> findBystartmemberno(int startmemberno);
+
 }

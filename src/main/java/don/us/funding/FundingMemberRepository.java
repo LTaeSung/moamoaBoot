@@ -10,6 +10,7 @@ import don.us.member.MemberEntity;
 public interface FundingMemberRepository extends JpaRepository<FundingMemberEntity, Integer>{
 	//List<MemberEntity> findByNameContaining(String name);
 	List<FundingMemberEntity> findByFundingno(int fund_no);
+
 	List<FundingMemberEntity> findByMemberno(int member_no);
 	
 	@Query(value = "SELECT * FROM funding_member WHERE funding_no = ?1 AND giveup = false"
