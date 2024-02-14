@@ -4,9 +4,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -99,5 +96,11 @@ public class FundingController {
 		});
 		System.out.println("result: " + result);
 		return result;
+	}
+	
+	@GetMapping("/regularPaymentList")
+	public ArrayList<List<FundingMemberEntity>> regularPaymentList(){
+		ArrayList<List<FundingMemberEntity>> list = service.needPayMemberList();
+		return list;
 	}
 }
