@@ -66,16 +66,25 @@ public class StartFundingTest {
 	
 	@Test
 	public void regularPayment() {
-		ArrayList<List<FundingMemberEntity>> list = service.needPayMemberList();
-		for(int i=0; i<list.size(); i++) {
-			for(int j=0; j<list.get(i).size(); j++) {
-				FundingHistoryEntity fundingHistory = new FundingHistoryEntity();
-				fundingHistory.setMemberno(list.get(i).get(j).getMemberno());
-				fundingHistory.setFundingno(list.get(i).get(j).getFundingno());
-				fundingHistory.setAmount(list.get(i).get(j).getMonthlypaymentamount());
-				//fundingHistory.setDirection(false); //0=false가 디폴트값이라 따로 설정 안하고 반대로 펀딩에서 돈 줄 때 true로 세팅할게요
-				fundingHistoryRepo.save(fundingHistory);
+//		ArrayList<List<FundingMemberEntity>> list = service.needPayMemberList();
+//		for(int i=0; i<list.size(); i++) {
+//			for(int j=0; j<list.get(i).size(); j++) {
+//				FundingHistoryEntity fundingHistory = new FundingHistoryEntity();
+//				fundingHistory.setMemberno(list.get(i).get(j).getMemberno());
+//				fundingHistory.setFundingno(list.get(i).get(j).getFundingno());
+//				fundingHistory.setAmount(list.get(i).get(j).getMonthlypaymentamount());
+//				//fundingHistory.setDirection(false); //0=false가 디폴트값이라 따로 설정 안하고 반대로 펀딩에서 돈 줄 때 true로 세팅할게요
+//				fundingHistoryRepo.save(fundingHistory);
+//			}
+//		}
+		List<FundingMemberEntity> memberlist = new ArrayList<>();
+		List<FundingEntity> fundlist = fundingRepo.needPayFundList();
+		for(int i=0; i<fundlist.size(); i++) {
+			List<FundingMemberEntity> templist = fundingMemberRepo.needPayFundMemberList(fundlist.get(i).getNo());
+			for(int j=0; j<templist.size(); j++) {
+				memberlist.add( templist.get(j) );				
 			}
 		}
+		System.out.println("확인: "+memberlist);
 	}
 }
