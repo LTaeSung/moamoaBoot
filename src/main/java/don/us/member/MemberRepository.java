@@ -11,6 +11,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Integer>{
 
 	//멤버 추가 - 멤버 검색 기능 구현(02 - 08 신정훈)
 	List<MemberEntity> findByNameContaining(String name);
-	
+
+
 	
 }

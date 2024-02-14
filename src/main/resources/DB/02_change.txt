@@ -72,3 +72,11 @@ ADD COLUMN `start_member_name` VARCHAR(255) NOT NULL AFTER `start_member_no`;
 ALTER TABLE `moamoaDonDon`.`funding_member` 
 CHANGE COLUMN `start_member_no` `start_member_no` INT NOT NULL AFTER `funding_no`,
 CHANGE COLUMN `start_member_name` `start_member_name` VARCHAR(255) NOT NULL AFTER `start_member_no`;
+
+ALTER TABLE `moamoaDonDon`.`point_transaction_history` 
+ADD COLUMN `bank` INT NULL DEFAULT NULL AFTER `imp_uid`,
+ADD COLUMN `account` VARCHAR(45) NULL DEFAULT NULL AFTER `bank`;
+
+ALTER TABLE `moamoaDonDon`.`point_transaction_history` 
+CHANGE COLUMN `bank` `bank` INT NULL DEFAULT 0 ;
+update point_transaction_history set bank=0;

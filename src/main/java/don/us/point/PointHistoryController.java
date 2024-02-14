@@ -104,7 +104,8 @@ public class PointHistoryController {
 		PointHistoryEntity pointHistory = new PointHistoryEntity();
 		pointHistory.setMemberno(member_no);
 		pointHistory.setAmount(amount);
-		pointHistory.setMerchantuid(merchant_id);
+		pointHistory.setBank(Integer.parseInt(merchant_id.split("_")[0]));
+		pointHistory.setAccount(merchant_id.split("_")[1]);
 		pointHistory.setDirection(true);
 		//그 외 시간 등은 erd에 맞춰서
 		repo.save(pointHistory);

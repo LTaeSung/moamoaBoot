@@ -45,4 +45,8 @@ public class PointHistoryEntity {
 	
 	@Column(name="imp_uid")
 	private String impuid;
+	
+	private int bank;
+	
+	private String account;
 }

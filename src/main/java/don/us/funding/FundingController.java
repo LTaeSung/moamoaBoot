@@ -78,26 +78,36 @@ public class FundingController {
 	}
 
 	@GetMapping("/list")
-	public List index(Model model) {
-
-		List<FundingEntity> fundingEntityList = repo.findAll();
-
-		return fundingEntityList;
+	public List<FundingEntity> myFunding(@RequestParam("start_member_no") int startmemberno) {
+		
+		List <FundingEntity> myFundinglist = repo.findBystartmemberno(startmemberno);
+		
+		return myFundinglist;
 	}
-
+	
+//	@GetMapping("/list")
+//	public List index(Model model) {
+//
+//		List<FundingEntity> fundingEntityList = repo.findAll();
+//
+//		return fundingEntityList;
+//	}
+//
 //	@GetMapping("/list/{no}")
 //		public ResponseEntity<FundingEntity> show(@PathVariable int no) {
 //			Optional<FundingEntity> optionalFundingEntity = repo.findById(no);
 //			return optionalFundingEntity.map(ResponseEntity::ok).orElseGet(() ->
 //					ResponseEntity.notFound().build());
 //		}
-	@GetMapping("/list/{no}")
-	public List<FundingEntity> show(@PathVariable int no) {
-		List<FundingEntity> result = new ArrayList<>();
-		repo.findById(no).ifPresent((data) -> {
-			result.add(data);
-		});
-		System.out.println("result: " + result);
-		return result;
-	}
+//	@GetMapping("/list/{no}")
+//	public List<FundingEntity> show(@PathVariable int no) {
+//		List<FundingEntity> result = new ArrayList<>();
+//		repo.findById(no).ifPresent((data) -> {
+//			result.add(data);
+//		});
+//		System.out.println("result: " + result);
+//		return result;
+//	}
+	
+	
 }
