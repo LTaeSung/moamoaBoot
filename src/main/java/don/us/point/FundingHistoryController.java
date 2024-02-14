@@ -33,16 +33,14 @@ public class FundingHistoryController {
 	@Transactional
 	@GetMapping("/regularPayment")
 	public void regularPayment() {
-		ArrayList<List<FundingMemberEntity>> list = fundingService.needPayMemberList();
+		List<FundingMemberEntity> list = fundingService.needPayMemberList();
 		for(int i=0; i<list.size(); i++) {
-			for(int j=0; j<list.get(i).size(); j++) {
-				FundingHistoryEntity fundingHistory = new FundingHistoryEntity();
-				fundingHistory.setMemberno(list.get(i).get(j).getMemberno());
-				fundingHistory.setFundingno(list.get(i).get(j).getFundingno());
-				fundingHistory.setAmount(list.get(i).get(j).getMonthlypaymentamount());
-				//fundingHistory.setDirection(false); //0=false가 디폴트값이라 따로 설정 안하고 반대로 펀딩에서 돈 줄 때 true로 세팅할게요
-				repo.save(fundingHistory);
-			}
+			FundingHistoryEntity fundingHistory = new FundingHistoryEntity();
+			fundingHistory.setMemberno(list.get(i).getMemberno());
+			fundingHistory.setFundingno(list.get(i).getFundingno());
+			fundingHistory.setAmount(list.get(i).getMonthlypaymentamount());
+			//fundingHistory.setDirection(false); //0=false가 디폴트값이라 따로 설정 안하고 반대로 펀딩에서 돈 줄 때 true로 세팅할게요
+			repo.save(fundingHistory);
 		}
 	}
 }

@@ -87,11 +87,14 @@ public class FundingService {
 	}
 	
 	
-	public ArrayList<List<FundingMemberEntity>> needPayMemberList(){
-		ArrayList<List<FundingMemberEntity>> memberlist = new ArrayList<>();
+	public List<FundingMemberEntity> needPayMemberList(){
+		List<FundingMemberEntity> memberlist = new ArrayList<>();
 		List<FundingEntity> fundlist = fundingRepo.needPayFundList();
 		for(int i=0; i<fundlist.size(); i++) {
-			memberlist.add( fundingMemberRepo.needPayFundMemberList(fundlist.get(i).getNo()) );
+			List<FundingMemberEntity> templist = fundingMemberRepo.needPayFundMemberList(fundlist.get(i).getNo());
+			for(int j=0; j<templist.size(); j++) {
+				memberlist.add( templist.get(j) );				
+			}
 		}
 		return memberlist;
 	}
