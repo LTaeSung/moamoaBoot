@@ -16,12 +16,16 @@ public class AcceptFunding {
 	
 	@Test
 	public void testIncreaseMember() {
-		fundingService.increaseCandidate(59);
+		int fund_no = 59;
+		fundingService.increaseCandidate(fund_no);
 		
 	}
 	
 	@Test
 	public void testStartFunding() {
-		System.out.println("result: " + service.checkStartFunding(65));
+		int fund_no = 59;
+		if(fundingService.checkStartFundingWhenAcceptFund(fund_no)) {
+			fundingService.setFundStart(fund_no);
+		}
 	}
 }

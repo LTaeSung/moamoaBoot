@@ -104,8 +104,8 @@ public class FundingController {
 	}
 	
 	@GetMapping("/regularPaymentList")
-	public ArrayList<List<FundingMemberEntity>> regularPaymentList(){
-		ArrayList<List<FundingMemberEntity>> list = service.needPayMemberList();
+	public List<FundingMemberEntity> regularPaymentList(){
+		List<FundingMemberEntity> list = service.needPayMemberList();
 		return list;
 	}
 }

@@ -17,7 +17,6 @@ public class FundingService {
 	private FundingRepository fundingRepo;
 	@Autowired
 	private FundingMemberRepository fundingMemberRepo;
-	
 
 	public void increaseCandidate(int fund_no) {
 		FundingEntity fund = fundingRepo.findById(fund_no).get();
@@ -25,6 +24,33 @@ public class FundingService {
 		fundingRepo.save(fund);
 	}
 	
+	public void setFundStart(int fund_no) {
+		FundingEntity fund = fundingRepo.findById(fund_no).get();
+		fund.setState(1);
+		fundingRepo.save(fund);
+	}
+	
+	public boolean checkStartFundingWhenAcceptFund(int fund_no) {
+		List<FundingMemberEntity> fundingMemberList = fundingMemberRepo.findByFundingno(fund_no);
+		System.out.println(fundingMemberList);
+		
+		List<FundingMemberEntity> result = new ArrayList<>();
+		for(FundingMemberEntity e : fundingMemberList) {
+			if(e.getParticipationdate() == null) {
+				//아직 참여하지 않은 인원을 알아보는 방법
+				//participationDate == null
+				//수락을 누를 때는 초대마감일이 지나지 않은 상태이기 때문에 초대 마감일이 지나지 않은 맴버는 고려하지 않아도 된다.
+				result.add(e);
+			}
+		}
+		
+		//아직 참여하지 않은 인원이 없을 경우
+		if(result.size() == 0) {
+			return true;
+		}
+		return false;
+		
+	}
 	public void makeFund(FundingEntity fund) {
 		fundingRepo.save(fund);
 	}
@@ -87,11 +113,14 @@ public class FundingService {
 	}
 	
 	
-	public ArrayList<List<FundingMemberEntity>> needPayMemberList(){
-		ArrayList<List<FundingMemberEntity>> memberlist = new ArrayList<>();
+	public List<FundingMemberEntity> needPayMemberList(){
+		List<FundingMemberEntity> memberlist = new ArrayList<>();
 		List<FundingEntity> fundlist = fundingRepo.needPayFundList();
 		for(int i=0; i<fundlist.size(); i++) {
-			memberlist.add( fundingMemberRepo.needPayFundMemberList(fundlist.get(i).getNo()) );
+			List<FundingMemberEntity> templist = fundingMemberRepo.needPayFundMemberList(fundlist.get(i).getNo());
+			for(int j=0; j<templist.size(); j++) {
+				memberlist.add( templist.get(j) );				
+			}
 		}
 		return memberlist;
 	}
