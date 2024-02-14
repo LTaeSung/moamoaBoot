@@ -15,6 +15,6 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, Integer>
 	PaymentEntity findByNo(int no);
 	
 	@Modifying
-	@Query("DELETE FROM PaymentEntity WHERE memberno = ?1 AND account = ?2")
-	int deletePay(int member_no, String account);
+	@Query("DELETE FROM PaymentEntity WHERE no = ?1 AND memberno = ?2")
+	int deletePay(int no, int member_no);
 }

@@ -62,25 +62,30 @@ public class PaymentController {
 	}
 	
 	@Transactional
-	@GetMapping("/delete")
-	public Map paymentDelete(@RequestParam int member_no, String account){
+	@PostMapping("/delete")
+	public Map<String, Object> paymentDelete(@RequestBody Map<String, String> request){
 		
 		//Payrepo.findByMemberno(member_no);
 		
-		//member_no와 account 번호가 일치하는 결제수단 삭제
-		int del_result = Payrepo.deletePay(member_no, account);
+		int no = Integer.parseInt(request.get("no"));
+		int member_no = Integer.parseInt(request.get("memberno"));
+		
+		System.out.println(no);
+		
+		//no와 member_no가 일치하는 결제수단 삭제
+		int del_result = Payrepo.deletePay(no, member_no);
 		System.out.println("삭제행 수 " + del_result);
 		
 		Map<String, Object> result = new HashMap<>();
 		
 		if(del_result==1) {
 			//삭제 완료시 success 리턴
-			result.put("result", "success");
+			result.put("result", "del_success");
 			return result;
 			
 		} else {
 			//삭제 실패시 fail 리턴
-			result.put("result", "fail");
+			result.put("result", "del_fail");
 			return result;
 		}
 	}
