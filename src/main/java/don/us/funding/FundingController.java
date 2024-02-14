@@ -4,9 +4,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import don.us.board.BoardEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +75,7 @@ public class FundingController {
 		
 	}
 
-	@GetMapping("/list")
+	@GetMapping("/host")
 	public List<FundingEntity> myFunding(@RequestParam("start_member_no") int start_member_no) {
 		
 		List <FundingEntity> myFundinglist = repo.findBystartmemberno(start_member_no);
@@ -93,7 +90,7 @@ public class FundingController {
 	}
 
 
-	@GetMapping("/list/{no}")
+	@GetMapping("/host/{no}")
 	public List<FundingEntity> show(@PathVariable int no) {
 		List<FundingEntity> result = new ArrayList<>();
 		repo.findById(no).ifPresent((data) -> {
@@ -103,5 +100,9 @@ public class FundingController {
 		return result;
 	}
 	
-	
+	@GetMapping("/regularPaymentList")
+	public ArrayList<List<FundingMemberEntity>> regularPaymentList(){
+		ArrayList<List<FundingMemberEntity>> list = service.needPayMemberList();
+		return list;
+	}
 }

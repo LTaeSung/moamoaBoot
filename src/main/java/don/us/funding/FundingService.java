@@ -3,6 +3,7 @@ package don.us.funding;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -17,9 +18,17 @@ public class FundingService {
 	@Autowired
 	private FundingMemberRepository fundingMemberRepo;
 	
+
+	public void increaseCandidate(int fund_no) {
+		FundingEntity fund = fundingRepo.findById(fund_no).get();
+		fund.setCandidate(fund.getCandidate() + 1);
+		fundingRepo.save(fund);
+	}
+	
 	public void makeFund(FundingEntity fund) {
 		fundingRepo.save(fund);
 	}
+	
 	
 	private FundingMemberEntity makeFundingMemberEntity(FundingEntity fund, int member_no) {
 		FundingMemberEntity fundMember = new FundingMemberEntity();
@@ -73,10 +82,18 @@ public class FundingService {
 	}
 	
 	private void inviteMember(FundingEntity fund, FundingMemberEntity fundingMember) {
-		fund.setCandidate(fund.getCandidate() + 1);
 		fundingRepo.save(fund);
 		fundingMemberRepo.save(fundingMember);
 	}
 	
+	
+	public ArrayList<List<FundingMemberEntity>> needPayMemberList(){
+		ArrayList<List<FundingMemberEntity>> memberlist = new ArrayList<>();
+		List<FundingEntity> fundlist = fundingRepo.needPayFundList();
+		for(int i=0; i<fundlist.size(); i++) {
+			memberlist.add( fundingMemberRepo.needPayFundMemberList(fundlist.get(i).getNo()) );
+		}
+		return memberlist;
+	}
 	
 }

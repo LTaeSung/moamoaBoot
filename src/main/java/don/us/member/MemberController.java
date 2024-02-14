@@ -69,31 +69,10 @@ public class MemberController {
 	@GetMapping(value = "/login")
 	public Map<String, String> getAccessToken(@RequestParam String code) {
 		Map<String, String> result = new HashMap<>();
-		// Naver OAuth 2.0 Token Endpoint URL
-		String tokenUrl = "https://nid.naver.com/oauth2.0/token";
-
-		// Request Headers 설정
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-		// Request Body 설정
-		MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-		requestBody.add("grant_type", "authorization_code");
-		requestBody.add("client_id", CLIENT_ID);
-		requestBody.add("client_secret", CLIENT_SECRET);
-		requestBody.add("code", code);
-		requestBody.add("redirect_uri", REDIRECT_URI);
-
-		// RestTemplate 객체 생성 .
-		RestTemplate restTemplate = new RestTemplate();
-
-		// POST 요청 및 응답 받기
-		ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, requestBody, String.class);
-
-		// 응답 내용 (JSON 형태의 문자열) - 액세스 토큰이 들어있음
-		String responseBody = response.getBody();
-
-		System.out.println(responseBody);
+		
+		String responseBody = GetAccessToken(code);
+		System.out.println("리스폰스바디 액세스토큰" + responseBody);
+		
 
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -105,16 +84,24 @@ public class MemberController {
 			// 여기서 accessToken 변수에 추출된 access_token 값이 들어갑니다.
 			System.out.println("Access Token: " + accessToken);
 
-			// 토큰 값을 사용하여 NaverLogin 클래스의 get_token 메서드 호출
+			// 토큰 값을 사용하여 NaverLogin 클래스의 get_token 메서드 호출 - 여기에 네이버로 로그인한 유저의 정보가 받아와짐
 			String user_data = naverLogin.get_token(accessToken);
 
 			JSONParser parser = new JSONParser();
 			JSONObject jsonObject = (JSONObject) parser.parse(user_data);
 			JSONObject responseObject = (JSONObject) jsonObject.get("response");
+		
+			System.out.println("parse한 유저data" + jsonObject);
+			System.out.println("그거에서 response 가져와봐" + responseObject);
 			
 			String user_email = responseObject.get("email").toString();
 			System.out.println("user_email: " + user_email);
 
+//			String user_name = responseObject.get("name").toString();
+//			String user_birthyear = responseObject.get("birthyear").toString();
+//			String user_birthday = responseObject.get("birthday").toString();
+			
+			
 			if(repo.findByEmail(user_email).isPresent()) {
 				MemberEntity target = repo.findByEmail(user_email).get();
 				System.out.print("타겟"+target);
@@ -127,7 +114,10 @@ public class MemberController {
 			} else {
 				System.out.println("유저없음");
 				result.put("result", "fail");
-
+//				result.put("email", user_email);
+//				result.put("name", user_name);
+//				result.put("birthyear", user_birthyear);
+//				result.put("birthday", user_birthday);
 				
 			}
 			return result;
@@ -160,8 +150,35 @@ public class MemberController {
 	
 	
 	
-	
-	
-	
+	//code를 받아와서 tokenUrl로 code를 가지고 재요청. naver에서 accesstoken을 넘겨준다.
+	public String GetAccessToken(String code) {
+		// Naver OAuth 2.0 Token Endpoint URL
+		String tokenUrl = "https://nid.naver.com/oauth2.0/token";
 
+		// Request Headers 설정
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		// Request Body 설정
+		MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+		requestBody.add("grant_type", "authorization_code");
+		requestBody.add("client_id", CLIENT_ID);
+		requestBody.add("client_secret", CLIENT_SECRET);
+		requestBody.add("code", code);
+		requestBody.add("redirect_uri", REDIRECT_URI);
+
+		// RestTemplate 객체 생성 .
+		RestTemplate restTemplate = new RestTemplate();
+
+		// POST 요청 및 응답 받기
+		ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, requestBody, String.class);
+
+		// 응답 내용 (JSON 형태의 문자열) - 액세스 토큰이 들어있음
+		String responseBody = response.getBody();
+
+		System.out.println(responseBody);
+		
+		return responseBody;
+	}
+		
 }

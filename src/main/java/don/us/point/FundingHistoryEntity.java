@@ -1,5 +1,9 @@
 package don.us.point;
 
+import java.sql.Timestamp;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,8 +30,9 @@ public class FundingHistoryEntity {
 	@Column(name="funding_no")
 	private int fundingno;
 	
+	@CreationTimestamp
 	@Column(name="transaction_date")
-	private int transactiondate;
+	private Timestamp transactiondate;
 	
 	private int amount;
 	

@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FundingHistoryRepository extends JpaRepository<FundingHistoryEntity, Integer>{
 	
-	List<FundingHistoryEntity> findByMemberno(int memberno);
+	List<FundingHistoryEntity> findByMembernoOrderByTransactiondateDesc(int memberno);
 }
