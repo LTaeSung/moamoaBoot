@@ -73,8 +73,9 @@ public class FriendController {
 	    
 		List<FriendEntity> friendList = entityManager.createQuery(jpql, FriendEntity.class)
 	                                                 .setParameter("member_no", member_no)
-	                                                 .setParameter("email", email)
+	                                                 .setParameter("email", email + "@naver.com")
 	                                                 .getResultList();
+		
 		if (friendList.equals(Collections.emptyList())) {
 			System.out.println("친구가 등록되어있습니다. 혹은 정보가 없습니다.");
 		}else {
