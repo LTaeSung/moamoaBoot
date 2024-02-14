@@ -32,7 +32,7 @@ public class FundingHistoryController {
 	
 	@Transactional
 	@GetMapping("/regularPayment")
-	public void regularPayment() {
+	public String regularPayment() {
 		List<FundingMemberEntity> list = fundingService.needPayMemberList();
 		for(int i=0; i<list.size(); i++) {
 			FundingHistoryEntity fundingHistory = new FundingHistoryEntity();
@@ -42,5 +42,6 @@ public class FundingHistoryController {
 			//fundingHistory.setDirection(false); //0=false가 디폴트값이라 따로 설정 안하고 반대로 펀딩에서 돈 줄 때 true로 세팅할게요
 			repo.save(fundingHistory);
 		}
+		return "success";
 	}
 }
