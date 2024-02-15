@@ -1,6 +1,7 @@
 package don.us.point;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import don.us.funding.FundingMemberEntity;
+import don.us.funding.FundingMemberRepository;
 import don.us.funding.FundingService;
 
 @CrossOrigin(origins = {"*"})
@@ -22,6 +24,9 @@ public class FundingHistoryController {
 	
 	@Autowired
 	private RepaymentRepository repayRepo;
+	
+	@Autowired
+	private FundingMemberRepository fundingMemberRepo;
 	
 	@Autowired
 	private FundingService fundingService;
@@ -71,14 +76,26 @@ public class FundingHistoryController {
 	//재결제하는 함수
 	@GetMapping("/doRepay")
 	public void doRepay() {
-		List<RepaymentEntity> repayList = repayList();
+		List<RepaymentEntity> repayList = repayRepo.findAll();
 		for(int i=0; i<repayList.size(); i++) {
+			Optional<FundingMemberEntity> fundingMem = fundingMemberRepo.findById(repayList.get(i).getFundingmemberno());
 			try {
 				//여기서 재결제 시도를 함
-				//성공하면 맨 마지막에 테이블에서 삭제
+				if(repayList.get(i).getFundingmemberno() == 127) throw new Exception();
+				makeFundingHistory(fundingMem.orElseThrow().getMemberno(), fundingMem.orElseThrow().getFundingno(), fundingMem.orElseThrow().getMonthlypaymentamount());
+				//성공하면 repay 테이블에서 삭제
+				repayRepo.deleteById(repayList.get(i).getNo());
 			} catch(Exception e) {
 				//안되면 재결제 횟수를 가져와서 2인지 체크함
-				//만약 2면 3회째 실패인 것이므로 해당 멤버 강제 중도포기로 전환, 알람 보냄, 테이블에서 삭제
+				if(repayList.get(i).getRepaycount() >= 2) {
+					//만약 2이면 방금 한 재결제로 3회째 실패인 것이므로 해당 멤버 강제 중도포기로 전환, 알람 보냄, 테이블에서 삭제
+					fundingMem.get().setGiveup(true);
+					fundingMemberRepo.save(fundingMem.get());
+					repayRepo.deleteById(repayList.get(i).getNo());
+				} else {
+					repayList.get(i).setRepaycount(repayList.get(i).getRepaycount()+1);
+					repayRepo.save(repayList.get(i));
+				}
 			}
 		}
 	}
