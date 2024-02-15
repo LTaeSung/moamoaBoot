@@ -82,3 +82,5 @@ CHANGE COLUMN `bank` `bank` INT NULL DEFAULT 0 ;
 update point_transaction_history set bank=0;
 ALTER TABLE `moamoaDonDon`.`member` 
 CHANGE COLUMN `birthday` `birthday` VARCHAR(255) NOT NULL ;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+ADD COLUMN `member_name` VARCHAR(255) NOT NULL AFTER `member_no`;

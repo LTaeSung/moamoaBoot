@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import don.us.alarm.AlarmService;
+import don.us.member.MemberEntity;
+import don.us.member.MemberRepository;
 
 @Service
 public class FundingService {
@@ -19,6 +21,8 @@ public class FundingService {
 	private FundingRepository fundingRepo;
 	@Autowired
 	private FundingMemberRepository fundingMemberRepo;
+	@Autowired
+	private MemberRepository memberRepo;
 	
 	@Autowired
 	private AlarmService alarmService;
@@ -102,6 +106,8 @@ public class FundingService {
 		FundingMemberEntity me = makeFundingMemberEntity(fund, fund.getStartmemberno());
 		me.setPaymentno(starterPaymentNo);
 		me.setParticipationdate(new Timestamp(System.currentTimeMillis()));
+		me.setMembername(fund.getStartmembername());
+		
 		inviteMember(fund, me);
 		
 		if (memberListString != null) {
@@ -116,14 +122,16 @@ public class FundingService {
 	}
 	
 	private void inviteMember(FundingEntity fund, FundingMemberEntity fundingMember) {
-		
-		fundingRepo.save(fund);
-		fundingMemberRepo.save(fundingMember);
+//		fundingRepo.save(fund);
 		
 		//펀드를 주최한 맴버에게는 초대 알람을 보내지 않는다.
 		if(fundingMember.getMemberno() != fund.getStartmemberno()) {
+			MemberEntity member = memberRepo.findById(fundingMember.getMemberno()).get();
+			fundingMember.setMembername(member.getName());
 			alarmService.makeInviteAlarm(fundingMember);
 		}
+		
+		fundingMemberRepo.save(fundingMember);
 	}
 	
 	
