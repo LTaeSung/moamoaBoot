@@ -1,6 +1,7 @@
 package don.us.funding;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Map;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,8 +16,9 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 	@Query(value = "SELECT * FROM funding_member WHERE funding_no = ?1 AND giveup = false"
 			, nativeQuery = true)
 	public List<FundingMemberEntity> needPayFundMemberList(int funding_no);
-	
-	
+
+	Optional<FundingMemberEntity> findByFundingnoAndMemberno(int funding_no, int member_no);
+
 	
 	String queryForOnGoingFunding = """
 			select
