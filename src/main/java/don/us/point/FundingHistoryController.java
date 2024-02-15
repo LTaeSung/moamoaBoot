@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import don.us.alarm.AlarmService;
 import don.us.funding.FundingEntity;
 import don.us.funding.FundingMemberEntity;
 import don.us.funding.FundingMemberRepository;
@@ -34,6 +35,9 @@ public class FundingHistoryController {
 	private FundingMemberRepository fundingMemberRepo;
 	
 	@Autowired
+	private AlarmService alarmService;
+	
+	@Autowired
 	private FundingService fundingService;
 	
 	@GetMapping("/mypointHistory")
@@ -46,19 +50,24 @@ public class FundingHistoryController {
 	public String regularPayment() {
 		List<FundingMemberEntity> list = fundingService.needPayMemberList();
 		for(int i=0; i<list.size(); i++) {
+			FundingMemberEntity fundMem = list.get(i);
+			Optional<FundingEntity> fund = fundingRepo.findById( fundMem.getFundingno() );
 			try {
-				FundingMemberEntity fundMem = list.get(i);
+				//펀딩결제 진행
 				FundingHistoryEntity fundingHistory = makeFundingHistory(fundMem.getMemberno(), fundMem.getFundingno(), fundMem.getMonthlypaymentamount());
 				//해당 펀딩 결제된 포인트에 돈 더해서 업데이트
-				Optional<FundingEntity> fund = fundingRepo.findById( fundMem.getFundingno() );
 				fund.orElseThrow().setCollectedpoint( fund.orElseThrow().getCollectedpoint() + fundMem.getMonthlypaymentamount() );
 				fundingRepo.save(fund.get());
 				//해당 펀딩 멤버의 총 결제금액에 더해서 업데이트
 				fundMem.setTotalpayamount( fundMem.getTotalpayamount() + fundMem.getMonthlypaymentamount() );
 				fundingMemberRepo.save(fundMem);
+				//결제 성공 알람
+				String content = "챌린지 ["+fund.get().getTitle()+"]의 이번 달 결제가 완료되었습니다.";
+				alarmService.makePayAlarm(fundMem.getMemberno(), content, fundMem.getFundingno());
 			} catch(Exception e) {
 				//여기서 해당 멤버에게 알람을 보내주고, 재결제 테이블에 정보 추가함
-				System.out.println(list.get(i).getMemberno()+"번 고객님의 "+list.get(i).getFundingno()+"번 펀딩 결제에서 문제가 발생했습니다.");
+				String content = "챌린지 ["+fund.get().getTitle()+"]의 이번 달 결제에 실패했습니다. 자동으로 재결제가 진행될 예정이오니 해당 펀딩에 등록된 결제 카드를 다른 카드로 변경해주세요.";
+				alarmService.makePayAlarm(fundMem.getMemberno(), content, fundMem.getFundingno());
 				RepaymentEntity repay = new RepaymentEntity();
 				repay.setFundingmemberno(list.get(i).getNo());
 				repayRepo.save(repay);

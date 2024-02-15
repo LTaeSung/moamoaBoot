@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import don.us.alarm.AlarmService;
 import don.us.member.FriendEntity;
 import don.us.member.FriendRepository;
 import don.us.member.MemberEntity;
@@ -172,5 +173,14 @@ public class StartFundingTest {
 		System.out.println("삭제전");
 		repayRepo.deleteById(3);
 		System.out.println("삭제후");
+	}
+	
+	@Autowired
+	private AlarmService alarmService;
+	
+	@Test
+	public void alarmTest() {
+		String content = "챌린지 ["+81+"]의 이번 달 결제에 실패했습니다. 자동으로 재결제가 진행될 예정이오니 해당 펀딩에 등록된 결제 카드를 다른 카드로 변경해주세요.";
+		alarmService.makePayAlarm(7, content, 81);
 	}
 }
