@@ -40,7 +40,7 @@ public class PaymentController {
 	    String cvc = request.get("cvc");
 	    
 
-		// PaymentEntity가 이미 존재하는지 확인
+		// PaymentEntity
 	    if (Payrepo.findByMembernoAndAccount(member_no, account).isEmpty()) {
 	        PaymentEntity payment = new PaymentEntity();
 	        payment.setMemberno(member_no);

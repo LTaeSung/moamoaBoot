@@ -118,7 +118,6 @@ public class FriendController {
 		result.put("result", "success");
 	
 		List<FriendEntity> updatedFriendList = frRepo.findByMemberno(member_no);
-	
 		return updatedFriendList;
 		
 	}

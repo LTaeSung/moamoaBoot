@@ -28,4 +28,15 @@ public class AlarmService {
 		
 		repo.save(alarm);
 	}
+	
+	
+	public void makePayAlarm(int memberno, String content, int fundingno) {
+		String link = "/funding/info?no="+fundingno;
+		
+		AlarmEntity alarm = new AlarmEntity();
+		alarm.setMemberno(memberno);
+		alarm.setContent(content);
+		alarm.setLink(link);
+		repo.save(alarm);
+	}
 }

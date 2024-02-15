@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import don.us.alarm.AlarmService;
+import don.us.member.MemberEntity;
+import don.us.member.MemberRepository;
 
 @Service
 public class FundingService {
@@ -19,6 +21,8 @@ public class FundingService {
 	private FundingRepository fundingRepo;
 	@Autowired
 	private FundingMemberRepository fundingMemberRepo;
+	@Autowired
+	private MemberRepository memberRepo;
 	
 	@Autowired
 	private AlarmService alarmService;
@@ -33,6 +37,18 @@ public class FundingService {
 		FundingEntity fund = fundingRepo.findById(fund_no).get();
 		fund.setState(1);
 		fundingRepo.save(fund);
+	}
+	
+	public void setFundVote(int fund_no) {
+		
+	}
+	
+	public void setFundSettlement(int fund_no) {
+		
+	}
+	
+	public void setFundEnd(int fund_no) {
+		
 	}
 	
 	public boolean checkStartFundingWhenAcceptFund(int fund_no) {
@@ -101,7 +117,6 @@ public class FundingService {
 	public void inviteMembers (FundingEntity fund, String memberListString, int starterPaymentNo) {
 		FundingMemberEntity me = makeFundingMemberEntity(fund, fund.getStartmemberno());
 		me.setPaymentno(starterPaymentNo);
-		me.setParticipationdate(new Timestamp(System.currentTimeMillis()));
 		inviteMember(fund, me);
 		
 		if (memberListString != null) {
@@ -112,18 +127,27 @@ public class FundingService {
 				int member_no = Integer.valueOf(i);
 				inviteMember(fund, makeFundingMemberEntity(fund, member_no));
 			}
+		}else {
+			fund.setState(1);
+			fundingRepo.save(fund);
 		}
 	}
 	
 	private void inviteMember(FundingEntity fund, FundingMemberEntity fundingMember) {
-		
-		fundingRepo.save(fund);
-		fundingMemberRepo.save(fundingMember);
-		
-		//펀드를 주최한 맴버에게는 초대 알람을 보내지 않는다.
 		if(fundingMember.getMemberno() != fund.getStartmemberno()) {
+			//펀드에 초대된 맴버
+			MemberEntity member = memberRepo.findById(fundingMember.getMemberno()).get();
+			fundingMember.setMembername(member.getName());
+			
 			alarmService.makeInviteAlarm(fundingMember);
 		}
+		else {		
+			//펀드를 주최한 맴버
+			fundingMember.setParticipationdate(new Timestamp(System.currentTimeMillis()));
+			fundingMember.setMembername(fund.getStartmembername());
+			increaseCandidate(fund.getNo());
+		}
+		fundingMemberRepo.save(fundingMember);
 	}
 	
 	
