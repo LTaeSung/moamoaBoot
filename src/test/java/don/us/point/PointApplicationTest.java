@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import don.us.funding.FundingMemberEntity;
 import don.us.funding.FundingService;
-import don.us.funding.RepaymentEntity;
-import don.us.funding.RepaymentRepository;
 import don.us.member.MemberEntity;
 import don.us.member.MemberRepository;
 import lombok.extern.java.Log;
@@ -85,7 +83,7 @@ public class PointApplicationTest {
 		fundingHistory.setMemberno(memberno);
 		fundingHistory.setFundingno(fundingno);
 		fundingHistory.setAmount(amount);
-		if(1 == 1) throw new Exception();
+//		if(1 == 1) throw new Exception();
 		return fundrepo.save(fundingHistory);
 	}
 	

@@ -16,6 +16,8 @@ import don.us.member.FriendRepository;
 import don.us.member.MemberEntity;
 import don.us.member.MemberRepository;
 import don.us.point.FundingHistoryRepository;
+import don.us.point.RepaymentEntity;
+import don.us.point.RepaymentRepository;
 import lombok.extern.java.Log;
 
 @SpringBootTest
@@ -106,5 +108,16 @@ public class StartFundingTest {
 		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", java.util.Locale.ENGLISH);
 		Date answer = inputFormat.parse(buffer.toString());
 		System.out.println("확인" + new Timestamp(answer.getTime()));
+	}
+	
+	@Autowired
+	private RepaymentRepository repayRepo;
+	
+	@Test
+	public void repayList() {
+		List<RepaymentEntity> list = repayRepo.findAll();
+		for(int i=0; i<list.size(); i++) {			
+			System.out.println(list.get(i));
+		}
 	}
 }
