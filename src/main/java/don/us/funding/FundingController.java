@@ -54,8 +54,7 @@ public class FundingController {
 		fund.setMonthlypaymentdate((String) map.get("monthly_payment_date"));
 
 		try {
-			Timestamp timestamp = service.getTimestamp((String) map.get("dueDate")); //
-			System.out.println("이건 맵에서 받아온거: "+(String) map.get("dueDate"));
+			Timestamp timestamp = service.getTimestamp((String) map.get("dueDate"));
 			fund.setFundingduedate(timestamp);
 		} catch (ParseException e) {
 			e.printStackTrace();
