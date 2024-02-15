@@ -39,6 +39,18 @@ public class FundingService {
 		fundingRepo.save(fund);
 	}
 	
+	public void setFundVote(int fund_no) {
+		
+	}
+	
+	public void setFundSettlement(int fund_no) {
+		
+	}
+	
+	public void setFundEnd(int fund_no) {
+		
+	}
+	
 	public boolean checkStartFundingWhenAcceptFund(int fund_no) {
 		List<FundingMemberEntity> fundingMemberList = fundingMemberRepo.findByFundingno(fund_no);
 		System.out.println(fundingMemberList);
