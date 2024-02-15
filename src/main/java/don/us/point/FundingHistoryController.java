@@ -46,7 +46,7 @@ public class FundingHistoryController {
 	}
 	
 	@Transactional
-	private FundingHistoryEntity makeFundingHistory(int memberno, int fundingno, int amount) {
+	private FundingHistoryEntity makeFundingHistory(int memberno, int fundingno, int amount) throws Exception {
 		FundingHistoryEntity fundingHistory = new FundingHistoryEntity();
 		fundingHistory.setMemberno(memberno);
 		fundingHistory.setFundingno(fundingno);
@@ -55,4 +55,9 @@ public class FundingHistoryController {
 		
 		return repo.save(fundingHistory);
 	}
+	
+	//최초 실패 시, 재결제 테이블에 row 생성
+	//재결제 성공 시, 테이블에서 삭제
+	//재결제 실패 시, 재결제 횟수 +1
+	//만약 재결제 횟수가 3인 상태에서 실패 시, 해당 펀딩멤버를 강제로 중도포기 상태로 전환하고 테이블에서 삭제
 }

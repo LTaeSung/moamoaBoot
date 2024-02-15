@@ -139,6 +139,19 @@ CREATE TABLE `alarm` (
 1- 확인'
 , PRIMARY KEY(`no`));
 
+CREATE TABLE `moamoaDonDon`.`repayment` (
+  `no` INT NOT NULL AUTO_INCREMENT,
+  `funding_member_no` INT NOT NULL,
+  `repay_count` INT NOT NULL DEFAULT 1,
+  PRIMARY KEY (`no`),
+  INDEX `FK_funding_member_TO_repayment_1_idx` (`funding_member_no` ASC) VISIBLE,
+  CONSTRAINT `FK_funding_member_TO_repayment_1`
+    FOREIGN KEY (`funding_member_no`)
+    REFERENCES `moamoaDonDon`.`funding_member` (`no`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
 ALTER TABLE `payment` ADD CONSTRAINT `FK_member_TO_payment_1` FOREIGN KEY (
 	`member_no`
 )

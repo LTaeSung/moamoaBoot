@@ -1,6 +1,10 @@
 package don.us.funding;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -11,7 +15,6 @@ import don.us.member.FriendEntity;
 import don.us.member.FriendRepository;
 import don.us.member.MemberEntity;
 import don.us.member.MemberRepository;
-import don.us.point.FundingHistoryEntity;
 import don.us.point.FundingHistoryRepository;
 import lombok.extern.java.Log;
 
@@ -86,5 +89,22 @@ public class StartFundingTest {
 			}
 		}
 		System.out.println("확인: "+memberlist);
+	}
+	
+	@Test
+	public void timetest() throws ParseException {
+		String temp = "Mon Jul 15 2024 11:12:32 GMT+0900 (한국 표준시)";
+		String[] temparr = temp.split(" ");
+//		for(int i=0; i<temparr.length; i++) {			
+//			System.out.println("확인 "+temparr[i]);
+//		}
+		temparr[4] = "23:59:59";
+		StringBuffer buffer = new StringBuffer();
+		for(int i=0; i<temparr.length; i++) {
+			buffer.append(temparr[i]+" ");
+		}
+		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", java.util.Locale.ENGLISH);
+		Date answer = inputFormat.parse(buffer.toString());
+		System.out.println("확인" + new Timestamp(answer.getTime()));
 	}
 }
