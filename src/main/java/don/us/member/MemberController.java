@@ -110,6 +110,7 @@ public class MemberController {
                 result.put("no", String.valueOf(target.getNo()));
                 result.put("email", target.getEmail());
                 result.put("name", target.getName());
+                
 				
 			} else {
 				System.out.println("유저없음");
@@ -184,51 +185,46 @@ public class MemberController {
 			String user_birthday = responseObject.get("birthday").toString();
 			
 			
-//			result.put("email", user_email);
-//			result.put("name", user_name);
-//			result.put("birthyear", user_birthyear);
-//			result.put("birthday", user_birthday);
 			
-			System.out.println("이룸"+user_name);
-			System.out.println("년도"+user_birthyear);
-			System.out.println("날짜"+user_birthday);
 			
+			//DB에 넣기 전 네이버 정보 잘 받아와졌는지 체크.
+//			System.out.println("이름"+user_name);
+//			System.out.println("년도"+user_birthyear);
+//			System.out.println("날짜"+user_birthday);
 			String full_birthday = user_birthyear + "-" + user_birthday;
+//			System.out.println("풀생일" + full_birthday);
+					
 			
-			System.out.println("풀생일" + full_birthday);
+			MemberEntity mem = new MemberEntity();
 			
-			
-			
-			
-			System.out.println("이룸"+user_name);
-			
-			
-//			MemberEntity mem = new MemberEntity();
-//			
-//			mem.setEmail(user_email);
-//			mem.setName(user_name);
-//			mem.set
-//			
-//			repo.
-			
-			
+			//같은 이메일로 중복 회원가입하는 것 방지(정보 DB에 넣기 전)
 			if(repo.findByEmail(user_email).isPresent()) {
-				MemberEntity target = repo.findByEmail(user_email).get();
-				System.out.print("타겟"+target);
-				
-                result.put("result", "success");
-                result.put("no", String.valueOf(target.getNo()));
-                result.put("email", target.getEmail());
-                result.put("name", target.getName());
-				
-			} else {
-				System.out.println("유저없음");
+
+				System.out.println("같은 이메일이 있다.");
 				result.put("result", "fail");
-				result.put("email", user_email);
-				result.put("name", user_name);
-				result.put("birthyear", user_birthyear);
-				result.put("birthday", user_birthday);
+				return result;
+			
+			} else {
+				System.out.println("같은 이메일 없으니까 repo.save 하겠음");
+				mem.setEmail(user_email);
+				mem.setName(user_name);
+				mem.setBirthday(full_birthday);
 				
+				repo.save(mem);
+			}
+			
+			//DB에 유저 정보 넣은 후
+			
+			//회원정보를 DB에 넣은 다음에, 그 정보가 잘 들어갔나 체크
+			if(repo.findByEmail(user_email).isPresent()) {
+
+				System.out.println("회원가입 정보 DB에 넣기 성공!");
+				MemberEntity target = repo.findByEmail(user_email).get();
+                result.put("result", "success");
+			
+			} else {
+				System.out.println("회원가입 정보 DB에 넣기 실패..");
+				result.put("result", "fail");
 			}
 			return result;
 		} catch (Exception e) {
