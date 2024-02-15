@@ -57,6 +57,9 @@ public class PointApplicationTest {
 	@Autowired
 	private FundingService fundingService;
 	
+	@Autowired
+	private RepaymentRepository repayRepo;
+	
 	@Test
 	public void paylisttest() {
 		List<FundingMemberEntity> list = fundingService.needPayMemberList();
@@ -67,6 +70,9 @@ public class PointApplicationTest {
 			} catch(Exception e) {
 				//여기서 해당 멤버에게 알람을 보내주면??
 				System.out.println(list.get(i).getMemberno()+"번 고객님의 "+list.get(i).getFundingno()+"번 펀딩 결제에서 문제가 발생했습니다.");
+				RepaymentEntity repay = new RepaymentEntity();
+				repay.setFundingmemberno(list.get(i).getNo());
+				repayRepo.save(repay);
 			}
 		}
 	}
@@ -77,7 +83,7 @@ public class PointApplicationTest {
 		fundingHistory.setMemberno(memberno);
 		fundingHistory.setFundingno(fundingno);
 		fundingHistory.setAmount(amount);
-		if(fundingno == 70) throw new Exception();
+		if(1 == 1) throw new Exception();
 		return fundrepo.save(fundingHistory);
 	}
 	
