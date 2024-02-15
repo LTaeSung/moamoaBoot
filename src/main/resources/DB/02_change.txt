@@ -82,5 +82,20 @@ CHANGE COLUMN `bank` `bank` INT NULL DEFAULT 0 ;
 update point_transaction_history set bank=0;
 ALTER TABLE `moamoaDonDon`.`member` 
 CHANGE COLUMN `birthday` `birthday` VARCHAR(255) NOT NULL ;
+
+UPDATE `moamoaDonDon`.`member` SET `birthday` = '2024-02-05' WHERE (`no` = '1');
+UPDATE `moamoaDonDon`.`member` SET `birthday` = '2024-02-05' WHERE (`no` = '2');
+UPDATE `moamoaDonDon`.`member` SET `birthday` = '2024-02-05' WHERE (`no` = '3');
+UPDATE `moamoaDonDon`.`member` SET `birthday` = '2024-02-06' WHERE (`no` = '4');
+UPDATE `moamoaDonDon`.`member` SET `birthday` = '2024-02-07' WHERE (`no` = '5');
+UPDATE `moamoaDonDon`.`member` SET `birthday` = '1996-08-09' WHERE (`no` = '6');
+UPDATE `moamoaDonDon`.`member` SET `birthday` = '2000-02-28' WHERE (`no` = '7');
+ALTER TABLE `moamoaDonDon`.`board_reply` 
+DROP FOREIGN KEY `FK_board_TO_board_reply_1`;
+ALTER TABLE `moamoaDonDon`.`board_reply` 
+ADD CONSTRAINT `FK_board_TO_board_reply_1`
+  FOREIGN KEY (`board_no`)
+  REFERENCES `moamoaDonDon`.`board` (`no`)
+  ON DELETE CASCADE;
 ALTER TABLE `moamoaDonDon`.`funding_member` 
 ADD COLUMN `member_name` VARCHAR(255) NOT NULL AFTER `member_no`;
