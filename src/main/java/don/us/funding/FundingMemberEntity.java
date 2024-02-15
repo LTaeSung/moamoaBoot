@@ -69,8 +69,4 @@ public class FundingMemberEntity {
 	
 	@Column(name="start_member_name")
 	private String startmembername;
-	
-	@ManyToOne
-	@JoinColumn(name = "no")
-	private FundingEntity fundingentity;
 }
