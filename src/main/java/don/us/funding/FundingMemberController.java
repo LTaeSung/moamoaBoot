@@ -86,13 +86,7 @@ public class FundingMemberController {
 			}
 			System.out.println("참여 완료");
 			
-			
-			
 			return "success";
-			
-//			FundingEntity 
-			//참여인원 늘리고
-			//펀딩 시작하나 체크하고
 		}catch(Exception e) {
 			System.out.println("참여 실패");
 			return "fail";
