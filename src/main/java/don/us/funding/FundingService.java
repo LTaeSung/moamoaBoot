@@ -11,13 +11,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import don.us.alarm.AlarmService;
+
 @Service
 public class FundingService {
 	@Autowired
 	private FundingRepository fundingRepo;
 	@Autowired
 	private FundingMemberRepository fundingMemberRepo;
-
+	
+	@Autowired
+	private AlarmService alarmService;
+	
 	public void increaseCandidate(int fund_no) {
 		FundingEntity fund = fundingRepo.findById(fund_no).get();
 		fund.setCandidate(fund.getCandidate() + 1);
@@ -95,10 +100,7 @@ public class FundingService {
 
 	public void inviteMembers (FundingEntity fund, String memberListString, int starterPaymentNo) {
 		FundingMemberEntity me = makeFundingMemberEntity(fund, fund.getStartmemberno());
-		me.setStartmemberno(fund.getStartmemberno());
-		me.setStartmembername(fund.getStartmembername());
 		me.setPaymentno(starterPaymentNo);
-		me.setPhoto(fund.getPhoto());
 		me.setParticipationdate(new Timestamp(System.currentTimeMillis()));
 		inviteMember(fund, me);
 		
@@ -114,8 +116,14 @@ public class FundingService {
 	}
 	
 	private void inviteMember(FundingEntity fund, FundingMemberEntity fundingMember) {
+		
 		fundingRepo.save(fund);
 		fundingMemberRepo.save(fundingMember);
+		
+		//펀드를 주최한 맴버에게는 초대 알람을 보내지 않는다.
+		if(fundingMember.getMemberno() != fund.getStartmemberno()) {
+			alarmService.makeInviteAlarm(fundingMember);
+		}
 	}
 	
 	
