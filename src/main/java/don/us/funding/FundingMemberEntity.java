@@ -72,4 +72,7 @@ public class FundingMemberEntity {
 	
 	@Column(name="start_member_name")
 	private String startmembername;
+	
+	@Column(name="settlement_amount")
+	private String settlementamount;
 }

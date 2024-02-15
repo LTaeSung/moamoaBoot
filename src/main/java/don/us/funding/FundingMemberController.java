@@ -124,8 +124,8 @@ public class FundingMemberController {
 	
 	
 	@GetMapping("/join")
-	public List<FundingMemberEntity> joinList (@RequestParam("member_no") int member_no){
-
-		return null;
+	public List<Map> joinList (@RequestParam("member_no") String member_no){
+		
+		return repo.getJoinedFundingList_OnGoing(member_no);
 	}
 }

@@ -115,6 +115,9 @@ public class FundingService {
 				int member_no = Integer.valueOf(i);
 				inviteMember(fund, makeFundingMemberEntity(fund, member_no));
 			}
+		}else {
+			fund.setState(1);
+			fundingRepo.save(fund);
 		}
 	}
 	
