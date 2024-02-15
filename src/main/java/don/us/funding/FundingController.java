@@ -5,10 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
+import don.us.board.BoardEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -86,16 +84,29 @@ public class FundingController {
 		return myFundinglist;
 	}
 
+	@GetMapping("/list/test")
+	public List funding (Model model) {
+		List <FundingEntity>  fundingEntityList = repo.findAll();
+		return fundingEntityList;
+	}
+
 
 	@GetMapping("/host/{no}")
-	public List<FundingEntity> show(@PathVariable int no) {
-		List<FundingEntity> result = new ArrayList<>();
-		repo.findById(no).ifPresent((data) -> {
-			result.add(data);
-		});
-		System.out.println("result: " + result);
+	public FundingEntity show(@PathVariable int no) {
+//		FundingEntity> result = new ArrayList<>();
+		FundingEntity result = null;
+		result = repo.findById(no).get();
+//		repo.findById(no).ifPresent((data) -> {
+//			result = data;
+//		});
 		return result;
+//		System.out.println("result: " + result);
+//		return result;
 	}
 	
-	
+	@GetMapping("/regularPaymentList")
+	public List<FundingMemberEntity> regularPaymentList(){
+		List<FundingMemberEntity> list = service.needPayMemberList();
+		return list;
+	}
 }

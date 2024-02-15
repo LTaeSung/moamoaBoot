@@ -60,7 +60,7 @@ public class PointHistoryController {
     
     @GetMapping("/mypointHistory")
     public List<PointHistoryEntity> pointHistory(@RequestParam(value="member_no") int member_no) {
-    	List<PointHistoryEntity> pointList = repo.findByMemberno(member_no);
+    	List<PointHistoryEntity> pointList = repo.findByMembernoOrderByTransactiondateDesc(member_no);
     	return pointList;
     }
 	

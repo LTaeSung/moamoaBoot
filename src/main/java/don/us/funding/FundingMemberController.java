@@ -3,7 +3,6 @@ package don.us.funding;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +26,9 @@ import jakarta.persistence.EntityManager;
 public class FundingMemberController {
 	@Autowired
 	private FundingMemberRepository repo;
+	
+	@Autowired
+	private FundingService fundingService;
 	
 	@Autowired
 	private EntityManager entityManager;
@@ -80,7 +82,16 @@ public class FundingMemberController {
 		fundMemberEntity.setPaymentno(payment_no);
 		try {
 			repo.save(fundMemberEntity);
+			
+			int fund_no = fundMemberEntity.getFundingno();
+			fundingService.increaseCandidate(fund_no);
+			if(fundingService.checkStartFundingWhenAcceptFund(fund_no)) {
+				fundingService.setFundStart(fund_no);
+			}
 			System.out.println("참여 완료");
+			
+			
+			
 			return "success";
 			
 //			FundingEntity 
@@ -98,13 +109,18 @@ public class FundingMemberController {
 	public String refuse(@RequestBody Map map) {
 		Map<String, String> result = new HashMap<>();
 		int fundMemberNo = Integer.valueOf((String)map.get("no"));
-		FundingMemberEntity fundMemberEntity = new FundingMemberEntity();
-		fundMemberEntity.setNo(fundMemberNo);
+		FundingMemberEntity fundMemberEntity = repo.findById(fundMemberNo).get();
 		try {
+			int fund_no = fundMemberEntity.getFundingno();
+			System.out.println("fund_no: " + fund_no);
 			repo.delete(fundMemberEntity);
+			if(fundingService.checkStartFundingWhenAcceptFund(fund_no)) {
+				fundingService.setFundStart(fund_no);
+			}
 			System.out.println("삭제 완료");
 			return "success";
 		}catch(Exception e) {
+			e.printStackTrace();
 			System.out.println("삭제 실패");
 			return "fail";
 		}
