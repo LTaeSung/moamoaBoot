@@ -23,4 +23,5 @@ public class makeAlarm {
 
 		service.makeInviteAlarm(fundingMember);
 	}
+	
 }

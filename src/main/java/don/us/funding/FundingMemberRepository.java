@@ -4,8 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import don.us.member.MemberEntity;
+import org.springframework.data.repository.query.Param;
 
 public interface FundingMemberRepository extends JpaRepository<FundingMemberEntity, Integer>{
 	//List<MemberEntity> findByNameContaining(String name);
@@ -16,4 +15,17 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 	@Query(value = "SELECT * FROM funding_member WHERE funding_no = ?1 AND giveup = false"
 			, nativeQuery = true)
 	public List<FundingMemberEntity> needPayFundMemberList(int funding_no);
+	
+	
+	
+//	String temp = """
+//			select
+//				*
+//			from 
+//				funding_member m join funding f
+//			    on m.funding_no = f.no
+//			where m.member_no = %?1%;
+//			""";
+//	@Query(value=temp)
+//	public List<Object> getJoinedFundingList(String member_no);
 }
