@@ -122,7 +122,8 @@ public class FundingService {
 	}
 	
 	private void inviteMember(FundingEntity fund, FundingMemberEntity fundingMember) {
-//		fundingRepo.save(fund);
+		
+		fundingRepo.save(fund);
 		
 		//펀드를 주최한 맴버에게는 초대 알람을 보내지 않는다.
 		if(fundingMember.getMemberno() != fund.getStartmemberno()) {
