@@ -95,28 +95,53 @@ public class FundingHistoryController {
 	
 	//재결제하는 함수
 	@GetMapping("/doRepay")
-	public void doRepay() {
+	public String doRepay() throws Exception {
 		List<RepaymentEntity> repayList = repayRepo.findAll();
 		for(int i=0; i<repayList.size(); i++) {
-			Optional<FundingMemberEntity> fundingMem = fundingMemberRepo.findById(repayList.get(i).getFundingmemberno());
+			Optional<FundingMemberEntity> fundMem = fundingMemberRepo.findById(repayList.get(i).getFundingmemberno());
+			Optional<FundingEntity> fund = fundingRepo.findById( fundMem.get().getFundingno() );
 			try {
+				if(fundMem.get().getNo() == 127) throw new Exception();
 				//여기서 재결제 시도를 함
-				if(repayList.get(i).getFundingmemberno() == 127) throw new Exception();
-				makeFundingHistory(fundingMem.orElseThrow().getMemberno(), fundingMem.orElseThrow().getFundingno(), fundingMem.orElseThrow().getMonthlypaymentamount());
+				makeFundingHistory(fundMem.orElseThrow().getMemberno(), fundMem.orElseThrow().getFundingno(), fundMem.orElseThrow().getMonthlypaymentamount());
+				//해당 펀딩 결제된 포인트에 돈 더해서 업데이트
+				fund.orElseThrow().setCollectedpoint( fund.orElseThrow().getCollectedpoint() + fundMem.get().getMonthlypaymentamount() );
+				fundingRepo.save(fund.get());
+				//해당 펀딩 멤버의 총 결제금액에 더해서 업데이트
+				fundMem.get().setTotalpayamount( fundMem.get().getTotalpayamount() + fundMem.get().getMonthlypaymentamount() );
+				fundingMemberRepo.save(fundMem.get());
+				
+				//재결제 성공 알림
+				String content = "챌린지 ["+fund.get().getTitle()+"]의 재결제에 성공했습니다.";
+				alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
 				//성공하면 repay 테이블에서 삭제
 				repayRepo.deleteById(repayList.get(i).getNo());
 			} catch(Exception e) {
 				//안되면 재결제 횟수를 가져와서 2인지 체크함
 				if(repayList.get(i).getRepaycount() >= 2) {
+					//재결제 완전 실패 알림
+					String content = "챌린지 ["+fund.get().getTitle()+"]의 재결제에 3회 실패했습니다. 자동으로 중도포기 처리됩니다.";
+					alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
 					//만약 2이면 방금 한 재결제로 3회째 실패인 것이므로 해당 멤버 강제 중도포기로 전환, 알람 보냄, 테이블에서 삭제
-					fundingMem.get().setGiveup(true);
-					fundingMemberRepo.save(fundingMem.get());
+					fundMem.get().setGiveup(true);
+					fundingMemberRepo.save(fundMem.get());
 					repayRepo.deleteById(repayList.get(i).getNo());
 				} else {
+					//재결제 성공
 					repayList.get(i).setRepaycount(repayList.get(i).getRepaycount()+1);
 					repayRepo.save(repayList.get(i));
+					//해당 펀딩 결제된 포인트에 돈 더해서 업데이트
+					fund.orElseThrow().setCollectedpoint( fund.orElseThrow().getCollectedpoint() + fundMem.get().getMonthlypaymentamount() );
+					fundingRepo.save(fund.get());
+					//해당 펀딩 멤버의 총 결제금액에 더해서 업데이트
+					fundMem.get().setTotalpayamount( fundMem.get().getTotalpayamount() + fundMem.get().getMonthlypaymentamount() );
+					fundingMemberRepo.save(fundMem.get());
+					//재결제 성공 알림
+					String content = "챌린지 ["+fund.get().getTitle()+"]의 재결제에 성공했습니다.";
+					alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
 				}
 			}
 		}
+		return "success";
 	}
 }

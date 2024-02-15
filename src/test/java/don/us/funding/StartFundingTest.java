@@ -81,6 +81,7 @@ public class StartFundingTest {
 		List<FundingMemberEntity> list = fundingService.needPayMemberList();
 		for(int i=0; i<list.size(); i++) {
 			try {
+				if(1 == 1) throw new Exception();
 				FundingMemberEntity fundMem = list.get(i);
 				FundingHistoryEntity fundingHistory = makeFundingHistory(fundMem.getMemberno(), fundMem.getFundingno(), fundMem.getMonthlypaymentamount());
 				//해당 펀딩 결제된 포인트에 돈 더해서 업데이트
@@ -148,6 +149,7 @@ public class StartFundingTest {
 		for(int i=0; i<repayList.size(); i++) {
 			Optional<FundingMemberEntity> fundingMem = fundingMemberRepo.findById(repayList.get(i).getFundingmemberno());
 			try {
+				if(1 == 1) throw new Exception();
 				//여기서 재결제 시도를 함
 				if(repayList.get(i).getFundingmemberno() == 127) throw new Exception();
 				makeFundingHistory(fundingMem.orElseThrow().getMemberno(), fundingMem.orElseThrow().getFundingno(), fundingMem.orElseThrow().getMonthlypaymentamount());
