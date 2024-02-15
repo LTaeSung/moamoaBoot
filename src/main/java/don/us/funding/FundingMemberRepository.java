@@ -11,4 +11,6 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 	List<FundingMemberEntity> findByFundingno(int fund_no);
 
 	List<FundingMemberEntity> findByMemberno(int member_no);
+	
+	
 }

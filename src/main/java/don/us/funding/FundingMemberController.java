@@ -112,23 +112,10 @@ public class FundingMemberController {
 	
 	
 	@GetMapping("/join")
-	public List<FundingMemberEntity> joinList (@RequestParam("member_no") int member_no){
+	public List<Object[]> joinList (@RequestParam("member_no") int member_no){
 		
-		String jpql ="SELECT fm FROM FundingMemberEntity fm "
-				+ "WHERE fm.memberno = :member_no AND fm.startmemberno != :start_member_no";
-		
-		List<FundingMemberEntity> joinList = entityManager.createQuery(jpql,FundingMemberEntity.class)
-															.setParameter("member_no" , member_no)
-															.setParameter("start_member_no" , member_no)
-															.getResultList();
-		if (joinList.isEmpty()) {
-			System.out.println("참여한 모금이 없습니다.");
-		}else {
-			System.out.println("모금 리스트: " + joinList);
-		}
-		
-		return joinList;
-		
+
+		return null;
 		
 	}
 }

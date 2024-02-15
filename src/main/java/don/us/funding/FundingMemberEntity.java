@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -68,4 +69,8 @@ public class FundingMemberEntity {
 	
 	@Column(name="start_member_name")
 	private String startmembername;
+	
+	@ManyToOne
+	@JoinColumn(name = "no")
+	private FundingEntity fundingentity;
 }
