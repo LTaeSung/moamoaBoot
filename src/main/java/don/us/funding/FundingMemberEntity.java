@@ -34,6 +34,9 @@ public class FundingMemberEntity {
 	@Column(name="member_no")
 	private int memberno;
 	
+	@Column(name="member_name")
+	private String membername;
+	
 	@Column(name="funding_no")
 	private int fundingno;
 	
@@ -69,4 +72,7 @@ public class FundingMemberEntity {
 	
 	@Column(name="start_member_name")
 	private String startmembername;
+	
+	@Column(name="settlement_amount")
+	private String settlementamount;
 }

@@ -1,4 +1,4 @@
-package don.us.funding;
+package don.us.point;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-package don.us.funding;
+package don.us.point;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

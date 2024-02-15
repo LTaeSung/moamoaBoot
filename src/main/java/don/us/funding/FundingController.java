@@ -51,7 +51,7 @@ public class FundingController {
 		fund.setDescription((String) map.get("description"));
 		fund.setMonthlypaymentamount(Integer.valueOf((String) (map.get("monthly_payment_amount"))));
 		fund.setMonthlypaymentdate((String) map.get("monthly_payment_date"));
-
+		
 		try {
 			Timestamp timestamp = service.getTimestamp((String) map.get("dueDate"));
 			fund.setFundingduedate(timestamp);
@@ -63,12 +63,14 @@ public class FundingController {
 			FileNameVO fvo = fileController.upload(photo, registed_img_path);
 			fund.setPhoto(fvo.getSaved_filename());
 		}
-
+		
 		repo.save(fund);
 
 //		// 임시로 payment_no를 1로 설정
 		int payment_no = 1;
 		
+		
+
 		service.inviteMembers(fund, (String)map.get("memberList"), payment_no);
 	}
 
