@@ -129,6 +129,7 @@ public class FundingMemberController {
 	
 	@GetMapping("/join")
 	public List<FundingMemberEntity> joinList (@RequestParam("member_no") int member_no){
+
 		return null;
 	}
 }

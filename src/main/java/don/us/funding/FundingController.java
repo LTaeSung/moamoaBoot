@@ -3,8 +3,10 @@ package don.us.funding;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
+import don.us.board.BoardEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -72,7 +74,7 @@ public class FundingController {
 		service.inviteMembers(fund, (String)map.get("memberList"), payment_no);
 	}
 
-	@GetMapping("/host")
+	@GetMapping("/host") 
 	public List<FundingEntity> myFunding(@RequestParam("start_member_no") int start_member_no) {
 		
 		List <FundingEntity> myFundinglist = repo.findBystartmemberno(start_member_no);
@@ -80,15 +82,24 @@ public class FundingController {
 		return myFundinglist;
 	}
 
+	@GetMapping("/list/test")
+	public List funding (Model model) {
+		List <FundingEntity>  fundingEntityList = repo.findAll();
+		return fundingEntityList;
+	}
+
 
 	@GetMapping("/host/{no}")
-	public List<FundingEntity> show(@PathVariable int no) {
-		List<FundingEntity> result = new ArrayList<>();
-		repo.findById(no).ifPresent((data) -> {
-			result.add(data);
-		});
-		System.out.println("result: " + result);
+	public FundingEntity show(@PathVariable int no) {
+//		FundingEntity> result = new ArrayList<>();
+		FundingEntity result = null;
+		result = repo.findById(no).get();
+//		repo.findById(no).ifPresent((data) -> {
+//			result = data;
+//		});
 		return result;
+//		System.out.println("result: " + result);
+//		return result;
 	}
 	
 	@GetMapping("/regularPaymentList")
