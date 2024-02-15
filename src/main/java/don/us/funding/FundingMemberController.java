@@ -1,22 +1,13 @@
 package don.us.funding;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import don.us.board.BoardEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 
 @CrossOrigin(origins = {"*"})
@@ -86,13 +77,7 @@ public class FundingMemberController {
 			}
 			System.out.println("참여 완료");
 			
-			
-			
 			return "success";
-			
-//			FundingEntity 
-			//참여인원 늘리고
-			//펀딩 시작하나 체크하고
 		}catch(Exception e) {
 			System.out.println("참여 실패");
 			return "fail";
@@ -124,8 +109,31 @@ public class FundingMemberController {
 	
 	
 	@GetMapping("/join")
-	public List<FundingMemberEntity> joinList (@RequestParam("member_no") int member_no){
-
-		return null;
+	public List<Map> joinList (@RequestParam("member_no") String member_no){
+		
+		return repo.getJoinedFundingList_OnGoing(member_no);
 	}
+
+
+	@GetMapping("/challenge/{fund_no}")
+	public List funding (@PathVariable int fund_no, Model model) {
+
+		List <FundingMemberEntity>  fundingMemberEntity = repo.findByFundingno(fund_no);
+		System.out.println("ㅎㅎ: " + fundingMemberEntity);
+		return fundingMemberEntity;
+	}
+
+
+//	@GetMapping("/challenge/{funding_no}")
+//	public FundingMemberEntity show(@PathVariable int funding_no) {
+////		FundingEntity> result = new ArrayList<>();
+//		FundingMemberEntity result = null;
+//		result = repo.findByFundingno(funding_no).get(funding_no);
+////		repo.findById(no).ifPresent((data) -> {
+////			result = data;
+////		});
+//		System.out.println("result: " + result);
+//		return result;
+//	}
+
 }
