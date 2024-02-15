@@ -83,7 +83,6 @@ public class AdminController {
 		fundingHistory.setMemberno(memberno);
 		fundingHistory.setFundingno(fundingno);
 		fundingHistory.setAmount(amount);
-		//fundingHistory.setDirection(false); //0=false가 디폴트값이라 따로 설정 안하고 반대로 펀딩에서 돈 줄 때 true로 세팅할게요
 		return fundingHistoryRepo.save(fundingHistory);
 	}
 	
@@ -102,8 +101,8 @@ public class AdminController {
 			Optional<FundingMemberEntity> fundMem = fundingMemberRepo.findById(repayList.get(i).getFundingmemberno());
 			Optional<FundingEntity> fund = fundingRepo.findById( fundMem.get().getFundingno() );
 			try {
-				if(fundMem.get().getNo() == 127) throw new Exception();
-				//여기서 재결제 시도를 함
+//				if(fundMem.get().getNo() == 127) throw new Exception(); 재결제 실패 데이터 만들기 위해 일부러 에러 유발하는 코드
+				//재결제 시도
 				makeFundingHistory(fundMem.orElseThrow().getMemberno(), fundMem.orElseThrow().getFundingno(), fundMem.orElseThrow().getMonthlypaymentamount());
 				updateTotalPayAmount(fundMem, fund);
 				
@@ -113,25 +112,23 @@ public class AdminController {
 				//성공하면 repay 테이블에서 삭제
 				repayRepo.deleteById(repayList.get(i).getNo());
 			} catch(Exception e) {
-				//안되면 재결제 횟수를 가져와서 2인지 체크함
+				//만약 이미 실패한 횟수가 2이면 방금 한 재결제로 3회째 실패인 것이므로 해당 멤버 강제 중도포기로 전환, 최종 실패 알람 보냄, 테이블에서 삭제
 				if(repayList.get(i).getRepaycount() >= 2) {
-					//재결제 완전 실패 알림
-					String content = "챌린지 ["+fund.get().getTitle()+"]의 재결제에 3회 실패했습니다. 자동으로 중도포기 처리됩니다.";
-					alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
-					//만약 2이면 방금 한 재결제로 3회째 실패인 것이므로 해당 멤버 강제 중도포기로 전환, 알람 보냄, 테이블에서 삭제
-					
 //					fundMem.get().setGiveup(true);
 //					//펀딩 멤버 수 1 줄여야함!!!
 //					fundingMemberRepo.save(fundMem.get());
 					
+					String content = "챌린지 ["+fund.get().getTitle()+"]의 재결제에 3회 실패했습니다. 자동으로 중도포기 처리됩니다.";
+					alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
+					
 					repayRepo.deleteById(repayList.get(i).getNo());
 				} else {
-					//재결제 성공
+					//재결제에 실패했으나 아직 기회가 남음
 					repayList.get(i).setRepaycount(repayList.get(i).getRepaycount()+1);
 					repayRepo.save(repayList.get(i));
-					updateTotalPayAmount(fundMem, fund);
-					//재결제 성공 알림
-					String content = "챌린지 ["+fund.get().getTitle()+"]의 재결제에 성공했습니다.";
+
+					//재결제 실패 알림
+					String content = "챌린지 ["+fund.get().getTitle()+"]의 재결제에 실패했습니다. 자동으로 재결제가 진행될 예정이오니 해당 펀딩에 등록된 결제 카드를 다른 카드로 변경해주세요.";
 					alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
 				}
 			}
@@ -148,4 +145,9 @@ public class AdminController {
 		fundMem.get().setTotalpayamount( fundMem.get().getTotalpayamount() + fundMem.get().getMonthlypaymentamount() );
 		fundingMemberRepo.save(fundMem.get());
 	}
+	
+	public void startFunding() {
+		//
+	}
+	//투표안했으면 거절로
 }
