@@ -82,8 +82,20 @@ public class FundingService {
 	}
 	
 	public Timestamp getTimestamp(String date) throws ParseException{
+//		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", java.util.Locale.ENGLISH);
+//		Date answer = inputFormat.parse(date);
+		String[] temparr = date.split(" ");
+//		for(int i=0; i<temparr.length; i++) {			
+//			System.out.println("확인 "+temparr[i]);
+//		}
+		temparr[4] = "23:59:59";
+		StringBuffer buffer = new StringBuffer();
+		for(int i=0; i<temparr.length; i++) {
+			buffer.append(temparr[i]+" ");
+		}
 		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", java.util.Locale.ENGLISH);
-		Date answer = inputFormat.parse(date);
+		Date answer = inputFormat.parse(buffer.toString());
+		System.out.println("확인" + new Timestamp(answer.getTime()));
 		return new Timestamp(answer.getTime());
 	}
 
