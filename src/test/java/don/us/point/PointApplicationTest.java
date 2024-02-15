@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
+import don.us.funding.FundingMemberEntity;
+import don.us.funding.FundingService;
 import don.us.member.MemberEntity;
 import don.us.member.MemberRepository;
 import lombok.extern.java.Log;
@@ -20,6 +22,9 @@ public class PointApplicationTest {
 	
 	@Autowired
 	private MemberRepository memberRepo;
+	
+	@Autowired
+	private FundingHistoryRepository fundrepo;
 	
 	@Transactional
 	@Test
@@ -49,9 +54,31 @@ public class PointApplicationTest {
     	System.out.println("확인"+pointList);
     }
 	
+	@Autowired
+	private FundingService fundingService;
+	
 	@Test
 	public void paylisttest() {
-		
+		List<FundingMemberEntity> list = fundingService.needPayMemberList();
+		for(int i=0; i<list.size(); i++) {
+			try {
+			FundingHistoryEntity fundingHistory = 
+					makeFundingHistory(list.get(i).getMemberno(), list.get(i).getFundingno(), list.get(i).getMonthlypaymentamount());
+			} catch(Exception e) {
+				//여기서 해당 멤버에게 알람을 보내주면??
+				System.out.println(list.get(i).getMemberno()+"번 고객님의 "+list.get(i).getFundingno()+"번 펀딩 결제에서 문제가 발생했습니다.");
+			}
+		}
+	}
+	
+	@Transactional
+	private FundingHistoryEntity makeFundingHistory(int memberno, int fundingno, int amount) throws Exception {
+		FundingHistoryEntity fundingHistory = new FundingHistoryEntity();
+		fundingHistory.setMemberno(memberno);
+		fundingHistory.setFundingno(fundingno);
+		fundingHistory.setAmount(amount);
+		if(fundingno == 70) throw new Exception();
+		return fundrepo.save(fundingHistory);
 	}
 	
 }

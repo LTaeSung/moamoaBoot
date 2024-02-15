@@ -3,6 +3,7 @@ package don.us.funding;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 import don.us.board.BoardEntity;
@@ -36,14 +37,14 @@ public class FundingController {
 	private FileController fileController;
 	@Autowired
 	private FundingService service;
-	@Autowired
-	private AlarmService alarmService;
+
 
 	@Value("${realPath.registed_img_path}")
 	private String registed_img_path;
 
 	@PostMapping("/regist")
 	public void makeFund(@RequestParam Map map, @RequestParam(name = "file", required = false) MultipartFile photo) {
+		System.out.println("map: " + map);
 		FundingEntity fund = new FundingEntity();
 
 		fund.setStartmemberno(Integer.valueOf((String) (map.get("member_no"))));
@@ -64,18 +65,16 @@ public class FundingController {
 			FileNameVO fvo = fileController.upload(photo, registed_img_path);
 			fund.setPhoto(fvo.getSaved_filename());
 		}
-
+		
 		repo.save(fund);
 
 //		// 임시로 payment_no를 1로 설정
 		int payment_no = 1;
 		
 		service.inviteMembers(fund, (String)map.get("memberList"), payment_no);
-		alarmService.makeAlarm(fund);
-		
 	}
 
-	@GetMapping("/host")
+	@GetMapping("/host") 
 	public List<FundingEntity> myFunding(@RequestParam("start_member_no") int start_member_no) {
 		
 		List <FundingEntity> myFundinglist = repo.findBystartmemberno(start_member_no);

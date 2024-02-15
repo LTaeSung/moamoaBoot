@@ -11,13 +11,22 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import don.us.alarm.AlarmService;
+import don.us.member.MemberEntity;
+import don.us.member.MemberRepository;
+
 @Service
 public class FundingService {
 	@Autowired
 	private FundingRepository fundingRepo;
 	@Autowired
 	private FundingMemberRepository fundingMemberRepo;
-
+	@Autowired
+	private MemberRepository memberRepo;
+	
+	@Autowired
+	private AlarmService alarmService;
+	
 	public void increaseCandidate(int fund_no) {
 		FundingEntity fund = fundingRepo.findById(fund_no).get();
 		fund.setCandidate(fund.getCandidate() + 1);
@@ -82,18 +91,23 @@ public class FundingService {
 	}
 	
 	public Timestamp getTimestamp(String date) throws ParseException{
+		String[] temparr = date.split(" ");
+		temparr[4] = "23:59:59";
+		StringBuffer buffer = new StringBuffer();
+		for(int i=0; i<temparr.length; i++) {
+			buffer.append(temparr[i]+" ");
+		}
 		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", java.util.Locale.ENGLISH);
-		Date answer = inputFormat.parse(date);
+		Date answer = inputFormat.parse(buffer.toString());
 		return new Timestamp(answer.getTime());
 	}
 
 	public void inviteMembers (FundingEntity fund, String memberListString, int starterPaymentNo) {
 		FundingMemberEntity me = makeFundingMemberEntity(fund, fund.getStartmemberno());
-		me.setStartmemberno(fund.getStartmemberno());
-		me.setStartmembername(fund.getStartmembername());
 		me.setPaymentno(starterPaymentNo);
-		me.setPhoto(fund.getPhoto());
 		me.setParticipationdate(new Timestamp(System.currentTimeMillis()));
+		me.setMembername(fund.getStartmembername());
+		
 		inviteMember(fund, me);
 		
 		if (memberListString != null) {
@@ -108,7 +122,16 @@ public class FundingService {
 	}
 	
 	private void inviteMember(FundingEntity fund, FundingMemberEntity fundingMember) {
+		
 		fundingRepo.save(fund);
+		
+		//펀드를 주최한 맴버에게는 초대 알람을 보내지 않는다.
+		if(fundingMember.getMemberno() != fund.getStartmemberno()) {
+			MemberEntity member = memberRepo.findById(fundingMember.getMemberno()).get();
+			fundingMember.setMembername(member.getName());
+			alarmService.makeInviteAlarm(fundingMember);
+		}
+		
 		fundingMemberRepo.save(fundingMember);
 	}
 	
