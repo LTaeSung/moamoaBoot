@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.persistence.EntityManager;
 
 
 
@@ -29,9 +28,6 @@ public class FundingMemberController {
 	
 	@Autowired
 	private FundingService fundingService;
-	
-	@Autowired
-	private EntityManager entityManager;
 	
 	@GetMapping("invitedList")
 	public List<FundingMemberEntity> getInvitedList(@RequestParam("member_no") int member_no) {
@@ -102,7 +98,6 @@ public class FundingMemberController {
 			return "fail";
 		}
 	}
-	
 	
 	
 	@PostMapping("refuse")
