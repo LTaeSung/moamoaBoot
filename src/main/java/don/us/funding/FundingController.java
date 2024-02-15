@@ -102,12 +102,6 @@ public class FundingController {
 //		return result;
 	}
 	
-	@GetMapping("/regularPaymentList")
-	public List<FundingMemberEntity> regularPaymentList(){
-		List<FundingMemberEntity> list = service.needPayMemberList();
-		return list;
-	}
-	
 	@PostMapping("/giveup")
 	public Map<String, Object> giveup(@RequestBody Map<String, String> request) {
 		
