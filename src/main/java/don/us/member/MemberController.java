@@ -67,7 +67,7 @@ public class MemberController {
 	}
 	
 	@GetMapping(value = "/login")
-	public Map<String, String> getAccessToken(@RequestParam String code) {
+	public Map<String, String> login(@RequestParam String code) {
 		Map<String, String> result = new HashMap<>();
 		
 		String responseBody = GetAccessToken(code);
@@ -147,6 +147,69 @@ public class MemberController {
 		
 		return memberInfo;
 	}
+	
+	@GetMapping(value = "/signup")
+	public Map<String, String> signup(@RequestParam String code) {
+		Map<String, String> result = new HashMap<>();
+		
+		String responseBody = GetAccessToken(code);
+		System.out.println("리스폰스바디 액세스토큰" + responseBody);
+		
+
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+			// access_token 값을 추출
+			String accessToken = jsonNode.path("access_token").asText();
+
+			// 여기서 accessToken 변수에 추출된 access_token 값이 들어갑니다.
+			System.out.println("Access Token: " + accessToken);
+
+			// 토큰 값을 사용하여 NaverLogin 클래스의 get_token 메서드 호출 - 여기에 네이버로 로그인한 유저의 정보가 받아와짐
+			String user_data = naverLogin.get_token(accessToken);
+
+			JSONParser parser = new JSONParser();
+			JSONObject jsonObject = (JSONObject) parser.parse(user_data);
+			JSONObject responseObject = (JSONObject) jsonObject.get("response");
+		
+			System.out.println("parse한 유저data" + jsonObject);
+			System.out.println("그거에서 response 가져와봐" + responseObject);
+			
+			String user_email = responseObject.get("email").toString();
+			System.out.println("user_email: " + user_email);
+
+//			String user_name = responseObject.get("name").toString();
+//			String user_birthyear = responseObject.get("birthyear").toString();
+//			String user_birthday = responseObject.get("birthday").toString();
+			
+			
+			if(repo.findByEmail(user_email).isPresent()) {
+				MemberEntity target = repo.findByEmail(user_email).get();
+				System.out.print("타겟"+target);
+				
+                result.put("result", "success");
+                result.put("no", String.valueOf(target.getNo()));
+                result.put("email", target.getEmail());
+                result.put("name", target.getName());
+				
+			} else {
+				System.out.println("유저없음");
+				result.put("result", "fail");
+//				result.put("email", user_email);
+//				result.put("name", user_name);
+//				result.put("birthyear", user_birthyear);
+//				result.put("birthday", user_birthday);
+				
+			}
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
 	
 	
 	
