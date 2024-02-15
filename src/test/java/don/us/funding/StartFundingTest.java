@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import don.us.alarm.AlarmService;
 import don.us.member.FriendEntity;
 import don.us.member.FriendRepository;
 import don.us.member.MemberEntity;
@@ -45,6 +46,7 @@ public class StartFundingTest {
 	@Autowired
 	private FundingHistoryRepository fundingHistoryRepo;
 
+	
 	@Test
 	public void getFriendList() {
 		//
@@ -80,6 +82,7 @@ public class StartFundingTest {
 		List<FundingMemberEntity> list = fundingService.needPayMemberList();
 		for(int i=0; i<list.size(); i++) {
 			try {
+				if(1 == 1) throw new Exception();
 				FundingMemberEntity fundMem = list.get(i);
 				FundingHistoryEntity fundingHistory = makeFundingHistory(fundMem.getMemberno(), fundMem.getFundingno(), fundMem.getMonthlypaymentamount());
 				//해당 펀딩 결제된 포인트에 돈 더해서 업데이트
@@ -147,6 +150,7 @@ public class StartFundingTest {
 		for(int i=0; i<repayList.size(); i++) {
 			Optional<FundingMemberEntity> fundingMem = fundingMemberRepo.findById(repayList.get(i).getFundingmemberno());
 			try {
+				if(1 == 1) throw new Exception();
 				//여기서 재결제 시도를 함
 				if(repayList.get(i).getFundingmemberno() == 127) throw new Exception();
 				makeFundingHistory(fundingMem.orElseThrow().getMemberno(), fundingMem.orElseThrow().getFundingno(), fundingMem.orElseThrow().getMonthlypaymentamount());
@@ -172,5 +176,14 @@ public class StartFundingTest {
 		System.out.println("삭제전");
 		repayRepo.deleteById(3);
 		System.out.println("삭제후");
+	}
+	
+	@Autowired
+	private AlarmService alarmService;
+	
+	@Test
+	public void alarmTest() {
+		String content = "챌린지 ["+81+"]의 이번 달 결제에 실패했습니다. 자동으로 재결제가 진행될 예정이오니 해당 펀딩에 등록된 결제 카드를 다른 카드로 변경해주세요.";
+		alarmService.makePayAlarm(7, content, 81);
 	}
 }

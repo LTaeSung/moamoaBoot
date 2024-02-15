@@ -22,6 +22,8 @@ public class MemberApplicationTest {
 	@Autowired
 	private FriendRepository friendRepo;
 	
+	
+	
 	//신원 조회
 	@Test
 	public void searchMember() {
