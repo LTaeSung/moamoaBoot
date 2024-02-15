@@ -147,4 +147,25 @@ public class FundingMemberController {
 		
 		
 	}
+
+	@GetMapping("/challenge")
+	public List<FundingMemberEntity> ChallengeList (@RequestParam("no") int no){
+
+		String jpql = "SELECT fm.member_name FROM FundingMemberEntity fm " +
+				"where fm.funding_no = :no and participation_date is NOT NULL";
+
+		List<FundingMemberEntity> ChallengeList = entityManager.createQuery(jpql,FundingMemberEntity.class)
+				.setParameter("member_no" , no)
+				.getResultList();
+		if (ChallengeList.isEmpty()) {
+			System.out.println("참여한 모금이 없습니다.");
+		}else {
+			System.out.println("모금 리스트: " + joinList);
+		}
+
+		return ChallengeList;
+
+
+	}
+
 }
