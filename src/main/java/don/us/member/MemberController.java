@@ -179,9 +179,37 @@ public class MemberController {
 			String user_email = responseObject.get("email").toString();
 			System.out.println("user_email: " + user_email);
 
-//			String user_name = responseObject.get("name").toString();
-//			String user_birthyear = responseObject.get("birthyear").toString();
-//			String user_birthday = responseObject.get("birthday").toString();
+			String user_name = responseObject.get("name").toString();
+			String user_birthyear = responseObject.get("birthyear").toString();
+			String user_birthday = responseObject.get("birthday").toString();
+			
+			
+//			result.put("email", user_email);
+//			result.put("name", user_name);
+//			result.put("birthyear", user_birthyear);
+//			result.put("birthday", user_birthday);
+			
+			System.out.println("이룸"+user_name);
+			System.out.println("년도"+user_birthyear);
+			System.out.println("날짜"+user_birthday);
+			
+			String full_birthday = user_birthyear + "-" + user_birthday;
+			
+			System.out.println("풀생일" + full_birthday);
+			
+			
+			
+			
+			System.out.println("이룸"+user_name);
+			
+			
+//			MemberEntity mem = new MemberEntity();
+//			
+//			mem.setEmail(user_email);
+//			mem.setName(user_name);
+//			mem.set
+//			
+//			repo.
 			
 			
 			if(repo.findByEmail(user_email).isPresent()) {
@@ -196,10 +224,10 @@ public class MemberController {
 			} else {
 				System.out.println("유저없음");
 				result.put("result", "fail");
-//				result.put("email", user_email);
-//				result.put("name", user_name);
-//				result.put("birthyear", user_birthyear);
-//				result.put("birthday", user_birthday);
+				result.put("email", user_email);
+				result.put("name", user_name);
+				result.put("birthyear", user_birthyear);
+				result.put("birthday", user_birthday);
 				
 			}
 			return result;
