@@ -1,22 +1,13 @@
 package don.us.funding;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import don.us.board.BoardEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 
 @CrossOrigin(origins = {"*"})
@@ -129,24 +120,26 @@ public class FundingMemberController {
 		return null;
 	}
 
-	@GetMapping("/challenge")
-	public List<FundingMemberEntity> ChallengeList (@RequestParam("no") int no){
 
-		String jpql = "SELECT fm.member_name FROM FundingMemberEntity fm " +
-				"where fm.funding_no = :no and participation_date is NOT NULL";
+	@GetMapping("/challenge/{fund_no}")
+	public List funding (@PathVariable int fund_no, Model model) {
 
-		List<FundingMemberEntity> ChallengeList = entityManager.createQuery(jpql,FundingMemberEntity.class)
-				.setParameter("member_no" , no)
-				.getResultList();
-		if (ChallengeList.isEmpty()) {
-			System.out.println("참여한 모금이 없습니다.");
-		}else {
-			System.out.println("모금 리스트: " + joinList);
-		}
-
-		return ChallengeList;
-
-
+		List <FundingMemberEntity>  fundingMemberEntity = repo.findByFundingno(fund_no);
+		System.out.println("ㅎㅎ: " + fundingMemberEntity);
+		return fundingMemberEntity;
 	}
+
+
+//	@GetMapping("/challenge/{funding_no}")
+//	public FundingMemberEntity show(@PathVariable int funding_no) {
+////		FundingEntity> result = new ArrayList<>();
+//		FundingMemberEntity result = null;
+//		result = repo.findByFundingno(funding_no).get(funding_no);
+////		repo.findById(no).ifPresent((data) -> {
+////			result = data;
+////		});
+//		System.out.println("result: " + result);
+//		return result;
+//	}
 
 }
