@@ -83,7 +83,7 @@ public class PointApplicationTest {
 		fundingHistory.setMemberno(memberno);
 		fundingHistory.setFundingno(fundingno);
 		fundingHistory.setAmount(amount);
-//		if(1 == 1) throw new Exception();
+		if(1 == 1) throw new Exception();
 		return fundrepo.save(fundingHistory);
 	}
 	
