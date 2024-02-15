@@ -90,3 +90,10 @@ UPDATE `moamoaDonDon`.`member` SET `birthday` = '2024-02-06' WHERE (`no` = '4');
 UPDATE `moamoaDonDon`.`member` SET `birthday` = '2024-02-07' WHERE (`no` = '5');
 UPDATE `moamoaDonDon`.`member` SET `birthday` = '1996-08-09' WHERE (`no` = '6');
 UPDATE `moamoaDonDon`.`member` SET `birthday` = '2000-02-28' WHERE (`no` = '7');
+ALTER TABLE `moamoaDonDon`.`board_reply` 
+DROP FOREIGN KEY `FK_board_TO_board_reply_1`;
+ALTER TABLE `moamoaDonDon`.`board_reply` 
+ADD CONSTRAINT `FK_board_TO_board_reply_1`
+  FOREIGN KEY (`board_no`)
+  REFERENCES `moamoaDonDon`.`board` (`no`)
+  ON DELETE CASCADE;
