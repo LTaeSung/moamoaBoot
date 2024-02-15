@@ -105,9 +105,6 @@ public class FundingService {
 	public void inviteMembers (FundingEntity fund, String memberListString, int starterPaymentNo) {
 		FundingMemberEntity me = makeFundingMemberEntity(fund, fund.getStartmemberno());
 		me.setPaymentno(starterPaymentNo);
-		me.setParticipationdate(new Timestamp(System.currentTimeMillis()));
-		me.setMembername(fund.getStartmembername());
-		
 		inviteMember(fund, me);
 		
 		if (memberListString != null) {
@@ -122,16 +119,19 @@ public class FundingService {
 	}
 	
 	private void inviteMember(FundingEntity fund, FundingMemberEntity fundingMember) {
-		
-		fundingRepo.save(fund);
-		
-		//펀드를 주최한 맴버에게는 초대 알람을 보내지 않는다.
 		if(fundingMember.getMemberno() != fund.getStartmemberno()) {
+			//펀드에 초대된 맴버
 			MemberEntity member = memberRepo.findById(fundingMember.getMemberno()).get();
 			fundingMember.setMembername(member.getName());
+			
 			alarmService.makeInviteAlarm(fundingMember);
 		}
-		
+		else {		
+			//펀드를 주최한 맴버
+			fundingMember.setParticipationdate(new Timestamp(System.currentTimeMillis()));
+			fundingMember.setMembername(fund.getStartmembername());
+			increaseCandidate(fund.getNo());
+		}
 		fundingMemberRepo.save(fundingMember);
 	}
 	
