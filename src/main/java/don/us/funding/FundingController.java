@@ -60,12 +60,12 @@ public class FundingController {
 		}
 
 		if (photo != null) {
-			FileNameVO fvo = fileController.upload(photo, registed_img_path);
+			FileNameVO fvo = fileController.upload(photo , registed_img_path);
 			fund.setPhoto(fvo.getSaved_filename());
 		}
 
 		repo.save(fund);
-
+		
 //		// 임시로 payment_no를 1로 설정
 		int payment_no = 1;
 
