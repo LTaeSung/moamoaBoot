@@ -99,3 +99,5 @@ ADD CONSTRAINT `FK_board_TO_board_reply_1`
   ON DELETE CASCADE;
 ALTER TABLE `moamoaDonDon`.`funding_member` 
 ADD COLUMN `member_name` VARCHAR(255) NOT NULL AFTER `member_no`;
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+CHANGE COLUMN `settlement_amount` `settlement_amount` VARCHAR(255) NULL DEFAULT NULL ;

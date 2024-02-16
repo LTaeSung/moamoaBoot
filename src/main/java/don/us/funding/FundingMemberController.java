@@ -121,8 +121,8 @@ public class FundingMemberController {
 	}
 	
 	
-	@GetMapping("/join")
-	public List<Map> joinList (@RequestParam("member_no") String member_no){
+	@GetMapping("/join/ongoing")
+	public List<Map> joinListOnGoing (@RequestParam("member_no") String member_no){
 		List<Map> rowList = repo.getJoinedFundingList_OnGoing(member_no);
 		
 		List<Map> result = new ArrayList<>();
@@ -130,6 +130,14 @@ public class FundingMemberController {
 
 			result.add(setMapOfFundingAndMember(fund));
 		}
+		
+		return result;
+	}
+	@GetMapping("/join/end")
+	public List<Map> joinListEnd (@RequestParam("member_no") String member_no){
+		List<Map> rowList = repo.getJoinedFundingList_OnGoing(member_no);
+		
+		List<Map> result = new ArrayList<>();
 		
 		return result;
 	}
