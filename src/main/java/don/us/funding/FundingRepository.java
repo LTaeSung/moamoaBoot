@@ -27,8 +27,21 @@ public interface FundingRepository extends JpaRepository<FundingEntity, Integer>
 	@Query(value = "SELECT *"
 			+ " FROM funding"
 			+ " WHERE state = 1"
-			//+ " AND NOW() > funding_due_date"
+			+ " AND NOW() > funding_due_date"
 			, nativeQuery = true)
 	public List<FundingEntity> getFundingDueList();
 
+	@Query(value = "SELECT *"
+			+ " FROM funding"
+			+ " WHERE state = 2"
+			+ " AND NOW() > vote_due_date"
+			, nativeQuery = true)
+	public List<FundingEntity> getVoteDueList();
+	
+	@Query(value = "SELECT *"
+			+ " FROM funding"
+			+ " WHERE state = 3"
+			+ " AND NOW() > settlement_due_date"
+			, nativeQuery = true)
+	public List<FundingEntity> getSettlementDueList();
 }
