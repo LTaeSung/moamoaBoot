@@ -80,6 +80,7 @@ public class AdminControllerTest {
 			fundingRepo.save(list.get(i));
 		}
 		//해당 펀딩 참여자중에 중도포기 안 한(0) 사람들 목록 가져와서 투표하라고 알림보냄
+		
 	}
 	@Transactional
 	@Test
