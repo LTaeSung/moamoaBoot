@@ -32,13 +32,16 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 				m.totalpayamount as myPayAmount,
 				f.collectedpoint as totalPayAmount,
 				
+				f.startdate as startDate,
 				f.fundingduedate as fundingDueDate,
 				f.voteduedate as voteDueDate,
 				f.settlementduedate as settlementDueDate,
 				
+				m.participationdate as participationDate,
 				m.giveup as giveup,
 				m.vote as vote,
-				m.settlementamount as settlementAmount
+				m.settlementamount as settlementAmount,
+				f.state as state
 			from 
 				FundingMemberEntity m join FundingEntity f
 			    on m.fundingno = f.no

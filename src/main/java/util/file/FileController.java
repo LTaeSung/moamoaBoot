@@ -14,7 +14,7 @@ public class FileController {
 	@Value("${realPath.registed_img_path}")
 	private String registed_img_path;
 	
-	public FileNameVO upload(MultipartFile file, String registed_img_path) {
+	public FileNameVO upload(MultipartFile file , String registed_img_path) {
 		if (file.isEmpty())
 			return null;
 

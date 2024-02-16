@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.hibernate.annotations.CurrentTimestamp;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +33,7 @@ public class MemberEntity {
    private Timestamp registerdate;
    private int point;
    private String photo;
+
    
 //   @OneToMany
 //   private List<PaymentEntity> payment;
