@@ -3,7 +3,8 @@ package don.us.funding;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +12,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import don.us.alarm.AlarmService;
 import don.us.member.FriendEntity;
@@ -123,6 +123,38 @@ public class StartFundingTest {
 		System.out.println("확인" + new Timestamp(answer.getTime()));
 	}
 	
+	@Test
+	public void getTimestamp2() throws ParseException{
+		String date = "Fri Feb 16 09:25:05 KST 2024";
+		String[] temparr = date.split(" ");
+		temparr[3] = "23:59:59";
+		StringBuffer buffer = new StringBuffer();
+		for(int i=0; i<temparr.length; i++) {
+			buffer.append(temparr[i]+" ");
+		}
+		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'KST' yyyy", java.util.Locale.ENGLISH);
+		Date answer = inputFormat.parse(buffer.toString());
+		System.out.println("확인" + new Timestamp(answer.getTime() ) );
+	}
+	
+	
+	@Test
+	public void plusdays() throws ParseException {
+		Date now = new Date();
+		String now_string = now.toString();
+		
+		Timestamp nowtime = service.getTimestamp2(now_string);
+		int days = 7;
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(nowtime);
+		cal.add(Calendar.DATE, days);
+		nowtime.setTime(cal.getTime().getTime());
+
+		System.out.println("확인 "+ nowtime);
+	}
+	
+	
 	@Autowired
 	private RepaymentRepository repayRepo;
 	
@@ -185,5 +217,16 @@ public class StartFundingTest {
 	public void alarmTest() {
 		String content = "챌린지 ["+81+"]의 이번 달 결제에 실패했습니다. 자동으로 재결제가 진행될 예정이오니 해당 펀딩에 등록된 결제 카드를 다른 카드로 변경해주세요.";
 		alarmService.makePayAlarm(7, content, 81);
+	}
+	
+	@Test
+	public void getDate() {
+		Date now = new Date();
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		String formattedDateTime = currentDateTime.toString();
+			
+        System.out.println("현재 날짜와 시간: " + formattedDateTime);
+        System.out.println("현재 날짜와 시간: " + now);
+		
 	}
 }
