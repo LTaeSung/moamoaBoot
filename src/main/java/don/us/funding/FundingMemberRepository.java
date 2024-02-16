@@ -17,7 +17,8 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 			, nativeQuery = true)
 	public List<FundingMemberEntity> needPayFundMemberList(int funding_no);
 
-	Optional<FundingMemberEntity> findByFundingnoAndMemberno(int funding_no, int member_no);
+//	Optional<FundingMemberEntity> findByFundingnoAndMemberno(int funding_no, int member_no);
+	FundingMemberEntity findByFundingnoAndMemberno(int funding_no, int member_no);
 
 	
 	String queryForOnGoingFunding = """
