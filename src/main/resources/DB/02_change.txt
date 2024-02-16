@@ -101,3 +101,6 @@ ALTER TABLE `moamoaDonDon`.`funding_member`
 ADD COLUMN `member_name` VARCHAR(255) NOT NULL AFTER `member_no`;
 ALTER TABLE `moamoaDonDon`.`funding_member` 
 CHANGE COLUMN `settlement_amount` `settlement_amount` VARCHAR(255) NULL DEFAULT NULL ;
+
+ALTER TABLE `moamoaDonDon`.`funding_member` 
+ADD COLUMN `will_settlement_amount` INT NULL DEFAULT '0' AFTER `settlement_amount`;

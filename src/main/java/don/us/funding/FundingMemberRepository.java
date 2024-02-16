@@ -17,7 +17,8 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 			, nativeQuery = true)
 	public List<FundingMemberEntity> needPayFundMemberList(int funding_no);
 
-	Optional<FundingMemberEntity> findByFundingnoAndMemberno(int funding_no, int member_no);
+//	Optional<FundingMemberEntity> findByFundingnoAndMemberno(int funding_no, int member_no);
+	FundingMemberEntity findByFundingnoAndMemberno(int funding_no, int member_no);
 
 	
 	@Query(value="""
@@ -53,4 +54,16 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 			order by f.state desc
 		""")
 	public List<Map> getJoinedFundingList_OnGoing(String member_no);
+	
+	@Query(value = "SELECT * FROM funding_member"
+			+ " WHERE participation_date IS NULL"
+			+ " AND DATE_ADD(invited_date, INTERVAL 7 DAY) < NOW()"
+			, nativeQuery = true)
+	public List<FundingMemberEntity> getDontAcceptRefuseInWeekMemberList();
+	
+	@Query(value = "SELECT * FROM funding_member"
+			+ " WHERE funding_no = ?1"
+			+ " AND giveup = false"
+			, nativeQuery = true)
+	public List<FundingMemberEntity> getCompleteMemberList(int fundingno);
 }

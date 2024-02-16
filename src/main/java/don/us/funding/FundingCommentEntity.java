@@ -29,9 +29,7 @@ public class FundingCommentEntity {
 	private int fundingno;
 	
 	private String name;
-	
 	private String contents;
-	
 	private String photo;
 	
 	@CurrentTimestamp
