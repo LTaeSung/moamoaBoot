@@ -1,5 +1,6 @@
 package don.us.member;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +23,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import util.file.FileController;
+import util.file.FileNameVO;
 
 @CrossOrigin(origins = { "*" })
 @RestController
@@ -34,6 +39,12 @@ import jakarta.servlet.http.HttpSession;
 public class MemberController {
 	@Autowired
 	private MemberRepository repo;
+	
+	@Autowired
+	private FileController fileController;
+	
+	@Value("${realPath.registed_img_path}")
+	private String registed_img_path;
 
 	private final String CLIENT_ID = "CdK5qEW_eg3VAa_uRt9l";
 	private final String CLIENT_SECRET = "56H_05YtBY";
@@ -139,6 +150,31 @@ public class MemberController {
 //        System.out.println("세션에 이메일: " + userEmail);
 //        return "redirect:/localhost:3000/board/list";
 //    }
+	
+	// 프로필 사진 수정 (신정훈 02 - 16)
+	@PostMapping("/changePhoto")
+	public String changePhoto (@RequestParam("member_no") int member_no , @RequestParam("file") MultipartFile photo)  {
+		// 해당 회원 조회
+	    Optional<MemberEntity> optionalMember = repo.findById(member_no);
+	    if (optionalMember.isPresent()) {
+	        MemberEntity memberEntity = optionalMember.get();
+	        
+	        // 파일 업로드 및 변경 로직 구현
+	        if (photo != null && !photo.isEmpty()) {
+	        	FileNameVO fvo = fileController.upload(photo , registed_img_path);
+	        	memberEntity.setPhoto(fvo.getSaved_filename());
+	            
+	            repo.save(memberEntity);
+	            return "프로필 사진이 성공적으로 변경되었습니다.";
+	        } else {
+	            return "파일이 없습니다.";
+	        }
+	    } else {
+	        return "해당하는 회원이 존재하지 않습니다.";
+	    }
+	}
+	
+	
 	
 	// 회원 정보 (신정훈 작업 02 - 14)
 	@GetMapping("/info")
