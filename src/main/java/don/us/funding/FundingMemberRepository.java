@@ -55,6 +55,32 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 		""")
 	public List<Map> getJoinedFundingList_OnGoing(String member_no);
 	
+	@Query(value="""
+			select
+				f.no as fundingNo,
+				f.title as fundingTitle,
+	
+				f.photo as photo,
+				
+				m.totalpayamount as myPayAmount,
+				m.settlementamount as settlementAmount,
+				
+				f.settlementduedate as settlementDueDate,
+				
+				m.giveup as giveup,
+				m.vote as vote
+			from 
+				FundingMemberEntity m join FundingEntity f
+			    on m.fundingno = f.no
+			where 
+				m.memberno = %?1%
+				and
+				f.state = 4
+			order by settlementDueDate desc
+		""")
+	public List<Map> getJoinedFundingList_End(String member_no);
+	
+	
 	@Query(value = "SELECT * FROM funding_member"
 			+ " WHERE participation_date IS NULL"
 			+ " AND DATE_ADD(invited_date, INTERVAL 7 DAY) < NOW()"

@@ -118,15 +118,8 @@ public class FundingMemberController {
 		
 		return result;
 	}
-	@GetMapping("/join/end")
-	public List<Map> joinListEnd (@RequestParam("member_no") String member_no){
-		List<Map> rowList = repo.getJoinedFundingList_OnGoing(member_no);
-		
-		List<Map> result = new ArrayList<>();
-		
-		return result;
-	}
 	
+
 	private Map setMapOfFundingAndMember(Map fund) {
 		Map target = new HashMap<>();
 		target.put("fundingNo", fund.get("fundingNo"));
@@ -217,6 +210,42 @@ public class FundingMemberController {
 	private int leftDays(Timestamp dueDate) {
 		int day = (int)((dueDate.getTime() - System.currentTimeMillis()) / (1000 * 60 * 60 * 24));
 		return day;
+	}
+	
+	@GetMapping("/join/end")
+	public List<Map> joinListEnd (@RequestParam("member_no") String member_no){
+		List<Map> rowList = repo.getJoinedFundingList_End(member_no);
+		
+		List<Map> result = new ArrayList<>();
+		for(Map fund : rowList) {
+
+			result.add(setMapOfFundingAndMember_End(fund));
+		}
+		
+		return result;
+	}
+	
+	private Map setMapOfFundingAndMember_End(Map fund) {
+		Map target = new HashMap<>();
+		target.put("fundingNo", fund.get("fundingNo"));
+		target.put("title", fund.get("fundingTitle"));
+		target.put("myPayAmount", fund.get("myPayAmount"));
+		target.put("settlementAmount", fund.get("settlementAmount"));
+		target.put("photo", fund.get("photo"));
+		
+		setSuccessMessage(target, fund);
+		
+		return target;
+	}
+	
+	private void setSuccessMessage(Map result, Map fund) {
+		if((boolean)fund.get("giveup") == true) {
+			result.put("message", "중도포기");
+		}else if((int)fund.get("vote") == 1) {
+			result.put("message", "성공");
+		}else if((int)fund.get("vote") == 2) {
+			result.put("message", "실패");
+		}
 	}
 	
 	@GetMapping("/challenge/{fund_no}")
