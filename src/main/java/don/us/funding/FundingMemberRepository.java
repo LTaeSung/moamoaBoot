@@ -50,4 +50,10 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 			""";
 	@Query(value=queryForOnGoingFunding)
 	public List<Map> getJoinedFundingList_OnGoing(String member_no);
+	
+	@Query(value = "SELECT * FROM funding_member"
+			+ " WHERE participation_date IS NULL"
+			+ " AND DATE_ADD(invited_date, INTERVAL 7 DAY) < NOW()"
+			, nativeQuery = true)
+	public List<FundingMemberEntity> getDontAcceptRefuseInWeekMemberList();
 }

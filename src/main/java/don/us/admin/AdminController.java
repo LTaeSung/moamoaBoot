@@ -106,10 +106,9 @@ public class AdminController {
 				makeFundingHistory(fundMem.orElseThrow().getMemberno(), fundMem.orElseThrow().getFundingno(), fundMem.orElseThrow().getMonthlypaymentamount());
 				updateTotalPayAmount(fundMem, fund);
 				
-				//재결제 성공 알림
+				//재결제 성공 알림 보내고 테이블에서 삭제
 				String content = "챌린지 ["+fund.get().getTitle()+"]의 재결제에 성공했습니다.";
 				alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
-				//성공하면 repay 테이블에서 삭제
 				repayRepo.deleteById(repayList.get(i).getNo());
 			} catch(Exception e) {
 				//만약 이미 실패한 횟수가 2이면 방금 한 재결제로 3회째 실패인 것이므로 해당 멤버 강제 중도포기로 전환, 최종 실패 알람 보냄, 테이블에서 삭제
@@ -150,4 +149,28 @@ public class AdminController {
 		//
 	}
 	//투표안했으면 거절로
+	
+	public void setFundStatus0To1() {
+		//펀딩 참여일이 없는 fundingmember 목록을 불러와서
+		//for문으로 isExpired를 돌리고 true(아직 초대마감일이 오늘 안 지남)인 애들은 리스트에서 삭제
+		//오잉 근데 쿼리문에서 거르면 되는거 아닌가..?? 초대일에 7일 더한거랑 now() 비교함 <- 아 jpql에서는 날짜함수 지원을 안해주는군요...
+		List<FundingMemberEntity> list = fundingMemberRepo.getDontAcceptRefuseInWeekMemberList();
+		//최종적으로 남는건 '초대마감일이 지났으면서 펀딩참여일이 없는(승낙도 거절도 안한) fundingmember'들
+		//저 걸러진 리스트를 가지고 병천씨가 쓴거랑 같은 3단계(펀딩멤버삭제->펀딩시작확인->되면펀딩시작)를 돌림
+		//또 빼먹은거 없겠지???
+		for(int i=0; i<list.size(); i++) {
+			fundingMemberRepo.delete(list.get(i));
+			System.out.println("펀딩멤버넘버 "+list.get(i).getNo()+"번 삭제됨");
+			//승낙거절 안한 멤버한테 따로 알림이...가야할까? 자동 거절됐다고..
+			if(fundingService.checkStartFundingWhenAcceptFund(list.get(i).getFundingno())) {
+				fundingService.setFundStart(list.get(i).getFundingno());
+				System.out.println("펀딩넘버 "+list.get(i).getFundingno()+"번 시작됨");
+				//펀딩넘버 갖다가 남은 참여 전체 인원한테 시작알림 보내줘도 좋을듯?
+			} else System.out.println("펀딩넘버 "+list.get(i).getFundingno()+"번 시작안됨");
+		}
+	}
+	
+	public void setFundStatus1To2() {
+		
+	}
 }
