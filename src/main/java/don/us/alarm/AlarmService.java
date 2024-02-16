@@ -39,4 +39,15 @@ public class AlarmService {
 		alarm.setLink(link);
 		repo.save(alarm);
 	}
+	
+	public void makeVoteAlarm(int memberno, int fundingno) {
+		String content = "참여하신 챌린지가 종료되었습니다. 챌린지 성공/실패 여부를 체크해주세요. 일주일 내에 입력하지 않으실 경우, 자동으로 실패 처리됩니다.";
+		String link = "/funding/info?no="+fundingno;
+		
+		AlarmEntity alarm = new AlarmEntity();
+		alarm.setMemberno(memberno);
+		alarm.setContent(content);
+		alarm.setLink(link);
+		repo.save(alarm);
+	}
 }

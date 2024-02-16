@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import util.file.HandleDays;
+
 
 @CrossOrigin(origins = {"*"})
 @RestController
@@ -29,6 +31,9 @@ public class FundingMemberController {
 	@Autowired
 	private FundingService fundingService;
 	
+	@Autowired
+	private HandleDays handleDays;
+	
 	@GetMapping("invitedList")
 	public List<FundingMemberEntity> getInvitedList(@RequestParam("member_no") int member_no) {
 		List<FundingMemberEntity> result = new ArrayList<>();
@@ -39,7 +44,7 @@ public class FundingMemberController {
 			if(fund.getParticipationdate() != null) {
 				continue;
 			}
-			if(isExpired(fund)) {
+			if(handleDays.isExpired(fund)) {
 				continue;
 			}
 			
@@ -47,26 +52,6 @@ public class FundingMemberController {
 		}
 		
 		return result;
-	}
-	
-	private boolean isExpired(FundingMemberEntity fund) {
-		Timestamp invitedDueDate = addDays(fund.getInviteddate(), 7);
-		
-		Timestamp today = new Timestamp(System.currentTimeMillis());
-		
-		if(invitedDueDate.before(today)) {
-			return true;
-		}else {
-			return false;
-		}
-	}
-	
-	private Timestamp addDays(Timestamp target, int day) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(target);
-		cal.add(Calendar.DATE, day);
-		target.setTime(cal.getTime().getTime());
-		return target;
 	}
 	
 	@PostMapping("accept")
@@ -189,7 +174,7 @@ public class FundingMemberController {
 		Timestamp dueDate = null;
 		switch(state) {
 		case 0://초대중
-			dueDate = addDays((Timestamp)fund.get("startDate"), 7);
+			dueDate = handleDays.addDays((Timestamp)fund.get("startDate"), 7);
 			result.put("dueDate", dueDate);
 			result.put("dueDateLeft", leftDays(dueDate));
 			break;

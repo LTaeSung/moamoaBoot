@@ -18,6 +18,7 @@ import don.us.funding.FundingRepository;
 import don.us.funding.FundingService;
 import don.us.point.FundingHistoryRepository;
 import don.us.point.RepaymentRepository;
+import util.file.HandleDays;
 
 @SpringBootTest
 public class AdminControllerTest {
@@ -41,6 +42,9 @@ public class AdminControllerTest {
 	
 	@Autowired
 	private FundingMemberController fundingMemberController;
+	
+	@Autowired
+	private HandleDays handleDays;
 	
 	@Test
 	public void getFundMemberList() {
@@ -74,14 +78,20 @@ public class AdminControllerTest {
 	public void setFundStatus1To2() {
 		//펀드 상태=1 and 펀드 마감일<now()인 목록 가져옴
 		List<FundingEntity> list = fundingRepo.getFundingDueList();
-		//펀드 상태를 1->2로 업뎃, 투표 마감일을 마감일(funding_due_date)+7일 해서 넣어줌
 		for(int i=0; i<list.size(); i++) {
+			//펀드 상태를 1->2로 업뎃, 투표 마감일을 마감일(funding_due_date)+7일 해서 넣어줌
 			list.get(i).setState(2);
+			list.get(i).setVoteduedate(handleDays.addDays(list.get(i).getFundingduedate(), 7));
 			fundingRepo.save(list.get(i));
-		}
-		//해당 펀딩 참여자중에 중도포기 안 한(0) 사람들 목록 가져와서 투표하라고 알림보냄
-		
+			
+			//해당 펀딩 참여자중에 중도포기 안 한(giveup=false) 사람들 목록 가져와서 투표하라고 알림보냄
+			List<FundingMemberEntity> completeMemberList = fundingMemberRepo.getCompleteMemberList(list.get(i).getNo());
+			for(int j=0; j<completeMemberList.size(); j++) {
+				alarmService.makeVoteAlarm(completeMemberList.get(j).getMemberno(), list.get(i).getNo());
+			}
+		}	
 	}
+	
 	@Transactional
 	@Test
 	public void setFundStatus2To3() {

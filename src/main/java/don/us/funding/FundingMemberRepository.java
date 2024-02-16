@@ -59,4 +59,10 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 			+ " AND DATE_ADD(invited_date, INTERVAL 7 DAY) < NOW()"
 			, nativeQuery = true)
 	public List<FundingMemberEntity> getDontAcceptRefuseInWeekMemberList();
+	
+	@Query(value = "SELECT * FROM funding_member"
+			+ " WHERE funding_no = ?1"
+			+ " AND giveup = false"
+			, nativeQuery = true)
+	public List<FundingMemberEntity> getCompleteMemberList(int fundingno);
 }
