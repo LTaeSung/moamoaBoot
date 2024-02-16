@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -113,6 +114,43 @@ public class FundingService {
 		Date answer = inputFormat.parse(buffer.toString());
 		return new Timestamp(answer.getTime());
 	}
+	
+	//date의 시간을 23:59:59로 바꿔주는 메서드
+	public Timestamp getTimestamp2(String date) throws ParseException{
+		String[] temparr = date.split(" ");
+		temparr[3] = "23:59:59";
+		StringBuffer buffer = new StringBuffer();
+		for(int i=0; i<temparr.length; i++) {
+			buffer.append(temparr[i]+" ");
+		}
+		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'KST' yyyy", java.util.Locale.ENGLISH);
+		Date answer = inputFormat.parse(buffer.toString());
+		return new Timestamp(answer.getTime());
+	}
+	
+	//date 그대로 timestamp로 바꿔주는 메서드
+	public Timestamp getTimestamp3(String date) throws ParseException{
+		String[] temparr = date.split(" ");
+		StringBuffer buffer = new StringBuffer();
+		for(int i=0; i<temparr.length; i++) {
+			buffer.append(temparr[i]+" ");
+		}
+		SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'KST' yyyy", java.util.Locale.ENGLISH);
+		Date answer = inputFormat.parse(buffer.toString());
+		return new Timestamp(answer.getTime());
+	}
+	
+	
+	// getTimestamp로 받아온 날짜에 원하는 일수를 더해주는 메서드
+	public Timestamp plusdays(Timestamp nowtime, int days) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(nowtime);
+		cal.add(Calendar.DATE, days);
+		nowtime.setTime(cal.getTime().getTime());
+		
+		return nowtime;
+	}
+	
 
 	public void inviteMembers (FundingEntity fund, String memberListString, int starterPaymentNo) {
 		FundingMemberEntity me = makeFundingMemberEntity(fund, fund.getStartmemberno());

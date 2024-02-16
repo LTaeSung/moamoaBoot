@@ -112,24 +112,34 @@ public class FundingMemberController {
 		
 		List<Map> result = new ArrayList<>();
 		for(Map fund : rowList) {
-			Map target = new HashMap<>();
-			target.put("title", fund.get("fundingTitle"));
-			target.put("state", fund.get("state"));
-			target.put("myPayAmount", fund.get("myPayAmount"));
-			target.put("totalPayAmount", fund.get("totalPayAmount"));
-			
-			setDueDate(target, fund);
-			setStateMessage(target, fund);
-			result.add(target);
+
+			result.add(setMapOfFundingAndMember(fund));
 		}
 		
 		return result;
 	}
+	
+	private Map setMapOfFundingAndMember(Map fund) {
+		Map target = new HashMap<>();
+		target.put("fundingNo", fund.get("fundingNo"));
+		target.put("title", fund.get("fundingTitle"));
+		target.put("state", fund.get("state"));
+		target.put("myPayAmount", fund.get("myPayAmount"));
+		target.put("totalPayAmount", fund.get("totalPayAmount"));
+		target.put("photo", fund.get("photo"));
+
+		
+		setDueDate(target, fund);
+		setStateMessage(target, fund);
+		return target;
+	}
+	
 	private void setStateMessage(Map result, Map fund) {
 		int state = (Integer)fund.get("state");
 		switch(state) {
 		case 0://초대중
 			if(fund.get("participationDate") == null) {
+				//메세지 스테이트를 추가한다?
 				result.put("stateMessage", "펀드에 참여해주세요!");
 				result.put("color", "red");
 			}else {
