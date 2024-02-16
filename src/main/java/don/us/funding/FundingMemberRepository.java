@@ -28,6 +28,7 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 				m.monthlypaymentdate as monthlyPaymentDate,
 				m.monthlypaymentamount as monthlyPaymentAmmount,
 	
+				f.photo as photo,
 				
 				m.totalpayamount as myPayAmount,
 				f.collectedpoint as totalPayAmount,

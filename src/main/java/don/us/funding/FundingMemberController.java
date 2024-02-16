@@ -141,6 +141,8 @@ public class FundingMemberController {
 		target.put("state", fund.get("state"));
 		target.put("myPayAmount", fund.get("myPayAmount"));
 		target.put("totalPayAmount", fund.get("totalPayAmount"));
+		target.put("photo", fund.get("photo"));
+
 		
 		setDueDate(target, fund);
 		setStateMessage(target, fund);
