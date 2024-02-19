@@ -41,7 +41,7 @@ public class FundingController {
 	private String registed_img_path;
 
 	@PostMapping("/regist")
-	public void makeFund(@RequestParam Map map, @RequestParam(name = "file", required = false) MultipartFile photo) {
+	public void makeFund(@RequestParam Map map, @RequestParam(name = "file", required = false) MultipartFile photo, @RequestParam int payment_no) {
 		System.out.println("map: " + map);
 		FundingEntity fund = new FundingEntity();
 
@@ -67,7 +67,7 @@ public class FundingController {
 		repo.save(fund);
 		
 //		// 임시로 payment_no를 1로 설정
-		int payment_no = 1;
+//		int payment_no = 1;
 
 		service.inviteMembers(fund, (String) map.get("memberList"), payment_no);
 	}
@@ -184,5 +184,34 @@ public class FundingController {
 
 		return result;
 	}
+	
+	@PostMapping("/addcard")
+	public String accept(@RequestBody Map map) {
+		Map<String, String> result = new HashMap<>();
+		System.out.println("map: " + map);
+		int fundMemberNo = (int)map.get("fundingMemberNo");
+		FundingMemberEntity fundMemberEntity = fundingmemrepo.findById(fundMemberNo).get();
+		System.out.println("fundMemberEntity: " + fundMemberEntity);
+		fundMemberEntity.setParticipationdate(new Timestamp(System.currentTimeMillis()));
+		
+		int payment_no = Integer.valueOf((String)map.get("payment_no"));
+		fundMemberEntity.setPaymentno(payment_no);
+		try {
+			fundingmemrepo.save(fundMemberEntity);
+			
+			int fund_no = fundMemberEntity.getFundingno();
+			service.increaseCandidate(fund_no);
+			if(service.checkStartFundingWhenAcceptFund(fund_no)) {
+				service.setFundStart(fund_no);
+			}
+			System.out.println("참여 완료");
+			
+			return "success";
+		}catch(Exception e) {
+			System.out.println("참여 실패");
+			return "fail";
+		}
+	}
+	
 
 }
