@@ -1,6 +1,7 @@
 package don.us.funding;
 
 import java.util.List;
+import java.util.Map;
 import java.sql.Date;
 import java.time.LocalDate;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,9 +18,68 @@ public interface FundingRepository extends JpaRepository<FundingEntity, Integer>
 			, nativeQuery = true)
 	public List<FundingEntity> needPayFundList();
 
-
-	List<FundingEntity> findBystartmemberno(int startmemberno);
+	@Query(value="""
+			select
+				m.no as fundingMemberNo,
+				f.no as fundingNo,
+				f.title as fundingTitle,
+				m.monthlypaymentdate as monthlyPaymentDate,
+				m.monthlypaymentamount as monthlyPaymentAmmount,
 	
+				f.photo as photo,
+				
+				m.totalpayamount as myPayAmount,
+				f.collectedpoint as totalPayAmount,
+				
+				f.startdate as startDate,
+				f.fundingduedate as fundingDueDate,
+				f.voteduedate as voteDueDate,
+				f.settlementduedate as settlementDueDate,
+				
+				m.participationdate as participationDate,
+				m.giveup as giveup,
+				m.vote as vote,
+				m.settlementamount as settlementAmount,
+				f.state as state
+			from 
+				FundingMemberEntity m join FundingEntity f
+			    on m.fundingno = f.no
+			where 
+				m.startmemberno = %?1%
+				and
+				m.memberno = %?1%
+				and
+				f.state != 4
+			order by f.state desc
+		""")
+	public List<Map> getHostFundingList_OnGoing(String member_no);
+	
+	@Query(value="""
+			select
+				f.no as fundingNo,
+				f.title as fundingTitle,
+	
+				f.photo as photo,
+				
+				m.totalpayamount as myPayAmount,
+				m.settlementamount as settlementAmount,
+				
+				f.settlementduedate as settlementDueDate,
+				
+				m.giveup as giveup,
+				m.vote as vote
+			from 
+				FundingMemberEntity m join FundingEntity f
+			    on m.fundingno = f.no
+			where 
+				m.startmemberno = %?1%
+				and
+				m.memberno = %?1%
+				and
+				f.state = 4
+			order by settlementDueDate desc
+		""")
+	public List<Map> getHostFundingList_End(String member_no);
 		
 	@Query("SELECT f FROM FundingEntity f WHERE f.startmemberno = :start_member_no AND f.fundingduedate > :currentDate")
 	List<FundingEntity> findBystartmembernoAndfundingduedate(int start_member_no, LocalDate currentDate);

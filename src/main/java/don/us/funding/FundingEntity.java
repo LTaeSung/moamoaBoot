@@ -74,22 +74,4 @@ public class FundingEntity {
 	@Column(name="complete_interest")
 	private int completeinterest;
 	
-	@OneToMany
-	@JoinColumn(name = "funding_no")
-	private List<FundingCommentEntity> comment;
-	
-	
-//	public void setFundingduedate(String currentTimestampToString) {
-//		String target = currentTimestampToString + " 23:59:59";
-//		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//		dateFormat.setLenient(false);// 날짜와 시간을 엄격하게 확인
-//		try {
-//			Date stringToDate = dateFormat.parse(target);
-//			Timestamp stringToTimestamp = new Timestamp(stringToDate.getTime());
-//			fundingduedate = stringToTimestamp;
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//			fundingduedate = null;
-//		}
-//	}
 }

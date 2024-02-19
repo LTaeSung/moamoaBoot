@@ -2,6 +2,7 @@ package don.us.funding;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,8 @@ public class FundingController {
 	private FileController fileController;
 	@Autowired
 	private FundingService service;
+	@Autowired
+	private FundingMemberService fundingMemberSerivce;
 	@Autowired
 	private FundingMemberRepository fundingmemrepo;
 
@@ -72,12 +75,30 @@ public class FundingController {
 		service.inviteMembers(fund, (String) map.get("memberList"), payment_no);
 	}
 
-	@GetMapping("/host")
-	public List<FundingEntity> myFunding(@RequestParam("start_member_no") int start_member_no) {
+	@GetMapping("/host/ongoing")
+	public List<Map> hostListOnGoing(@RequestParam("member_no") String member_no) {
+		List<Map> rowList = repo.getHostFundingList_OnGoing(member_no);
 
-		List<FundingEntity> myFundinglist = repo.findBystartmemberno(start_member_no);
+		List<Map> result = new ArrayList<>();
+		for(Map fund : rowList) {
 
-		return myFundinglist;
+			result.add(fundingMemberSerivce.setMapOfFundingAndMember(fund));
+		}
+		
+		return result;
+	}
+	
+	@GetMapping("/host/end")
+	public List<Map> hostListEnd(@RequestParam("member_no") String member_no) {
+		List<Map> rowList = repo.getHostFundingList_End(member_no);
+
+		List<Map> result = new ArrayList<>();
+		for(Map fund : rowList) {
+
+			result.add(fundingMemberSerivce.setMapOfFundingAndMember_End(fund));
+		}
+		
+		return result;
 	}
 
 	@GetMapping("/list/test")
