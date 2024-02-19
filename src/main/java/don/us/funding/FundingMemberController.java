@@ -29,6 +29,9 @@ public class FundingMemberController {
 	private FundingMemberRepository repo;
 	
 	@Autowired
+	private FundingMemberService service;
+	
+	@Autowired
 	private FundingService fundingService;
 	
 	@Autowired
@@ -113,104 +116,14 @@ public class FundingMemberController {
 		List<Map> result = new ArrayList<>();
 		for(Map fund : rowList) {
 
-			result.add(setMapOfFundingAndMember(fund));
+			result.add(service.setMapOfFundingAndMember(fund));
 		}
 		
 		return result;
 	}
 	
 
-	private Map setMapOfFundingAndMember(Map fund) {
-		Map target = new HashMap<>();
-		target.put("fundingNo", fund.get("fundingNo"));
-		target.put("title", fund.get("fundingTitle"));
-		target.put("state", fund.get("state"));
-		target.put("myPayAmount", fund.get("myPayAmount"));
-		target.put("totalPayAmount", fund.get("totalPayAmount"));
-		target.put("photo", fund.get("photo"));
 
-		
-		setDueDate(target, fund);
-		setStateMessage(target, fund);
-		return target;
-	}
-	
-	private void setStateMessage(Map result, Map fund) {
-		int state = (Integer)fund.get("state");
-		switch(state) {
-		case 0://초대중
-			if(fund.get("participationDate") == null) {
-				//메세지 스테이트를 추가한다?
-				result.put("stateMessage", "펀드에 참여해주세요!");
-				result.put("color", "red");
-			}else {
-				result.put("stateMessage", "초대중이에요!");
-				result.put("color", "black");
-			}
-			break;
-		case 1://진행중
-			System.out.println("fund: " + fund.get("giveup"));
-			if((boolean)fund.get("giveup") == false) {
-				result.put("stateMessage", "진행중");
-				result.put("color", "black");
-			}else {
-				result.put("stateMessage", "중도포기");
-				result.put("color", "black");
-			}
-			break;
-		case 2://투표중
-			if((int)fund.get("vote") == 0) {
-				result.put("stateMessage", "결과를 입력해주세요!");
-				result.put("color", "red");
-			}else {
-				result.put("stateMessage", "집계중");
-				result.put("color", "black");
-			}
-			break;
-		case 3://정산중
-			if(fund.get("settlementAmount") == null) {
-				result.put("stateMessage", "정산받아가세요!");
-				result.put("color", "red");
-			}else {
-				result.put("stateMessage", "정산중");
-				result.put("color", "black");
-			}
-			break;
-		}
-	}
-	
-	private void setDueDate(Map result, Map fund) {
-		int state = (Integer)fund.get("state");
-		int dueDay_Left = 9999999;
-		Timestamp dueDate = null;
-		switch(state) {
-		case 0://초대중
-			dueDate = handleDays.addDays((Timestamp)fund.get("startDate"), 7);
-			result.put("dueDate", dueDate);
-			result.put("dueDateLeft", leftDays(dueDate));
-			break;
-		case 1://진행중
-			dueDate = (Timestamp)fund.get("fundingDueDate");
-			result.put("dueDate", dueDate);
-			result.put("dueDateLeft", leftDays(dueDate));
-			break;
-		case 2://투표중
-			dueDate = (Timestamp)fund.get("voteDueDate");
-			result.put("dueDate", dueDate);
-			result.put("dueDateLeft", leftDays(dueDate));
-			break;
-		case 3://정산중
-			dueDate = (Timestamp)fund.get("settlementDueDate");
-			result.put("dueDate", dueDate);
-			result.put("dueDateLeft", leftDays(dueDate));
-			break;
-		}
-	}
-	
-	private int leftDays(Timestamp dueDate) {
-		int day = (int)((dueDate.getTime() - System.currentTimeMillis()) / (1000 * 60 * 60 * 24));
-		return day;
-	}
 	
 	@GetMapping("/join/end")
 	public List<Map> joinListEnd (@RequestParam("member_no") String member_no){
@@ -219,34 +132,13 @@ public class FundingMemberController {
 		List<Map> result = new ArrayList<>();
 		for(Map fund : rowList) {
 
-			result.add(setMapOfFundingAndMember_End(fund));
+			result.add(service.setMapOfFundingAndMember_End(fund));
 		}
 		
 		return result;
 	}
 	
-	private Map setMapOfFundingAndMember_End(Map fund) {
-		Map target = new HashMap<>();
-		target.put("fundingNo", fund.get("fundingNo"));
-		target.put("title", fund.get("fundingTitle"));
-		target.put("myPayAmount", fund.get("myPayAmount"));
-		target.put("settlementAmount", fund.get("settlementAmount"));
-		target.put("photo", fund.get("photo"));
-		
-		setSuccessMessage(target, fund);
-		
-		return target;
-	}
 	
-	private void setSuccessMessage(Map result, Map fund) {
-		if((boolean)fund.get("giveup") == true) {
-			result.put("message", "중도포기");
-		}else if((int)fund.get("vote") == 1) {
-			result.put("message", "성공");
-		}else if((int)fund.get("vote") == 2) {
-			result.put("message", "실패");
-		}
-	}
 	
 	@GetMapping("/challenge/{fund_no}")
 	public List funding (@PathVariable int fund_no, Model model) {
@@ -268,5 +160,30 @@ public class FundingMemberController {
 //		System.out.println("result: " + result);
 //		return result;
 //	}
+	
+	@PostMapping("modifycard")
+	public String modifycard(@RequestBody Map map) {
+//		Map<String, String> result = new HashMap<>();
+		String fundMemberNo_string = (String)map.get("fundingMemberNo");
+		int fundMemberNo = Integer.parseInt(fundMemberNo_string);
+		String fundingNo_string = (String)map.get("fundingNo");
+		int fundingNo = Integer.parseInt(fundingNo_string);
+		FundingMemberEntity fundMemberEntity = repo.findByFundingnoAndMemberno(fundingNo, fundMemberNo);
+		System.out.println("fundMemberEntity: " + fundMemberEntity);
+		
+		int payment_no = Integer.valueOf((String)map.get("payment_no"));
+		fundMemberEntity.setPaymentno(payment_no);
+		try {
+			repo.save(fundMemberEntity);
+			
+			System.out.println("카드 수정 완료");
+			
+			return "success";
+		}catch(Exception e) {
+			System.out.println("카드 수정 실패");
+			return "fail";
+		}
+	}
+	
 
 }
