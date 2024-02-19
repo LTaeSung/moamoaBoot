@@ -143,11 +143,17 @@ public class FundingMemberController {
 
 	@GetMapping("/info")
 	public Map myFundingInfo(@RequestParam("no") String no, @RequestParam("member_no") String member_no){
-		System.out.println("실행은되나");
-		Map row = repo.getMyFundInfo(no, member_no);
-		Map result = new HashMap<>();
-		result.put("myFundInfo", service.setMapOfFundingAndMember(row));
-		return result;
+		Map row = null;
+		try {
+			row = repo.getMyFundInfo(no, member_no);
+
+			System.out.println("row: " + row);
+			Map result = new HashMap<>();
+			result.put("myFundInfo", service.setMapOfFundingAndMember(row));
+			return result;	
+		}catch(Exception e) {
+			return row;
+		}
 	}
 	
 	@GetMapping("/challenge/{fund_no}")

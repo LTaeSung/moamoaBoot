@@ -170,8 +170,7 @@ public class FundingController {
 	public Map<String, Object> giveup(@RequestBody Map<String, String> request) throws ParseException {
 
 		Map<String, Object> result = new HashMap<>();
-
-		int funding_no = Integer.parseInt(request.get("fundingno"));
+		int funding_no = Integer.parseInt(request.get("fundingNo"));
 		int member_no = Integer.parseInt(request.get("memberno"));
 
 		FundingEntity funding = repo.findById(funding_no).get();
