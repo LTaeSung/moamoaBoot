@@ -113,11 +113,12 @@ public class AdminControllerTest {
 					computeAndSetSettlementAccount(fundlist.get(i));
 				}
 			}
-			//펀드 status 3으로 업뎃~
-			System.out.println("상태 업뎃 전: "+fundlist.get(i).getState());
+			//펀드 status 3으로 업뎃, settlement_due_date 업데이트해줌
+			System.out.println("상태 업뎃 전: "+fundlist.get(i).getState()+" 정산마감일"+fundlist.get(i).getSettlementduedate());
 			fundlist.get(i).setState(3);
+			fundlist.get(i).setSettlementduedate(handleDays.addDays(fundlist.get(i).getVoteduedate(), 7));
 			fundingRepo.save(fundlist.get(i));
-			System.out.println("상태 업뎃 후: "+fundlist.get(i).getState());
+			System.out.println("상태 업뎃 후: "+fundlist.get(i).getState()+" 정산마감일"+fundlist.get(i).getSettlementduedate());
 		}
 	}
 	
@@ -158,7 +159,7 @@ public class AdminControllerTest {
 			}
 		}
 	}
-	@Test //computeAndSetSettlementAccount에서 호출할 정산예정금 저장 및 알림보내는 함수
+	@Test //computeAndSetSettlementAccount에서 호출할, 정산예정금 저장 및 알림보내는 함수
 	public void setAndAlarmSettlementAccount(FundingMemberEntity member, int amount) {
 		member.setWillsettlementamount(amount);
 		fundingMemberRepo.save(member);
@@ -167,7 +168,11 @@ public class AdminControllerTest {
 	
 	@Test
 	public void setFundStatus3To4() {
-		//
+		//fund status=3이고 settlement_due_date<now()인 펀드 리스트 불러옴
+		//해당 펀딩에 정산 안받은 사람 있나 확인(settlement_amount가 null이어야함)
+		//만약 정산 안받은 사람 존재 시 will_settlement_amount의 값을 settlement_amount로 넣어줌
+		//will_settlement_amount로 해당 멤버의 펀드포인트거래내역을 만듦(0인사람은 제외?)
+		//남은 인원이 없으면 state를 4로 바꿈
 	}
 	//정산받기
 	//체크
