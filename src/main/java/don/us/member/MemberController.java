@@ -1,8 +1,6 @@
 package don.us.member;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,8 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import don.us.funding.FundingMemberRepository;
 import util.file.FileController;
 import util.file.FileNameVO;
 
@@ -39,6 +36,9 @@ import util.file.FileNameVO;
 public class MemberController {
 	@Autowired
 	private MemberRepository repo;
+	
+	@Autowired
+	private FundingMemberRepository fundingmemrepo;
 	
 	@Autowired
 	private FileController fileController;
@@ -269,10 +269,6 @@ public class MemberController {
 		}
 	}
 	
-	
-	
-	
-	
 	//code를 받아와서 tokenUrl로 code를 가지고 재요청. naver에서 accesstoken을 넘겨준다.
 	public String GetAccessToken(String code) {
 		// Naver OAuth 2.0 Token Endpoint URL
@@ -303,5 +299,25 @@ public class MemberController {
 		
 		return responseBody;
 	}
+	
+	//회원탈퇴
+//	@PostMapping("leave")
+//	public Map<String, String> leave(@RequestBody Map<String, String> map) {
+//		System.out.println("map: " + map);
+//		String member_no = map.get("memberno");
+//		
+//		Map<String, String> result = new HashMap<>();
+//		if(fundingmemrepo.findByMemberno(Integer.parseInt(member_no)).size() != 0/*map.get("name").equals("myID")*/) {
+//			MemberEntity target = repo.findByEmail(input_email).get();
+//			result.put("result", "success");
+//			result.put("no", String.valueOf(target.getNo()));
+//            result.put("email", target.getEmail());
+//            result.put("name", target.getName());
+//		}else {
+//			result.put("result", "fail");
+//		}
+//		return result;
+//	}
+	
 		
 }

@@ -1,14 +1,14 @@
 package don.us.member;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import don.us.funding.FundingMemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 
@@ -18,6 +18,9 @@ import lombok.extern.java.Log;
 public class MemberApplicationTest {
 	@Autowired
 	private MemberRepository memberRepo;
+	
+	@Autowired
+	private FundingMemberRepository fundingmemrepo;
 	
 	@Autowired
 	private FriendRepository friendRepo;
@@ -103,4 +106,14 @@ public class MemberApplicationTest {
 		List<FriendEntity> friendList = friendRepo.findByMemberno(6);
 		System.out.println("list " + friendList.toString());
 	}
+	
+	@Test
+	public void leave() {
+		String member_no = "4";
+		
+		List list = new ArrayList(); 
+		list = fundingmemrepo.findByMemberno(Integer.parseInt(member_no));
+		System.out.println(list);
+	}
+	
 }
