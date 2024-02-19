@@ -177,12 +177,13 @@ public class AdminControllerTest {
 			for(int j=0; j<dontSettlementMemberList.size(); j++) {
 				settlement(dontSettlementMemberList.get(j));
 				if(checkSettlementIsComplete(dontSettlementMemberList.get(j).getFundingno())) {
+					//정산 끝났으니 상태 4로 업뎃, break는 쳐줘도 되지만 어차피 끝날거라 굳이?
+					System.out.println("상태 업뎃 전: "+fundlist.get(i).getState());
+					fundlist.get(i).setState(4);
+					fundingRepo.save(fundlist.get(i));
+					System.out.println("상태 업뎃 후: "+fundlist.get(i).getState());
 				}
 			}
-			System.out.println("상태 업뎃 전: "+fundlist.get(i).getState());
-			fundlist.get(i).setState(4);
-			fundingRepo.save(fundlist.get(i));
-			System.out.println("상태 업뎃 후: "+fundlist.get(i).getState());
 		}
 		//해당 펀딩에 정산 안받은 사람 있나 확인(settlement_amount가 null이어야함)
 		//만약 정산 안받은 사람 존재 시 will_settlement_amount의 값을 settlement_amount로 넣어줌
