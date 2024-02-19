@@ -268,5 +268,30 @@ public class FundingMemberController {
 //		System.out.println("result: " + result);
 //		return result;
 //	}
+	
+	@PostMapping("modifycard")
+	public String modifycard(@RequestBody Map map) {
+//		Map<String, String> result = new HashMap<>();
+		String fundMemberNo_string = (String)map.get("fundingMemberNo");
+		int fundMemberNo = Integer.parseInt(fundMemberNo_string);
+		String fundingNo_string = (String)map.get("fundingNo");
+		int fundingNo = Integer.parseInt(fundingNo_string);
+		FundingMemberEntity fundMemberEntity = repo.findByFundingnoAndMemberno(fundingNo, fundMemberNo);
+		System.out.println("fundMemberEntity: " + fundMemberEntity);
+		
+		int payment_no = Integer.valueOf((String)map.get("payment_no"));
+		fundMemberEntity.setPaymentno(payment_no);
+		try {
+			repo.save(fundMemberEntity);
+			
+			System.out.println("카드 수정 완료");
+			
+			return "success";
+		}catch(Exception e) {
+			System.out.println("카드 수정 실패");
+			return "fail";
+		}
+	}
+	
 
 }
