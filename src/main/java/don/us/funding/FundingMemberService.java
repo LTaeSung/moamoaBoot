@@ -47,6 +47,7 @@ public class FundingMemberService {
 	public Map setMapOfFundingAndMember(Map fund) {
 		Map target = new HashMap<>();
 		target.put("fundingNo", fund.get("fundingNo"));
+		target.put("fundingMemberNo", fund.get("fundingMemberNo"));
 		target.put("title", fund.get("fundingTitle"));
 		target.put("state", fund.get("state"));
 		target.put("myPayAmount", fund.get("myPayAmount"));
@@ -69,9 +70,11 @@ public class FundingMemberService {
 				//메세지 스테이트를 추가한다?
 				result.put("stateMessage", "펀드에 참여해주세요!");
 				result.put("color", "red");
+				result.put("messageNo", 0);
 			}else {
 				result.put("stateMessage", "초대중이에요!");
 				result.put("color", "black");
+				result.put("messageNo", 1);
 			}
 			break;
 		case 1://진행중
@@ -79,27 +82,33 @@ public class FundingMemberService {
 			if((boolean)fund.get("giveup") == false) {
 				result.put("stateMessage", "진행중");
 				result.put("color", "black");
+				result.put("messageNo", 2);
 			}else {
 				result.put("stateMessage", "중도포기");
 				result.put("color", "black");
+				result.put("messageNo", 3);
 			}
 			break;
 		case 2://투표중
 			if((int)fund.get("vote") == 0) {
 				result.put("stateMessage", "결과를 입력해주세요!");
 				result.put("color", "red");
+				result.put("messageNo", 4);
 			}else {
 				result.put("stateMessage", "집계중");
 				result.put("color", "black");
+				result.put("messageNo", 5);
 			}
 			break;
 		case 3://정산중
 			if(fund.get("settlementAmount") == null) {
 				result.put("stateMessage", "정산받아가세요!");
 				result.put("color", "red");
+				result.put("messageNo", 6);
 			}else {
 				result.put("stateMessage", "정산중");
 				result.put("color", "black");
+				result.put("messageNo", 7);
 			}
 			break;
 		}
