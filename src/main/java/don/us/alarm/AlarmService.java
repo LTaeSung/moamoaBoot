@@ -39,6 +39,11 @@ public class AlarmService {
 		makeAlarm(fundingMember.getMemberno(), content, link, 0);
 	}
 	
+	public void makeFundStartAlarm(FundingMemberEntity fundingMember) {
+		String content = "[" + fundingMember.getFundtitle() + "] 챌린지가 시작되었습니다.";
+		String link = "/funding/info?no="+fundingMember.getFundingno();
+		makeAlarm(fundingMember.getMemberno(), content, link, 0);
+	}
 	
 	public void makePayAlarm(int memberno, String content, int fundingno) {
 		String link = "/funding/info?no="+fundingno;

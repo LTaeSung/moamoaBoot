@@ -152,6 +152,10 @@ public class AdminController {
 				fundingService.setFundStart(list.get(i).getFundingno());
 				System.out.println("펀딩넘버 "+list.get(i).getFundingno()+"번 시작됨");
 				//펀딩넘버 갖다가 남은 참여 전체 인원한테 시작알림 보내줘도 좋을듯?
+				List<FundingMemberEntity> alarmList = fundingMemberRepo.findByFundingno(list.get(i).getNo());
+				for(int j=0; j<alarmList.size(); j++) {
+					alarmService.makeFundStartAlarm(alarmList.get(j));
+				}
 			} else System.out.println("펀딩넘버 "+list.get(i).getFundingno()+"번 시작안됨");
 		}
 	}
