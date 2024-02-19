@@ -80,6 +80,38 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 		""")
 	public List<Map> getJoinedFundingList_End(String member_no);
 	
+	@Query(value="""
+			select
+				m.no as fundingMemberNo,
+				f.no as fundingNo,
+				f.title as fundingTitle,
+				m.monthlypaymentdate as monthlyPaymentDate,
+				m.monthlypaymentamount as monthlyPaymentAmmount,
+	
+				f.photo as photo,
+				
+				m.totalpayamount as myPayAmount,
+				f.collectedpoint as totalPayAmount,
+				
+				f.startdate as startDate,
+				f.fundingduedate as fundingDueDate,
+				f.voteduedate as voteDueDate,
+				f.settlementduedate as settlementDueDate,
+				
+				m.participationdate as participationDate,
+				m.giveup as giveup,
+				m.vote as vote,
+				m.settlementamount as settlementAmount,
+				f.state as state
+			from 
+				FundingMemberEntity m join FundingEntity f
+			    on m.fundingno = f.no
+			where 
+				m.fundingno = %?1%
+				and
+				m.memberno = %?2%
+		""")
+	public Map getMyFundInfo(String fund_no, String member_no);
 	
 	@Query(value = "SELECT * FROM funding_member"
 			+ " WHERE participation_date IS NULL"

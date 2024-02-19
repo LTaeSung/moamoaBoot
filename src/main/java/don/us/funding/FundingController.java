@@ -107,17 +107,11 @@ public class FundingController {
 		return fundingEntityList;
 	}
 
-	@GetMapping("/host/{no}")
-	public FundingEntity show(@PathVariable int no) {
-//		FundingEntity> result = new ArrayList<>();
-		FundingEntity result = null;
-		result = repo.findById(no).get();
-//		repo.findById(no).ifPresent((data) -> {
-//			result = data;
-//		});
+	@GetMapping("/info")
+	public Map show(@RequestParam("no") String no) {
+		Map result = new HashMap<>();
+		result.put("fundEntity", repo.findById(Integer.valueOf(no)).get());
 		return result;
-//		System.out.println("result: " + result);
-//		return result;
 	}
 
 	@GetMapping("/regularPaymentList")
