@@ -1,7 +1,5 @@
 package don.us.admin;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -10,18 +8,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import don.us.alarm.AlarmService;
+import don.us.funding.FundingController;
 import don.us.funding.FundingEntity;
-import don.us.funding.FundingMemberController;
 import don.us.funding.FundingMemberEntity;
 import don.us.funding.FundingMemberRepository;
 import don.us.funding.FundingRepository;
 import don.us.funding.FundingService;
+import don.us.member.MemberEntity;
+import don.us.member.MemberRepository;
+import don.us.point.FundingHistoryEntity;
 import don.us.point.FundingHistoryRepository;
 import don.us.point.RepaymentRepository;
 import util.file.HandleDays;
 
 @SpringBootTest
 public class AdminControllerTest {
+	@Autowired
+	private MemberRepository memberRepo;
+	
 	@Autowired
 	private FundingHistoryRepository fundingHistoryRepo;
 	
@@ -41,7 +45,7 @@ public class AdminControllerTest {
 	private FundingService fundingService;
 	
 	@Autowired
-	private FundingMemberController fundingMemberController;
+	private FundingController fundingController;
 	
 	@Autowired
 	private HandleDays handleDays;
@@ -113,7 +117,7 @@ public class AdminControllerTest {
 					computeAndSetSettlementAccount(fundlist.get(i));
 				}
 			}
-			//펀드 status 3으로 업뎃, settlement_due_date 업데이트해줌
+			//펀드 status 3으로 업뎃, settlement_due_date 7일 후로 업데이트해줌
 			System.out.println("상태 업뎃 전: "+fundlist.get(i).getState()+" 정산마감일"+fundlist.get(i).getSettlementduedate());
 			fundlist.get(i).setState(3);
 			fundlist.get(i).setSettlementduedate(handleDays.addDays(fundlist.get(i).getVoteduedate(), 7));
@@ -166,15 +170,62 @@ public class AdminControllerTest {
 		alarmService.makeSettlmentAlarm(member.getMemberno(), member.getFundingno());
 	}
 	
+	@Transactional
 	@Test
 	public void setFundStatus3To4() {
 		//fund status=3이고 settlement_due_date<now()인 펀드 리스트 불러옴
-		//해당 펀딩에 정산 안받은 사람 있나 확인(settlement_amount가 null이어야함)
-		//만약 정산 안받은 사람 존재 시 will_settlement_amount의 값을 settlement_amount로 넣어줌
-		//will_settlement_amount로 해당 멤버의 펀드포인트거래내역을 만듦(0인사람은 제외?)
-		//남은 인원이 없으면 state를 4로 바꿈
+		List<FundingEntity> fundlist = fundingRepo.getSettlementDueList();
+		for(int i=0; i<fundlist.size(); i++) {
+			List<FundingMemberEntity> dontSettlementMemberList = fundingMemberRepo.needSettlementFundMemberList(fundlist.get(i).getNo());
+			
+			for(int j=0; j<dontSettlementMemberList.size(); j++) {
+				settlement(dontSettlementMemberList.get(j));
+				if(checkSettlementIsComplete(dontSettlementMemberList.get(j).getFundingno())) {
+					//정산 끝났으니 상태 4로 업뎃, break는 쳐줘도 되지만 어차피 끝날거라 굳이?
+					System.out.println("상태 업뎃 전: "+fundlist.get(i).getState());
+					fundlist.get(i).setState(4);
+					fundingRepo.save(fundlist.get(i));
+					System.out.println("상태 업뎃 후: "+fundlist.get(i).getState());
+				}
+			}
+		}
 	}
-	//정산받기
-	//체크
-	//남은인원없으면 종료상태로 이전
+	@Test //정산받을 FundingMemberEntity의 정산금 업뎃, 펀드포인트 거래내역 만들고 회원정보에 포인트 업데이트치고 정산알림
+	public void settlement(FundingMemberEntity member) {
+		System.out.println("정산금 제대로 들어가나 확인(세팅전) "+member.getSettlementamount());
+		member.setSettlementamount(member.getWillsettlementamount()+"");
+		System.out.println("정산금 제대로 들어가나 확인(세팅후) "+member.getSettlementamount());
+		fundingMemberRepo.save(member);
+		addSettlementPointToMember(member);
+		makeSettlementFundingHistory(member);
+		alarmService.makeSettlementEndAlarm(member);
+	}
+	@Test //펀드포인트 거래내역 만들기 (정산금이 0원일때는 제외)
+	public void makeSettlementFundingHistory(FundingMemberEntity member) {
+		if(member.getWillsettlementamount() != 0) {
+			//회원번호, 펀딩번호, 거래금액(정산금액), 방향=1(true)로 세팅 후 save 치기
+			FundingHistoryEntity fundingHistory = new FundingHistoryEntity();
+			System.out.println("세팅 전 확인"+fundingHistory);
+			fundingHistory.setMemberno(member.getMemberno());
+			fundingHistory.setFundingno(member.getFundingno());
+			fundingHistory.setAmount(member.getWillsettlementamount());
+			fundingHistory.setDirection(true);
+			fundingHistoryRepo.save(fundingHistory);
+			System.out.println("세팅 후 확인"+fundingHistory);
+		}
+	}
+	@Test //회원정보에 보유 포인트 업데이트
+	public void addSettlementPointToMember(FundingMemberEntity member) {
+		MemberEntity mem = memberRepo.findById(member.getMemberno()).get();
+		System.out.println("회원정보 업데이트 전 확인"+mem);
+		mem.setPoint(mem.getPoint() + member.getWillsettlementamount());
+		memberRepo.save(mem);
+		System.out.println("회원정보 업데이트 후 확인"+mem);
+	}
+	@Test //해당 펀딩에서 정산 안 한 사람 있는지 확인
+	public boolean checkSettlementIsComplete(int fundingno) {
+		List<FundingMemberEntity> dontSettlementMemberList = fundingMemberRepo.needSettlementFundMemberList(fundingno);
+		if(dontSettlementMemberList.size() == 0) {System.out.println("확인 true"); return true;}
+		else {System.out.println("확인 false"); return false;}
+	}
 }

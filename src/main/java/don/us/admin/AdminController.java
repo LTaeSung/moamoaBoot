@@ -1,17 +1,16 @@
 package don.us.admin;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import don.us.alarm.AlarmService;
+import don.us.funding.FundingController;
 import don.us.funding.FundingEntity;
 import don.us.funding.FundingMemberEntity;
 import don.us.funding.FundingMemberRepository;
@@ -21,6 +20,7 @@ import don.us.point.FundingHistoryEntity;
 import don.us.point.FundingHistoryRepository;
 import don.us.point.RepaymentEntity;
 import don.us.point.RepaymentRepository;
+import util.file.HandleDays;
 
 @CrossOrigin(origins = {"*"})
 @RestController
@@ -44,6 +44,15 @@ public class AdminController {
 	@Autowired
 	private FundingService fundingService;
 	
+	@Autowired
+	private AdminService adminService;
+	
+	@Autowired
+	private FundingController fundingController;
+	
+	@Autowired
+	private HandleDays handleDays;
+	
 	@GetMapping("/regularPaymentList")
 	public List<FundingMemberEntity> regularPaymentList(){
 		List<FundingMemberEntity> list = fundingService.needPayMemberList();
@@ -54,36 +63,26 @@ public class AdminController {
 	public String regularPayment() {
 		List<FundingMemberEntity> list = fundingService.needPayMemberList();
 		for(int i=0; i<list.size(); i++) {
-			Optional<FundingMemberEntity> fundMem = fundingMemberRepo.findById(list.get(i).getNo());
-			Optional<FundingEntity> fund = fundingRepo.findById( fundMem.get().getFundingno() );
+			FundingMemberEntity fundMem = fundingMemberRepo.findById(list.get(i).getNo()).get();
+			FundingEntity fund = fundingRepo.findById( fundMem.getFundingno() ).get();
 			try {
 				//펀딩결제 진행
-				FundingHistoryEntity fundingHistory = 
-						makeFundingHistory(fundMem.get().getMemberno(), fundMem.get().getFundingno(), fundMem.get().getMonthlypaymentamount());
+				adminService.makePayToFundingFundingHistory(fundMem.getMemberno(), fundMem.getFundingno(), fundMem.getMonthlypaymentamount());
 				updateTotalPayAmount(fundMem, fund);
 				
 				//결제 성공 알람
-				String content = "챌린지 ["+fund.get().getTitle()+"]의 이번 달 결제가 완료되었습니다.";
-				alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
+				String content = "챌린지 ["+fund.getTitle()+"]의 이번 달 결제가 완료되었습니다.";
+				alarmService.makePayAlarm(fundMem.getMemberno(), content, fundMem.getFundingno());
 			} catch(Exception e) {
 				//여기서 해당 멤버에게 알람을 보내주고, 재결제 테이블에 정보 추가함
-				String content = "챌린지 ["+fund.get().getTitle()+"]의 이번 달 결제에 실패했습니다. 자동으로 재결제가 진행될 예정이오니 해당 펀딩에 등록된 결제 카드를 다른 카드로 변경해주세요.";
-				alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
+				String content = "챌린지 ["+fund.getTitle()+"]의 이번 달 결제에 실패했습니다. 자동으로 재결제가 진행될 예정이오니 해당 펀딩에 등록된 결제 카드를 다른 카드로 변경해주세요.";
+				alarmService.makePayAlarm(fundMem.getMemberno(), content, fundMem.getFundingno());
 				RepaymentEntity repay = new RepaymentEntity();
 				repay.setFundingmemberno(list.get(i).getNo());
 				repayRepo.save(repay);
 			}
 		}
 		return "success";
-	}
-	
-	@Transactional
-	private FundingHistoryEntity makeFundingHistory(int memberno, int fundingno, int amount) throws Exception {
-		FundingHistoryEntity fundingHistory = new FundingHistoryEntity();
-		fundingHistory.setMemberno(memberno);
-		fundingHistory.setFundingno(fundingno);
-		fundingHistory.setAmount(amount);
-		return fundingHistoryRepo.save(fundingHistory);
 	}
 	
 	//재결제 목록을 전부 불러옴
@@ -98,27 +97,23 @@ public class AdminController {
 	public String doRepay() throws Exception {
 		List<RepaymentEntity> repayList = repayRepo.findAll();
 		for(int i=0; i<repayList.size(); i++) {
-			Optional<FundingMemberEntity> fundMem = fundingMemberRepo.findById(repayList.get(i).getFundingmemberno());
-			Optional<FundingEntity> fund = fundingRepo.findById( fundMem.get().getFundingno() );
+			FundingMemberEntity fundMem = fundingMemberRepo.findById(repayList.get(i).getFundingmemberno()).get();
+			FundingEntity fund = fundingRepo.findById( fundMem.getFundingno() ).get();
 			try {
-//				if(fundMem.get().getNo() == 127) throw new Exception(); 재결제 실패 데이터 만들기 위해 일부러 에러 유발하는 코드
 				//재결제 시도
-				makeFundingHistory(fundMem.orElseThrow().getMemberno(), fundMem.orElseThrow().getFundingno(), fundMem.orElseThrow().getMonthlypaymentamount());
+				adminService.makePayToFundingFundingHistory(fundMem.getMemberno(), fundMem.getFundingno(), fundMem.getMonthlypaymentamount());
 				updateTotalPayAmount(fundMem, fund);
 				
 				//재결제 성공 알림 보내고 테이블에서 삭제
-				String content = "챌린지 ["+fund.get().getTitle()+"]의 재결제에 성공했습니다.";
-				alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
+				String content = "챌린지 ["+fund.getTitle()+"]의 재결제에 성공했습니다.";
+				alarmService.makePayAlarm(fundMem.getMemberno(), content, fundMem.getFundingno());
 				repayRepo.deleteById(repayList.get(i).getNo());
 			} catch(Exception e) {
-				//만약 이미 실패한 횟수가 2이면 방금 한 재결제로 3회째 실패인 것이므로 해당 멤버 강제 중도포기로 전환, 최종 실패 알람 보냄, 테이블에서 삭제
+				//만약 이미 실패한 횟수가 2인데 또 실패 시 방금 한 재결제로 3회째 실패인 것이므로 해당 멤버 강제 중도포기로 전환, 최종 실패 알람 보냄, 테이블에서 삭제
 				if(repayList.get(i).getRepaycount() >= 2) {
-//					fundMem.get().setGiveup(true);
-//					//펀딩 멤버 수 1 줄여야함!!!
-//					fundingMemberRepo.save(fundMem.get());
-					
-					String content = "챌린지 ["+fund.get().getTitle()+"]의 재결제에 3회 실패했습니다. 자동으로 중도포기 처리됩니다.";
-					alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
+					fundingController.giveupMethod(fundMem, fund);
+					String content = "챌린지 ["+fund.getTitle()+"]의 재결제에 3회 실패했습니다. 자동으로 중도포기 처리됩니다.";
+					alarmService.makePayAlarm(fundMem.getMemberno(), content, fundMem.getFundingno());
 					
 					repayRepo.deleteById(repayList.get(i).getNo());
 				} else {
@@ -127,8 +122,8 @@ public class AdminController {
 					repayRepo.save(repayList.get(i));
 
 					//재결제 실패 알림
-					String content = "챌린지 ["+fund.get().getTitle()+"]의 재결제에 실패했습니다. 자동으로 재결제가 진행될 예정이오니 해당 펀딩에 등록된 결제 카드를 다른 카드로 변경해주세요.";
-					alarmService.makePayAlarm(fundMem.get().getMemberno(), content, fundMem.get().getFundingno());
+					String content = "챌린지 ["+fund.getTitle()+"]의 재결제에 실패했습니다. 자동으로 재결제가 진행될 예정이오니 해당 펀딩에 등록된 결제 카드를 다른 카드로 변경해주세요.";
+					alarmService.makePayAlarm(fundMem.getMemberno(), content, fundMem.getFundingno());
 				}
 			}
 		}
@@ -136,32 +131,23 @@ public class AdminController {
 	}
 	
 	//결제 후 해당 펀딩에 모인 총 포인트, 결제한 멤버의 총결제금액 업데이트 치는 함수
-	private void updateTotalPayAmount(Optional<FundingMemberEntity> fundMem, Optional<FundingEntity> fund) {
+	private void updateTotalPayAmount(FundingMemberEntity fundMem, FundingEntity fund) {
 		//해당 펀딩 결제된 포인트에 돈 더해서 업데이트
-		fund.orElseThrow().setCollectedpoint( fund.orElseThrow().getCollectedpoint() + fundMem.get().getMonthlypaymentamount() );
-		fundingRepo.save(fund.get());
+		fund.setCollectedpoint( fund.getCollectedpoint() + fundMem.getMonthlypaymentamount() );
+		fundingRepo.save(fund);
 		//해당 펀딩 멤버의 총 결제금액에 더해서 업데이트
-		fundMem.get().setTotalpayamount( fundMem.get().getTotalpayamount() + fundMem.get().getMonthlypaymentamount() );
-		fundingMemberRepo.save(fundMem.get());
+		fundMem.setTotalpayamount( fundMem.getTotalpayamount() + fundMem.getMonthlypaymentamount() );
+		fundingMemberRepo.save(fundMem);
 	}
-	
-	public void startFunding() {
-		//
-	}
-	//투표안했으면 거절로
 	
 	public void setFundStatus0To1() {
-		//펀딩 참여일이 없는 fundingmember 목록을 불러와서
-		//for문으로 isExpired를 돌리고 true(아직 초대마감일이 오늘 안 지남)인 애들은 리스트에서 삭제
-		//오잉 근데 쿼리문에서 거르면 되는거 아닌가..?? 초대일에 7일 더한거랑 now() 비교함 <- 아 jpql에서는 날짜함수 지원을 안해주는군요...
+		//초대마감일이 지났는데 펀딩 참여일이 없는(승낙도 거절도 안한) fundingmember 목록을 불러와서
 		List<FundingMemberEntity> list = fundingMemberRepo.getDontAcceptRefuseInWeekMemberList();
-		//최종적으로 남는건 '초대마감일이 지났으면서 펀딩참여일이 없는(승낙도 거절도 안한) fundingmember'들
-		//저 걸러진 리스트를 가지고 병천씨가 쓴거랑 같은 3단계(펀딩멤버삭제->펀딩시작확인->되면펀딩시작)를 돌림
-		//또 빼먹은거 없겠지???
 		for(int i=0; i<list.size(); i++) {
+			//해당 정보를 펀딩멤버 테이블에서 삭제해버림
 			fundingMemberRepo.delete(list.get(i));
 			System.out.println("펀딩멤버넘버 "+list.get(i).getNo()+"번 삭제됨");
-			//승낙거절 안한 멤버한테 따로 알림이...가야할까? 자동 거절됐다고..
+			//앞에서 펀딩멤버를 삭제했으니 이제 펀딩을 시작할 수 있는지 확인, 가능하면 start(status를 0에서 1로)
 			if(fundingService.checkStartFundingWhenAcceptFund(list.get(i).getFundingno())) {
 				fundingService.setFundStart(list.get(i).getFundingno());
 				System.out.println("펀딩넘버 "+list.get(i).getFundingno()+"번 시작됨");
@@ -171,6 +157,67 @@ public class AdminController {
 	}
 	
 	public void setFundStatus1To2() {
-		
+		System.out.println("실행됨");
+		//펀드 상태=1 and 펀드 마감일<now()인 목록 가져옴
+		List<FundingEntity> fundlist = fundingRepo.getFundingDueList();
+		System.out.println("펀딩 개수: "+fundlist.size());
+		for(int i=0; i<fundlist.size(); i++) {
+			//펀드 상태를 1->2로 업뎃, 투표 마감일을 마감일(funding_due_date)+7일 해서 넣어줌
+			System.out.println("펀드상태 업뎃전 확인"+fundlist.get(i).getState()+" 펀드 투표기한 들어가기전 확인: "+fundlist.get(i).getVoteduedate());
+			fundlist.get(i).setState(2);
+			fundlist.get(i).setVoteduedate(handleDays.addDays(fundlist.get(i).getFundingduedate(), 7));
+			System.out.println("펀드상태 업뎃 확인"+fundlist.get(i).getState()+" 펀드 투표기한 잘 들어갔나 확인: "+fundlist.get(i).getVoteduedate());
+			fundingRepo.save(fundlist.get(i));
+			
+			//해당 펀딩 참여자중에 중도포기 안 한(giveup=false) 사람들 목록 가져와서 투표하라고 알림보냄
+			List<FundingMemberEntity> completeMemberList = fundingMemberRepo.getCompleteMemberList(fundlist.get(i).getNo());
+			for(int j=0; j<completeMemberList.size(); j++) {
+				alarmService.makeVoteAlarm(completeMemberList.get(j).getMemberno(), fundlist.get(i).getNo());
+				System.out.println("알람갔어용");
+			}
+		}	
+	}
+	
+	public void setFundStatus2To3() {
+		System.out.println("실행됨");
+		//펀드상태=2 and 투표마감일<now()인 목록 가져옴
+		List<FundingEntity> fundlist = fundingRepo.getVoteDueList();
+		System.out.println("펀딩 개수: "+fundlist.size());
+		//멤버 중 투표 안 한 인원이 있으면(vote=0) 전부 실패(2)로 업뎃
+		for(int i=0; i<fundlist.size(); i++) {
+			List<FundingMemberEntity> dontVoteMemberList = fundingMemberRepo.needVoteFundMemberList(fundlist.get(i).getNo());
+			
+			for(int j=0; j<dontVoteMemberList.size(); j++) {
+				adminService.vote(dontVoteMemberList.get(j), 2);
+				if(adminService.checkVoteIsComplete(dontVoteMemberList.get(j).getFundingno())) {
+					adminService.computeAndSetSettlementAccount(fundlist.get(i));
+				}
+			}
+			//펀드 status 3으로 업뎃, settlement_due_date 7일 후로 업데이트해줌
+			System.out.println("상태 업뎃 전: "+fundlist.get(i).getState()+" 정산마감일"+fundlist.get(i).getSettlementduedate());
+			fundlist.get(i).setState(3);
+			fundlist.get(i).setSettlementduedate(handleDays.addDays(fundlist.get(i).getVoteduedate(), 7));
+			fundingRepo.save(fundlist.get(i));
+			System.out.println("상태 업뎃 후: "+fundlist.get(i).getState()+" 정산마감일"+fundlist.get(i).getSettlementduedate());
+		}
+	}
+	
+	public void setFundStatus3To4() {
+		//fund status=3이고 settlement_due_date<now()인 펀드 리스트 불러옴
+		List<FundingEntity> fundlist = fundingRepo.getSettlementDueList();
+		for(int i=0; i<fundlist.size(); i++) {
+			List<FundingMemberEntity> dontSettlementMemberList = fundingMemberRepo.needSettlementFundMemberList(fundlist.get(i).getNo());
+			
+			for(int j=0; j<dontSettlementMemberList.size(); j++) {
+				adminService.settlement(dontSettlementMemberList.get(j));
+				if(adminService.checkSettlementIsComplete(dontSettlementMemberList.get(j).getFundingno())) {
+					//정산 끝났으니 상태 4로 업뎃, break는 쳐줘도 되지만 어차피 끝날거라 굳이?
+					System.out.println("상태 업뎃 전: "+fundlist.get(i).getState());
+					fundlist.get(i).setState(4);
+					fundingRepo.save(fundlist.get(i));
+					System.out.println("상태 업뎃 후: "+fundlist.get(i).getState());
+				}
+			}
+		}
 	}
 }

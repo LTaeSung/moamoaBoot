@@ -140,11 +140,17 @@ public class FundingMemberController {
 
 	@GetMapping("/info")
 	public Map myFundingInfo(@RequestParam("no") String no, @RequestParam("member_no") String member_no){
-		System.out.println("실행은되나");
-		Map row = repo.getMyFundInfo(no, member_no);
-		Map result = new HashMap<>();
-		result.put("myFundInfo", service.setMapOfFundingAndMember(row));
-		return result;
+		Map row = null;
+		try {
+			row = repo.getMyFundInfo(no, member_no);
+
+			System.out.println("row: " + row);
+			Map result = new HashMap<>();
+			result.put("myFundInfo", service.setMapOfFundingAndMember(row));
+			return result;	
+		}catch(Exception e) {
+			return row;
+		}
 	}
 	
 	@GetMapping("/challenge/{fund_no}")
@@ -159,13 +165,11 @@ public class FundingMemberController {
 	public String modifycard(@RequestBody Map map) {
 		System.out.println("Map.fundingNo: " + map.get("fundingNo"));
 		System.out.println("Map.fundingNo: " + map.get("memberNo"));
-//		Map<String, String> result = new HashMap<>();
-		String fundMemberNo_string = (String)map.get("memberNo");
+ 		String fundMemberNo_string = (String)map.get("memberNo");
 		int fundMemberNo = Integer.parseInt(fundMemberNo_string);
 		System.out.println("fundMemberNo: " + fundMemberNo);
 		String fundingNo_string = (String)map.get("fundingNo");
 		int fundingNo = Integer.parseInt(fundingNo_string);
-//		int fundingNo = (int)map.get("fundingNo");
 		FundingMemberEntity fundMemberEntity = repo.findByFundingnoAndMemberno(fundingNo, fundMemberNo);
 		System.out.println("fundMemberEntity: " + fundMemberEntity);
 		
