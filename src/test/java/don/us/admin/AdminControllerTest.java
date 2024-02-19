@@ -196,6 +196,7 @@ public class AdminControllerTest {
 		System.out.println("정산금 제대로 들어가나 확인(세팅후) "+member.getSettlementamount());
 		fundingMemberRepo.save(member);
 		makeSettlementFundingHistory(member);
+		alarmService.makeSettlementEndAlarm(member);
 	}
 	@Test
 	public void makeSettlementFundingHistory(FundingMemberEntity member) {
