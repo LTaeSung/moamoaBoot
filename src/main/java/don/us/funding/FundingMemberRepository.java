@@ -137,4 +137,11 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 			+ " AND vote = 1"
 			, nativeQuery = true)
 	public List<FundingMemberEntity> getsuccessFundMemberList(int funding_no);
+	
+	@Query(value = "SELECT * FROM funding_member"
+			+ " WHERE funding_no = ?1"
+			+ " AND giveup = false"
+			+ " AND settlement_amount IS NULL"
+			, nativeQuery = true)
+	public List<FundingMemberEntity> needSettlementFundMemberList(int funding_no);
 }
