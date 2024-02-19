@@ -8,12 +8,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import don.us.alarm.AlarmService;
+import don.us.funding.FundingController;
 import don.us.funding.FundingEntity;
-import don.us.funding.FundingMemberController;
 import don.us.funding.FundingMemberEntity;
 import don.us.funding.FundingMemberRepository;
 import don.us.funding.FundingRepository;
 import don.us.funding.FundingService;
+import don.us.member.MemberEntity;
+import don.us.member.MemberRepository;
 import don.us.point.FundingHistoryEntity;
 import don.us.point.FundingHistoryRepository;
 import don.us.point.RepaymentRepository;
@@ -21,6 +23,9 @@ import util.file.HandleDays;
 
 @SpringBootTest
 public class AdminControllerTest {
+	@Autowired
+	private MemberRepository memberRepo;
+	
 	@Autowired
 	private FundingHistoryRepository fundingHistoryRepo;
 	
@@ -40,7 +45,7 @@ public class AdminControllerTest {
 	private FundingService fundingService;
 	
 	@Autowired
-	private FundingMemberController fundingMemberController;
+	private FundingController fundingController;
 	
 	@Autowired
 	private HandleDays handleDays;
@@ -184,24 +189,21 @@ public class AdminControllerTest {
 				}
 			}
 		}
-		//해당 펀딩에 정산 안받은 사람 있나 확인(settlement_amount가 null이어야함)
-		//만약 정산 안받은 사람 존재 시 will_settlement_amount의 값을 settlement_amount로 넣어줌
-		//will_settlement_amount로 해당 멤버의 펀드포인트거래내역을 만듦(0인사람은 제외?)
-		//남은 인원이 없으면 state를 4로 바꿈
 	}
-	@Test //정산받을 FundingMemberEntity의 정산금 업뎃, 펀드포인트 거래내역 만들기
+	@Test //정산받을 FundingMemberEntity의 정산금 업뎃, 펀드포인트 거래내역 만들고 회원정보에 포인트 업데이트치고 정산알림
 	public void settlement(FundingMemberEntity member) {
 		System.out.println("정산금 제대로 들어가나 확인(세팅전) "+member.getSettlementamount());
 		member.setSettlementamount(member.getWillsettlementamount()+"");
 		System.out.println("정산금 제대로 들어가나 확인(세팅후) "+member.getSettlementamount());
 		fundingMemberRepo.save(member);
+		addSettlementPointToMember(member);
 		makeSettlementFundingHistory(member);
 		alarmService.makeSettlementEndAlarm(member);
 	}
-	@Test
+	@Test //펀드포인트 거래내역 만들기 (정산금이 0원일때는 제외)
 	public void makeSettlementFundingHistory(FundingMemberEntity member) {
-		//펀드포인트 거래내역 만들기 <- 정산금이 0원일때는 뺌
 		if(member.getWillsettlementamount() != 0) {
+			//회원번호, 펀딩번호, 거래금액(정산금액), 방향=1(true)로 세팅 후 save 치기
 			FundingHistoryEntity fundingHistory = new FundingHistoryEntity();
 			System.out.println("세팅 전 확인"+fundingHistory);
 			fundingHistory.setMemberno(member.getMemberno());
@@ -211,8 +213,14 @@ public class AdminControllerTest {
 			fundingHistoryRepo.save(fundingHistory);
 			System.out.println("세팅 후 확인"+fundingHistory);
 		}
-		//회원번호, 펀딩번호, 거래금액(정산금액), 방향=1(true)로 세팅 후 save 치기
-		
+	}
+	@Test //회원정보에 보유 포인트 업데이트
+	public void addSettlementPointToMember(FundingMemberEntity member) {
+		MemberEntity mem = memberRepo.findById(member.getMemberno()).get();
+		System.out.println("회원정보 업데이트 전 확인"+mem);
+		mem.setPoint(mem.getPoint() + member.getWillsettlementamount());
+		memberRepo.save(mem);
+		System.out.println("회원정보 업데이트 후 확인"+mem);
 	}
 	@Test //해당 펀딩에서 정산 안 한 사람 있는지 확인
 	public boolean checkSettlementIsComplete(int fundingno) {
