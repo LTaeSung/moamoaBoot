@@ -104,3 +104,65 @@ CHANGE COLUMN `settlement_amount` `settlement_amount` VARCHAR(255) NULL DEFAULT 
 
 ALTER TABLE `moamoaDonDon`.`funding_member` 
 ADD COLUMN `will_settlement_amount` INT NULL DEFAULT '0' AFTER `settlement_amount`;
+ALTER TABLE `moamoaDonDon`.`point_transaction_history` 
+DROP FOREIGN KEY `FK_member_TO_point_transaction_history_1`;
+ALTER TABLE `moamoaDonDon`.`point_transaction_history` 
+ADD CONSTRAINT `FK_member_TO_point_transaction_history_1`
+  FOREIGN KEY (`member_no`)
+  REFERENCES `moamoaDonDon`.`member` (`no`)
+  ON DELETE NO ACTION;
+ALTER TABLE `moamoaDonDon`.`alarm` 
+DROP FOREIGN KEY `FK_member_TO_alarm_1`;
+ALTER TABLE `moamoaDonDon`.`alarm` 
+ADD CONSTRAINT `FK_member_TO_alarm_1`
+  FOREIGN KEY (`member_no`)
+  REFERENCES `moamoaDonDon`.`member` (`no`)
+  ON DELETE CASCADE;
+  ALTER TABLE `moamoaDonDon`.`friend` 
+DROP FOREIGN KEY `FK_member_TO_friend_1`,
+DROP FOREIGN KEY `FK_member_TO_friend_2`;
+ALTER TABLE `moamoaDonDon`.`friend` 
+ADD CONSTRAINT `FK_member_TO_friend_1`
+  FOREIGN KEY (`member_no`)
+  REFERENCES `moamoaDonDon`.`member` (`no`)
+  ON DELETE CASCADE,
+ADD CONSTRAINT `FK_member_TO_friend_2`
+  FOREIGN KEY (`friend_no`)
+  REFERENCES `moamoaDonDon`.`member` (`no`)
+  ON DELETE CASCADE;
+  ALTER TABLE `moamoaDonDon`.`board` 
+DROP FOREIGN KEY `FK_member_TO_board_1`;
+ALTER TABLE `moamoaDonDon`.`board` 
+ADD CONSTRAINT `FK_member_TO_board_1`
+  FOREIGN KEY (`member_no`)
+  REFERENCES `moamoaDonDon`.`member` (`no`)
+  ON DELETE CASCADE;
+  ALTER TABLE `moamoaDonDon`.`funding` 
+DROP FOREIGN KEY `FK_member_TO_funding_1`;
+ALTER TABLE `moamoaDonDon`.`funding` 
+ADD CONSTRAINT `FK_member_TO_funding_1`
+  FOREIGN KEY (`start_member_no`)
+  REFERENCES `moamoaDonDon`.`member` (`no`)
+  ON DELETE NO ACTION;
+  ALTER TABLE `moamoaDonDon`.`fund_transaction_history` 
+DROP FOREIGN KEY `FK_member_TO_fund_transaction_history_1`;
+ALTER TABLE `moamoaDonDon`.`fund_transaction_history` 
+ADD CONSTRAINT `FK_member_TO_fund_transaction_history_1`
+  FOREIGN KEY (`member_no`)
+  REFERENCES `moamoaDonDon`.`member` (`no`)
+  ON DELETE NO ACTION;
+  ALTER TABLE `moamoaDonDon`.`payment` 
+DROP FOREIGN KEY `FK_member_TO_payment_1`;
+ALTER TABLE `moamoaDonDon`.`payment` 
+ADD CONSTRAINT `FK_member_TO_payment_1`
+  FOREIGN KEY (`member_no`)
+  REFERENCES `moamoaDonDon`.`member` (`no`)
+  ON DELETE CASCADE;
+  ALTER TABLE `moamoaDonDon`.`funding_comment` 
+DROP FOREIGN KEY `FK_funding_TO_funding_comment_1`;
+ALTER TABLE `moamoaDonDon`.`funding_comment` 
+ADD CONSTRAINT `FK_funding_TO_funding_comment_1`
+  FOREIGN KEY (`funding_no`)
+  REFERENCES `moamoaDonDon`.`funding` (`no`)
+  ON DELETE NO ACTION;
+  
