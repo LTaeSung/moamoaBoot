@@ -120,7 +120,7 @@ public class FundingController {
 		return list;
 	}
 
-	private boolean giveupMethod(FundingMemberEntity fundMember, FundingEntity funding) throws ParseException {
+	public boolean giveupMethod(FundingMemberEntity fundMember, FundingEntity funding) throws ParseException {
 		
 		int fund_candi = funding.getCandidate();
 		

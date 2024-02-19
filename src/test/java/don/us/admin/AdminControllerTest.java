@@ -8,8 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import don.us.alarm.AlarmService;
+import don.us.funding.FundingController;
 import don.us.funding.FundingEntity;
-import don.us.funding.FundingMemberController;
 import don.us.funding.FundingMemberEntity;
 import don.us.funding.FundingMemberRepository;
 import don.us.funding.FundingRepository;
@@ -45,7 +45,7 @@ public class AdminControllerTest {
 	private FundingService fundingService;
 	
 	@Autowired
-	private FundingMemberController fundingMemberController;
+	private FundingController fundingController;
 	
 	@Autowired
 	private HandleDays handleDays;
