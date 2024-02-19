@@ -2,7 +2,6 @@ package don.us.funding;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import don.us.admin.AdminService;
 import util.file.HandleDays;
 
 
@@ -33,6 +33,9 @@ public class FundingMemberController {
 	
 	@Autowired
 	private FundingService fundingService;
+	
+	@Autowired
+	private AdminService adminService;
 	
 	@Autowired
 	private HandleDays handleDays;

@@ -7,14 +7,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import don.us.admin.AdminService;
 import util.file.FileController;
 import util.file.FileNameVO;
+import util.file.HandleDays;
 
 @CrossOrigin(origins = { "*" })
 @RestController
@@ -39,6 +39,11 @@ public class FundingController {
 	private FundingMemberService fundingMemberSerivce;
 	@Autowired
 	private FundingMemberRepository fundingmemrepo;
+	@Autowired
+	private AdminService adminService;
+	
+	@Autowired
+	private HandleDays handleDays;
 
 	@Value("${realPath.registed_img_path}")
 	private String registed_img_path;
@@ -228,5 +233,75 @@ public class FundingController {
 		}
 	}
 	
+	@PostMapping("/voteSuccess")
+	public Map<String, Object> voteSuccess(@RequestBody Map<String, String> request) throws ParseException {
+
+		Map<String, Object> result = new HashMap<>();
+		System.out.println(request);
+
+		int funding_no = Integer.parseInt(request.get("fundingNo"));
+		int member_no = Integer.parseInt(request.get("memberNo"));
+
+		FundingEntity funding = repo.findById(funding_no).get();
+		FundingMemberEntity fund_mem = fundingmemrepo.findById(member_no).get();
+		
+		adminService.vote(fund_mem, 1);
+		result.put("result", "vote_success");
+		if(adminService.checkVoteIsComplete(fund_mem.getFundingno())) {
+			adminService.computeAndSetSettlementAccount(funding);
+			funding.setState(3);
+			funding.setSettlementduedate(handleDays.addDays(new Timestamp(System.currentTimeMillis()), 7));
+			repo.save(funding);
+			result.put("result", "vote_success_end");
+		}
+		return result;
+	}
+	
+	@PostMapping("/voteFail")
+	public Map<String, Object> voteFail(@RequestBody Map<String, String> request) throws ParseException {
+
+		Map<String, Object> result = new HashMap<>();
+
+		int funding_no = Integer.parseInt(request.get("fundingNo"));
+		int member_no = Integer.parseInt(request.get("memberNo"));
+
+		FundingEntity funding = repo.findById(funding_no).get();
+		FundingMemberEntity fund_mem = fundingmemrepo.findById(member_no).get();
+		
+		adminService.vote(fund_mem, 2);
+		result.put("result", "vote_fail");
+		if(adminService.checkVoteIsComplete(fund_mem.getFundingno())) {
+			adminService.computeAndSetSettlementAccount(funding);
+			funding.setState(3);
+			funding.setSettlementduedate(handleDays.addDays(new Timestamp(System.currentTimeMillis()), 7));
+			repo.save(funding);
+			result.put("result", "vote_fail_end");
+		}
+		return result;
+	}
+	
+	@PostMapping("/doSettlement")
+	public Map<String, Object> doSettlement(@RequestBody Map<String, String> request) throws ParseException {
+
+		Map<String, Object> result = new HashMap<>();
+		System.out.println(request);
+
+		int funding_no = Integer.parseInt(request.get("fundingNo"));
+		int member_no = Integer.parseInt(request.get("memberNo"));
+
+		FundingEntity funding = repo.findById(funding_no).get();
+		FundingMemberEntity fund_mem = fundingmemrepo.findById(member_no).get();
+		
+		adminService.settlement(fund_mem);
+		result.put("result", "settlememt_success");
+		if(adminService.checkSettlementIsComplete(fund_mem.getFundingno())) {
+			//정산 끝났으니 상태 4로 업뎃, break는 쳐줘도 되지만 어차피 끝날거라 굳이?
+			System.out.println("상태 업뎃 전: "+funding.getState());
+			funding.setState(4);
+			repo.save(funding);
+			result.put("result", "settlement_success_end");
+		}
+		return result;
+	}
 
 }
