@@ -1,7 +1,5 @@
 package don.us.admin;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -16,6 +14,7 @@ import don.us.funding.FundingMemberEntity;
 import don.us.funding.FundingMemberRepository;
 import don.us.funding.FundingRepository;
 import don.us.funding.FundingService;
+import don.us.point.FundingHistoryEntity;
 import don.us.point.FundingHistoryRepository;
 import don.us.point.RepaymentRepository;
 import util.file.HandleDays;
@@ -196,9 +195,23 @@ public class AdminControllerTest {
 		member.setSettlementamount(member.getWillsettlementamount()+"");
 		System.out.println("정산금 제대로 들어가나 확인(세팅후) "+member.getSettlementamount());
 		fundingMemberRepo.save(member);
-		
-		//펀드포인트 거래내역 만들기 <- 정산금이 0원일때는 빼도 되나?
+		makeSettlementFundingHistory(member);
+	}
+	@Test
+	public void makeSettlementFundingHistory(FundingMemberEntity member) {
+		//펀드포인트 거래내역 만들기 <- 정산금이 0원일때는 뺌
+		if(member.getWillsettlementamount() != 0) {
+			FundingHistoryEntity fundingHistory = new FundingHistoryEntity();
+			System.out.println("세팅 전 확인"+fundingHistory);
+			fundingHistory.setMemberno(member.getMemberno());
+			fundingHistory.setFundingno(member.getFundingno());
+			fundingHistory.setAmount(member.getWillsettlementamount());
+			fundingHistory.setDirection(true);
+			fundingHistoryRepo.save(fundingHistory);
+			System.out.println("세팅 후 확인"+fundingHistory);
+		}
 		//회원번호, 펀딩번호, 거래금액(정산금액), 방향=1(true)로 세팅 후 save 치기
+		
 	}
 	@Test //해당 펀딩에서 정산 안 한 사람 있는지 확인
 	public boolean checkSettlementIsComplete(int fundingno) {
