@@ -108,7 +108,6 @@ public class FundingMemberController {
 		}
 	}
 	
-	
 	@GetMapping("/join/ongoing")
 	public List<Map> joinListOnGoing (@RequestParam("member_no") String member_no){
 		List<Map> rowList = repo.getJoinedFundingList_OnGoing(member_no);
@@ -138,7 +137,15 @@ public class FundingMemberController {
 		return result;
 	}
 	
-	
+
+	@GetMapping("/info")
+	public Map myFundingInfo(@RequestParam("no") String no, @RequestParam("member_no") String member_no){
+		System.out.println("실행은되나");
+		Map row = repo.getMyFundInfo(no, member_no);
+		Map result = new HashMap<>();
+		result.put("myFundInfo", service.setMapOfFundingAndMember(row));
+		return result;
+	}
 	
 	@GetMapping("/challenge/{fund_no}")
 	public List funding (@PathVariable int fund_no, Model model) {
@@ -148,26 +155,17 @@ public class FundingMemberController {
 		return fundingMemberEntity;
 	}
 
-
-//	@GetMapping("/challenge/{funding_no}")
-//	public FundingMemberEntity show(@PathVariable int funding_no) {
-////		FundingEntity> result = new ArrayList<>();
-//		FundingMemberEntity result = null;
-//		result = repo.findByFundingno(funding_no).get(funding_no);
-////		repo.findById(no).ifPresent((data) -> {
-////			result = data;
-////		});
-//		System.out.println("result: " + result);
-//		return result;
-//	}
-	
 	@PostMapping("modifycard")
 	public String modifycard(@RequestBody Map map) {
+		System.out.println("Map.fundingNo: " + map.get("fundingNo"));
+		System.out.println("Map.fundingNo: " + map.get("memberNo"));
 //		Map<String, String> result = new HashMap<>();
-		String fundMemberNo_string = (String)map.get("fundingMemberNo");
+		String fundMemberNo_string = (String)map.get("memberNo");
 		int fundMemberNo = Integer.parseInt(fundMemberNo_string);
+		System.out.println("fundMemberNo: " + fundMemberNo);
 		String fundingNo_string = (String)map.get("fundingNo");
 		int fundingNo = Integer.parseInt(fundingNo_string);
+//		int fundingNo = (int)map.get("fundingNo");
 		FundingMemberEntity fundMemberEntity = repo.findByFundingnoAndMemberno(fundingNo, fundMemberNo);
 		System.out.println("fundMemberEntity: " + fundMemberEntity);
 		
