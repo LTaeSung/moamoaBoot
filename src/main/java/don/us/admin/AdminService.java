@@ -51,6 +51,16 @@ public class AdminService {
 		return fundingHistoryRepo.save(fundingHistory);
 	}
 	
+	//결제 후 해당 펀딩에 모인 총 포인트, 결제한 멤버의 총결제금액 업데이트 치는 함수
+	public void updateTotalPayAmount(FundingMemberEntity fundMem, FundingEntity fund) {
+		//해당 펀딩 결제된 포인트에 돈 더해서 업데이트
+		fund.setCollectedpoint( fund.getCollectedpoint() + fundMem.getMonthlypaymentamount() );
+		fundingRepo.save(fund);
+		//해당 펀딩 멤버의 총 결제금액에 더해서 업데이트
+		fundMem.setTotalpayamount( fundMem.getTotalpayamount() + fundMem.getMonthlypaymentamount() );
+		fundingMemberRepo.save(fundMem);
+	}
+	
 	//투표한 FundingMemberEntity 넣어주고, 몇 번으로 투표했는지 넣어주세용(1=성공, 2=실패)
 	public void vote(FundingMemberEntity member, int result) {
 		System.out.println("투표 제대로 들어가나 확인(세팅전) "+member.getVote());

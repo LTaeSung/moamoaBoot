@@ -294,7 +294,6 @@ public class FundingController {
 		adminService.settlement(fund_mem);
 		result.put("result", "settlememt_success");
 		if(adminService.checkSettlementIsComplete(fund_mem.getFundingno())) {
-			//정산 끝났으니 상태 4로 업뎃, break는 쳐줘도 되지만 어차피 끝날거라 굳이?
 			System.out.println("상태 업뎃 전: "+funding.getState());
 			funding.setState(4);
 			repo.save(funding);
