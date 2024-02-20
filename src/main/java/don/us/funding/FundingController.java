@@ -149,6 +149,10 @@ public class FundingController {
 			Date now = new Date();
 			String now_string = now.toString();
 			Timestamp nowtime = service.getTimestamp2(now_string);
+			int settle_amount = funding.getCollectedpoint();
+			
+			fundMember.setWillsettlementamount(settle_amount);
+			fundingmemrepo.save(fundMember);
 			
 			// 펀딩멤버의 vote를 1(성공상태)로 설정
 			fundMember.setVote(1);
