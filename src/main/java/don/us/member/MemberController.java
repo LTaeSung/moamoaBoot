@@ -33,6 +33,7 @@ import don.us.funding.FundingEntity;
 import don.us.funding.FundingMemberEntity;
 import don.us.funding.FundingMemberRepository;
 import don.us.funding.FundingRepository;
+import jakarta.transaction.Transactional;
 import util.file.FileController;
 import util.file.FileNameVO;
 
@@ -313,9 +314,10 @@ public class MemberController {
 	}
 	
 	//회원탈퇴
+	@Transactional
 	@PostMapping("leave")
 	public Map<String, String> leave(@RequestBody Map<String, String> map) throws ParseException {
-		int member_no = Integer.valueOf("memberno");
+		int member_no = Integer.valueOf(map.get("memberno"));
 		List<FundingMemberEntity> nowlist = fundingmemrepo.getNotGaveupFund(member_no);
 		Map<String, String> result = new HashMap<>();
 		
@@ -358,8 +360,12 @@ public class MemberController {
 			result.put("result", "exist_point");
 		}
 		
-		repo.deleteMember(member_no);
-		result.put("result", "leave_finish");
+		int delete_check = repo.deleteMember(member_no);
+		if(delete_check == 1) {
+			result.put("result", "leave_finish");
+		} else {
+			result.put("result", "delete_fail");
+		}
 		return result;
 	}
 	
