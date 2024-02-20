@@ -35,7 +35,7 @@ public class FundingCommentController {
 	// 게시글 상세보기
 	@GetMapping("/list")
 	public ResponseEntity<List<FundingCommentEntity>> show(@RequestParam int fundingno) {
-	    List<FundingCommentEntity> commentEntities = repo.findByfundingno(fundingno);
+	    List<FundingCommentEntity> commentEntities = repo.findByfundingnoOrderByRegistdate(fundingno);
 	    
 	    if (!commentEntities.isEmpty()) {
 	        return ResponseEntity.ok(commentEntities);
