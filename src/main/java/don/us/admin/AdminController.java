@@ -138,7 +138,7 @@ public class AdminController {
 	}
 	
 	@GetMapping("/setFundStatus0To1")
-	public void setFundStatus0To1() {
+	public String setFundStatus0To1() {
 		//초대마감일이 지났는데 펀딩 참여일이 없는(승낙도 거절도 안한) fundingmember 목록을 불러와서
 		List<FundingMemberEntity> list = fundingMemberRepo.getDontAcceptRefuseInWeekMemberList();
 		for(int i=0; i<list.size(); i++) {
@@ -156,6 +156,7 @@ public class AdminController {
 				}
 			} else System.out.println("펀딩넘버 "+list.get(i).getFundingno()+"번 시작안됨");
 		}
+		return "success";
 	}
 	
 	@GetMapping("/FundingDueList")
@@ -165,7 +166,7 @@ public class AdminController {
 	}
 	
 	@GetMapping("/setFundStatus1To2")
-	public void setFundStatus1To2() {
+	public String setFundStatus1To2() {
 		System.out.println("실행됨");
 		//펀드 상태=1 and 펀드 마감일<now()인 목록 가져옴
 		List<FundingEntity> fundlist = fundingRepo.getFundingDueList();
@@ -185,6 +186,7 @@ public class AdminController {
 				System.out.println("알람갔어용");
 			}
 		}	
+		return "success";
 	}
 	
 	@GetMapping("/VoteDueList")
@@ -194,7 +196,7 @@ public class AdminController {
 	}
 	
 	@GetMapping("/setFundStatus2To3")
-	public void setFundStatus2To3() {
+	public String setFundStatus2To3() {
 		System.out.println("실행됨");
 		//펀드상태=2 and 투표마감일<now()인 목록 가져옴
 		List<FundingEntity> fundlist = fundingRepo.getVoteDueList();
@@ -216,6 +218,7 @@ public class AdminController {
 			fundingRepo.save(fundlist.get(i));
 			System.out.println("상태 업뎃 후: "+fundlist.get(i).getState()+" 정산마감일"+fundlist.get(i).getSettlementduedate());
 		}
+		return "success";
 	}
 	
 	@GetMapping("/SettlementDueList")
@@ -225,7 +228,7 @@ public class AdminController {
 	}
 	
 	@GetMapping("/setFundStatus3To4")
-	public void setFundStatus3To4() {
+	public String setFundStatus3To4() {
 		//fund status=3이고 settlement_due_date<now()인 펀드 리스트 불러옴
 		List<FundingEntity> fundlist = fundingRepo.getSettlementDueList();
 		for(int i=0; i<fundlist.size(); i++) {
@@ -242,5 +245,6 @@ public class AdminController {
 				}
 			}
 		}
+		return "success";
 	}
 }
