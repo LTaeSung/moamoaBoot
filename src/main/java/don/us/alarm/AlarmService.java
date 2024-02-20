@@ -85,7 +85,7 @@ public class AlarmService {
 	
 	public void makeSettlementEndAlarm(FundingMemberEntity member) {
 		String content = "참여하신 챌린지의 정산이 완료되었습니다. 마이페이지-포인트 내역에서 확인 가능합니다.";
-		String link = "/point/funding_history/mypointHistory?member_no="+member.getMemberno();
+		String link = "/point/fundpointlist"; //나중에 프론트 링크 바뀌면 맞춰서 바꿔줘야함
 		makeAlarm(member.getMemberno(), content, link, 0);
 	}
 }
