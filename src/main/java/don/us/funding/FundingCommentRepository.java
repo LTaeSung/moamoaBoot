@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface FundingCommentRepository extends JpaRepository<FundingCommentEntity, Integer>{
-	 List<FundingCommentEntity> findByfundingno(int fundingno);
+	 List<FundingCommentEntity> findByfundingnoOrderByRegistdate(int fundingno);
 	public void deleteByfundingno(int fundingno);
 }

@@ -68,7 +68,7 @@ public class AdminController {
 			try {
 				//펀딩결제 진행
 				adminService.makePayToFundingFundingHistory(fundMem.getMemberno(), fundMem.getFundingno(), fundMem.getMonthlypaymentamount());
-				updateTotalPayAmount(fundMem, fund);
+				adminService.updateTotalPayAmount(fundMem, fund);
 				
 				//결제 성공 알람
 				String content = "챌린지 ["+fund.getTitle()+"]의 이번 달 결제가 완료되었습니다.";
@@ -102,7 +102,7 @@ public class AdminController {
 			try {
 				//재결제 시도
 				adminService.makePayToFundingFundingHistory(fundMem.getMemberno(), fundMem.getFundingno(), fundMem.getMonthlypaymentamount());
-				updateTotalPayAmount(fundMem, fund);
+				adminService.updateTotalPayAmount(fundMem, fund);
 				
 				//재결제 성공 알림 보내고 테이블에서 삭제
 				String content = "챌린지 ["+fund.getTitle()+"]의 재결제에 성공했습니다.";
@@ -130,17 +130,15 @@ public class AdminController {
 		return "success";
 	}
 	
-	//결제 후 해당 펀딩에 모인 총 포인트, 결제한 멤버의 총결제금액 업데이트 치는 함수
-	private void updateTotalPayAmount(FundingMemberEntity fundMem, FundingEntity fund) {
-		//해당 펀딩 결제된 포인트에 돈 더해서 업데이트
-		fund.setCollectedpoint( fund.getCollectedpoint() + fundMem.getMonthlypaymentamount() );
-		fundingRepo.save(fund);
-		//해당 펀딩 멤버의 총 결제금액에 더해서 업데이트
-		fundMem.setTotalpayamount( fundMem.getTotalpayamount() + fundMem.getMonthlypaymentamount() );
-		fundingMemberRepo.save(fundMem);
+	//초대 마감일이 지났지만 승낙이나 거절을 하지 않은 펀딩멤버의 목록
+	@GetMapping("/DontAcceptRefuseInWeekMemberList")
+	public List<FundingMemberEntity> DontAcceptRefuseInWeekMemberList(){
+		List<FundingMemberEntity> list = fundingMemberRepo.getDontAcceptRefuseInWeekMemberList();
+		return list;
 	}
 	
-	public void setFundStatus0To1() {
+	@GetMapping("/setFundStatus0To1")
+	public String setFundStatus0To1() {
 		//초대마감일이 지났는데 펀딩 참여일이 없는(승낙도 거절도 안한) fundingmember 목록을 불러와서
 		List<FundingMemberEntity> list = fundingMemberRepo.getDontAcceptRefuseInWeekMemberList();
 		for(int i=0; i<list.size(); i++) {
@@ -152,11 +150,23 @@ public class AdminController {
 				fundingService.setFundStart(list.get(i).getFundingno());
 				System.out.println("펀딩넘버 "+list.get(i).getFundingno()+"번 시작됨");
 				//펀딩넘버 갖다가 남은 참여 전체 인원한테 시작알림 보내줘도 좋을듯?
+				List<FundingMemberEntity> alarmList = fundingMemberRepo.findByFundingno(list.get(i).getNo());
+				for(int j=0; j<alarmList.size(); j++) {
+					alarmService.makeFundStartAlarm(alarmList.get(j));
+				}
 			} else System.out.println("펀딩넘버 "+list.get(i).getFundingno()+"번 시작안됨");
 		}
+		return "success";
 	}
 	
-	public void setFundStatus1To2() {
+	@GetMapping("/FundingDueList")
+	public List<FundingEntity> FundingDueList(){
+		List<FundingEntity> fundlist = fundingRepo.getFundingDueList();
+		return fundlist;
+	}
+	
+	@GetMapping("/setFundStatus1To2")
+	public String setFundStatus1To2() {
 		System.out.println("실행됨");
 		//펀드 상태=1 and 펀드 마감일<now()인 목록 가져옴
 		List<FundingEntity> fundlist = fundingRepo.getFundingDueList();
@@ -176,9 +186,17 @@ public class AdminController {
 				System.out.println("알람갔어용");
 			}
 		}	
+		return "success";
 	}
 	
-	public void setFundStatus2To3() {
+	@GetMapping("/VoteDueList")
+	public List<FundingEntity> VoteDueList(){
+		List<FundingEntity> fundlist = fundingRepo.getVoteDueList();
+		return fundlist;
+	}
+	
+	@GetMapping("/setFundStatus2To3")
+	public String setFundStatus2To3() {
 		System.out.println("실행됨");
 		//펀드상태=2 and 투표마감일<now()인 목록 가져옴
 		List<FundingEntity> fundlist = fundingRepo.getVoteDueList();
@@ -200,9 +218,17 @@ public class AdminController {
 			fundingRepo.save(fundlist.get(i));
 			System.out.println("상태 업뎃 후: "+fundlist.get(i).getState()+" 정산마감일"+fundlist.get(i).getSettlementduedate());
 		}
+		return "success";
 	}
 	
-	public void setFundStatus3To4() {
+	@GetMapping("/SettlementDueList")
+	public List<FundingEntity> SettlementDueList(){
+		List<FundingEntity> fundlist = fundingRepo.getSettlementDueList();
+		return fundlist;
+	}
+	
+	@GetMapping("/setFundStatus3To4")
+	public String setFundStatus3To4() {
 		//fund status=3이고 settlement_due_date<now()인 펀드 리스트 불러옴
 		List<FundingEntity> fundlist = fundingRepo.getSettlementDueList();
 		for(int i=0; i<fundlist.size(); i++) {
@@ -219,5 +245,6 @@ public class AdminController {
 				}
 			}
 		}
+		return "success";
 	}
 }

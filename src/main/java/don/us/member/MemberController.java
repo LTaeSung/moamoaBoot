@@ -1,6 +1,6 @@
 package don.us.member;
 
-import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +28,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import don.us.funding.FundingController;
+import don.us.funding.FundingEntity;
+import don.us.funding.FundingMemberEntity;
+import don.us.funding.FundingMemberRepository;
+import don.us.funding.FundingRepository;
+import jakarta.transaction.Transactional;
 import util.file.FileController;
 import util.file.FileNameVO;
 
@@ -39,6 +43,12 @@ import util.file.FileNameVO;
 public class MemberController {
 	@Autowired
 	private MemberRepository repo;
+	
+	@Autowired
+	private FundingRepository fundingrepo;
+	
+	@Autowired
+	private FundingMemberRepository fundingmemrepo;
 	
 	@Autowired
 	private FileController fileController;
@@ -52,6 +62,9 @@ public class MemberController {
 
 	@Autowired
 	private NaverLogin naverLogin;
+	
+	@Autowired
+	private FundingController fundingController;
 
 	/*
 	 * @GetMapping(value = "/naver") public void naver(String code){
@@ -269,10 +282,6 @@ public class MemberController {
 		}
 	}
 	
-	
-	
-	
-	
 	//code를 받아와서 tokenUrl로 code를 가지고 재요청. naver에서 accesstoken을 넘겨준다.
 	public String GetAccessToken(String code) {
 		// Naver OAuth 2.0 Token Endpoint URL
@@ -303,5 +312,62 @@ public class MemberController {
 		
 		return responseBody;
 	}
+	
+	//회원탈퇴
+	@Transactional
+	@PostMapping("leave")
+	public Map<String, String> leave(@RequestBody Map<String, String> map) throws ParseException {
+		int member_no = Integer.valueOf(map.get("memberno"));
+		List<FundingMemberEntity> nowlist = fundingmemrepo.getNotGaveupFund(member_no);
+		Map<String, String> result = new HashMap<>();
+		
+		for(int i=0; i<nowlist.size(); i++) {
+			int fundingno = nowlist.get(i).getFundingno();
+			Optional<FundingEntity> fund = fundingrepo.findById(fundingno);
+			int fund_state = fund.get().getState();
+			FundingMemberEntity fund_mem = nowlist.get(i);
+			FundingEntity funding = fund.get();
+			
+			if(fund_state == 2) {
+				result.put("result", "need_vote");
+				return result;
+			} else if (fund_state == 3) {
+				result.put("result", "need_settle");
+				return result;
+			} else if (fund_state == 1) {
+				fundingController.giveupMethod(fund_mem, funding);
+				// state 1이었는데 giveup 후에 state 3으로 바뀌었을 것이므로 정산받으라고 알려줌
+				//giveup하고 난 후에 state가 여전히 1인 것은 신경쓰지 않아도됨. giveup이 1로 바뀔것이라 다음번 회원탈퇴호출때 불러와지지 않을뿐더러 정산받을 포인트도 없기 때문
+				if(funding.getState() == 3) { 
+					result.put("result", "need_settle");
+					return result;
+				}
+				// state 1이고 참가자 2이상인 경우는 giveup이 1로 바뀌니까 조건에 걸리지않음.
+				// 다음번 회원탈퇴 버튼을 다시 누를때 이것들은 안 가져와진다.
+			} else if (fund_state == 0) {
+				// state가 0이면, 어차피 정산받을 포인트가 없으므로 그냥 펀딩의 참가자 수만 1 줄여주자
+				if(nowlist.get(i).getPaymentno() != 0) {
+					
+					funding.setCandidate(funding.getCandidate() - 1);
+					fundingrepo.save(funding);
+				}
+				
+			}
+		}
+		
+		Optional<MemberEntity> member = repo.findById(member_no);
+		if(member.get().getPoint() > 0) {
+			result.put("result", "exist_point");
+		}
+		
+		int delete_check = repo.deleteMember(member_no);
+		if(delete_check == 1) {
+			result.put("result", "leave_finish");
+		} else {
+			result.put("result", "delete_fail");
+		}
+		return result;
+	}
+	
 		
 }

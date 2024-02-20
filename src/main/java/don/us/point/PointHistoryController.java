@@ -106,6 +106,7 @@ public class PointHistoryController {
 		pointHistory.setAmount(amount);
 		pointHistory.setBank(Integer.parseInt(merchant_id.split("_")[0]));
 		pointHistory.setAccount(merchant_id.split("_")[1]);
+		pointHistory.setMerchantuid(merchant_id);
 		pointHistory.setDirection(true);
 		//그 외 시간 등은 erd에 맞춰서
 		repo.save(pointHistory);
