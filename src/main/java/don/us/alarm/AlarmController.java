@@ -18,7 +18,7 @@ public class AlarmController {
 	
 	@GetMapping("list")
 	public List<AlarmEntity> list(@RequestParam("member_no") int member_no) {
-		return repo.findByMemberno(member_no);
+		return repo.findByMembernoOrderByAlarmdateDesc(member_no);
 	}
 	
 	@GetMapping("erase")

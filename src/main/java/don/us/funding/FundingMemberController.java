@@ -44,7 +44,7 @@ public class FundingMemberController {
 	public List<FundingMemberEntity> getInvitedList(@RequestParam("member_no") int member_no) {
 		List<FundingMemberEntity> result = new ArrayList<>();
 		
-		List<FundingMemberEntity> allFundOfMe = repo.findByMemberno(member_no);
+		List<FundingMemberEntity> allFundOfMe = repo.findByMembernoOrderByInviteddate(member_no);
 		
 		for(FundingMemberEntity fund : allFundOfMe) {
 			if(fund.getParticipationdate() != null) {
