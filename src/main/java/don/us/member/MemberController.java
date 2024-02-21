@@ -329,16 +329,20 @@ public class MemberController {
 			FundingEntity funding = fund.get();
 			
 			if(fund_state != 4) {
-				result.put("result", "fundLeft");
+				// 참여중인 펀드가 있으면 탈퇴가 안됨
+				result.put("result", "leave_fail");
 				return result;
 			}
 		}
 		
+		// 멤버 테이블에 포인트가 존재한다면 포인트를 다 인출하고 탈퇴해야함
 		Optional<MemberEntity> member = repo.findById(member_no);
 		if(member.get().getPoint() > 0) {
 			result.put("result", "exist_point");
+			return result;
 		}
 		
+		// 삭제 잘 됐는지 체크
 		int delete_check = repo.deleteMember(member_no);
 		if(delete_check == 1) {
 			result.put("result", "leave_finish");
