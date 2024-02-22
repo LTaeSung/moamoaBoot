@@ -182,5 +182,12 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 				m.memberno = %?1%
 		""")
 	public List<Map> getInvitedFundinglist(int member_no);
+	
+	@Query(value = "SELECT COUNT(no) AS total, "
+			+ " (SELECT COUNT(no) FROM funding_member WHERE giveup = true) AS giveup "
+			+ " FROM funding_member "
+			+ " WHERE participation_date IS NOT NULL"
+			, nativeQuery = true)
+	public Map<String, Integer> getGiveupStatistics();
 
 }

@@ -1,6 +1,7 @@
 package don.us.admin;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -241,5 +242,12 @@ public class AdminControllerTest {
 		main.setTotalsuccess(fundingMemberRepo.getTotalSuccess());
 		mainTotalRepo.save(main);
 		System.out.println("확인"+main);
+	}
+	
+	@Test
+	public void statistics() {
+		Map<String, Integer> map = fundingMemberRepo.getGiveupStatistics();
+		System.out.println("확인"+map.get("total"));
+		System.out.println("확인"+map.get("giveup"));
 	}
 }
