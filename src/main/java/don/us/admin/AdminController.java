@@ -26,6 +26,11 @@ import util.file.HandleDays;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+	@GetMapping("/test")
+	public String test() {
+		return "hi";
+	}
+	
 	@Autowired
 	private FundingHistoryRepository fundingHistoryRepo;
 	
