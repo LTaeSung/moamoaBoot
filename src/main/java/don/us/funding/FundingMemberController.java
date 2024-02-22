@@ -40,14 +40,17 @@ public class FundingMemberController {
 	@Autowired
 	private HandleDays handleDays;
 	
+	@Autowired
+	private FundingRepository fundrepo;
+	
 	@GetMapping("invitedList")
-	public List<FundingMemberEntity> getInvitedList(@RequestParam("member_no") int member_no) {
-		List<FundingMemberEntity> result = new ArrayList<>();
+	public List<Map> getInvitedList(@RequestParam("member_no") int member_no) {
+		List<Map> result = new ArrayList<>();
 		
-		List<FundingMemberEntity> allFundOfMe = repo.findByMemberno(member_no);
-		
-		for(FundingMemberEntity fund : allFundOfMe) {
-			if(fund.getParticipationdate() != null) {
+		List<Map> allFundOfMe = repo.getInvitedFundinglist(member_no);
+
+		for(Map fund : allFundOfMe) {
+			if(fund.get("participationDate") != null) {
 				continue;
 			}
 			if(handleDays.isExpired(fund)) {

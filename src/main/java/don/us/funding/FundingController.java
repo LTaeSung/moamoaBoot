@@ -169,7 +169,7 @@ public class FundingController {
 			return false;
 		}
 	}
-	
+	//기브업
 	@PostMapping("/giveup")
 	public Map<String, Object> giveup(@RequestBody Map<String, String> request) throws ParseException {
 

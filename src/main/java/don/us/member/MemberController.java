@@ -328,38 +328,21 @@ public class MemberController {
 			FundingMemberEntity fund_mem = nowlist.get(i);
 			FundingEntity funding = fund.get();
 			
-			if(fund_state == 2) {
-				result.put("result", "need_vote");
+			if(fund_state != 4) {
+				// 참여중인 펀드가 있으면 탈퇴가 안됨
+				result.put("result", "leave_fail");
 				return result;
-			} else if (fund_state == 3) {
-				result.put("result", "need_settle");
-				return result;
-			} else if (fund_state == 1) {
-				fundingController.giveupMethod(fund_mem, funding);
-				// state 1이었는데 giveup 후에 state 3으로 바뀌었을 것이므로 정산받으라고 알려줌
-				//giveup하고 난 후에 state가 여전히 1인 것은 신경쓰지 않아도됨. giveup이 1로 바뀔것이라 다음번 회원탈퇴호출때 불러와지지 않을뿐더러 정산받을 포인트도 없기 때문
-				if(funding.getState() == 3) { 
-					result.put("result", "need_settle");
-					return result;
-				}
-				// state 1이고 참가자 2이상인 경우는 giveup이 1로 바뀌니까 조건에 걸리지않음.
-				// 다음번 회원탈퇴 버튼을 다시 누를때 이것들은 안 가져와진다.
-			} else if (fund_state == 0) {
-				// state가 0이면, 어차피 정산받을 포인트가 없으므로 그냥 펀딩의 참가자 수만 1 줄여주자
-				if(nowlist.get(i).getPaymentno() != 0) {
-					
-					funding.setCandidate(funding.getCandidate() - 1);
-					fundingrepo.save(funding);
-				}
-				
 			}
 		}
 		
+		// 멤버 테이블에 포인트가 존재한다면 포인트를 다 인출하고 탈퇴해야함
 		Optional<MemberEntity> member = repo.findById(member_no);
 		if(member.get().getPoint() > 0) {
 			result.put("result", "exist_point");
+			return result;
 		}
 		
+		// 삭제 잘 됐는지 체크
 		int delete_check = repo.deleteMember(member_no);
 		if(delete_check == 1) {
 			result.put("result", "leave_finish");

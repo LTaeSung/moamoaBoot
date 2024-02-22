@@ -11,7 +11,7 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 	//List<MemberEntity> findByNameContaining(String name);
 	List<FundingMemberEntity> findByFundingno(int fund_no);
 
-	List<FundingMemberEntity> findByMemberno(int member_no);
+	List<FundingMemberEntity> findByMembernoOrderByInviteddate(int member_no);
 	
 	@Query(value = "SELECT * FROM funding_member WHERE funding_no = ?1 AND giveup = false"
 			, nativeQuery = true)
@@ -51,7 +51,8 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 				m.memberno = %?1%
 				and
 				f.state != 4
-			order by f.state desc
+			order by f.state desc,
+				f.fundingduedate asc
 		""")
 	public List<Map> getJoinedFundingList_OnGoing(String member_no);
 	
@@ -150,4 +151,35 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 			+ " AND giveup = 0"
 			, nativeQuery = true)
 	public List<FundingMemberEntity> getNotGaveupFund(int member_no);
+	
+	
+	@Query(value="""
+			select
+				m.no as fundingMemberNo,
+				m.memberno as memberNo,
+				m.fundingno as fundingNo,
+				m.startmemberno as startMemberNo,
+				m.startmembername as startMemberName,
+				m.fundtitle as fundTitle,
+				m.photo as photo,
+				m.paymentno as paymentNo,
+				m.fundingtype as fundingType,
+				m.monthlypaymentdate as monthlyPaymentDate,
+				m.monthlypaymentamount as monthlyPaymentAmmount,
+				m.totalpayamount as myPayAmount,
+				m.inviteddate as invitedDate,
+				m.participationdate as participationDate,
+				m.giveup as giveup,
+				m.vote as vote,
+				m.settlementamount as settlementAmount,
+				m.willsettlementamount as willSettlementAmount,
+				f.fundingduedate as fundingDueDate
+			from 
+				FundingMemberEntity m join FundingEntity f
+			    on m.fundingno = f.no
+			where 
+				m.memberno = %?1%
+		""")
+	public List<Map> getInvitedFundinglist(int member_no);
+	
 }
