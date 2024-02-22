@@ -233,7 +233,7 @@ public class AdminControllerTest {
 	}
 	
 	@Test
-	@Transactional
+	//@Transactional
 	public void updateMain() {
 		MainTotalEntity main = mainTotalRepo.findById(1).get();
 		main.setTotalchallenge(fundingRepo.getTotalChallenge());

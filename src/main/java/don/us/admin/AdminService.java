@@ -151,14 +151,6 @@ public class AdminService {
 		if(dontSettlementMemberList.size() == 0) {System.out.println("확인 true"); return true;}
 		else {System.out.println("확인 false"); return false;}
 	}
-	
-	public void updateMain() {
-		MainTotalEntity main = mainTotalRepo.findById(1).get();
-		main.setTotalchallenge(fundingRepo.getTotalChallenge());
-		main.setTotalmoney(fundingRepo.getTotalMoney());
-		main.setTotalsuccess(fundingMemberRepo.getTotalSuccess());
-		mainTotalRepo.save(main);
-	}
 }
 	
 	

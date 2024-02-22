@@ -248,4 +248,19 @@ public class AdminController {
 		}
 		return "success";
 	}
+	
+	@GetMapping("/getMainTotal")
+	public MainTotalEntity getMainTotal() {
+		MainTotalEntity main = mainTotalRepo.findById(1).get();
+		return main;
+	}
+	
+	@GetMapping("/updateMainTotal")
+	public void updateMain() {
+		MainTotalEntity main = mainTotalRepo.findById(1).get();
+		main.setTotalchallenge(fundingRepo.getTotalChallenge());
+		main.setTotalmoney(fundingRepo.getTotalMoney());
+		main.setTotalsuccess(fundingMemberRepo.getTotalSuccess());
+		mainTotalRepo.save(main);
+	}
 }
