@@ -37,6 +37,9 @@ public class AdminService {
 	private FundingMemberRepository fundingMemberRepo;
 	
 	@Autowired
+	private MainTotalRepository mainTotalRepo;
+	
+	@Autowired
 	private AlarmService alarmService;
 	
 	@Autowired

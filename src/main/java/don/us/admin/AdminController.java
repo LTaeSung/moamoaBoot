@@ -3,7 +3,6 @@ package don.us.admin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +15,6 @@ import don.us.funding.FundingMemberEntity;
 import don.us.funding.FundingMemberRepository;
 import don.us.funding.FundingRepository;
 import don.us.funding.FundingService;
-import don.us.point.FundingHistoryEntity;
 import don.us.point.FundingHistoryRepository;
 import don.us.point.RepaymentEntity;
 import don.us.point.RepaymentRepository;
@@ -42,6 +40,9 @@ public class AdminController {
 	
 	@Autowired
 	private FundingMemberRepository fundingMemberRepo;
+	
+	@Autowired
+	private MainTotalRepository mainTotalRepo;
 	
 	@Autowired
 	private AlarmService alarmService;
@@ -251,5 +252,20 @@ public class AdminController {
 			}
 		}
 		return "success";
+	}
+	
+	@GetMapping("/getMainTotal")
+	public MainTotalEntity getMainTotal() {
+		MainTotalEntity main = mainTotalRepo.findById(1).get();
+		return main;
+	}
+	
+	@GetMapping("/updateMainTotal")
+	public void updateMain() {
+		MainTotalEntity main = mainTotalRepo.findById(1).get();
+		main.setTotalchallenge(fundingRepo.getTotalChallenge());
+		main.setTotalmoney(fundingRepo.getTotalMoney());
+		main.setTotalsuccess(fundingMemberRepo.getTotalSuccess());
+		mainTotalRepo.save(main);
 	}
 }

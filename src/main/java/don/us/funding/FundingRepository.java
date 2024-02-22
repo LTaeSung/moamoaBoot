@@ -82,7 +82,7 @@ public interface FundingRepository extends JpaRepository<FundingEntity, Integer>
 	public List<Map> getHostFundingList_End(String member_no);
 		
 	@Query("SELECT f FROM FundingEntity f WHERE f.startmemberno = :start_member_no AND f.fundingduedate > :currentDate")
-	List<FundingEntity> findBystartmembernoAndfundingduedate(int start_member_no, LocalDate currentDate);
+	public List<FundingEntity> findBystartmembernoAndfundingduedate(int start_member_no, LocalDate currentDate);
 	
 	@Query(value = "SELECT *"
 			+ " FROM funding"
@@ -105,7 +105,10 @@ public interface FundingRepository extends JpaRepository<FundingEntity, Integer>
 			, nativeQuery = true)
 	public List<FundingEntity> getSettlementDueList();
 	
+	@Query(value = "SELECT COUNT(no) AS total_challenge FROM funding", nativeQuery = true)
+	public int getTotalChallenge();
+	
+	@Query(value = "SELECT SUM(collected_point) AS total_money FROM funding" , nativeQuery = true)
+	public int getTotalMoney();
 
-	
-	
 }
