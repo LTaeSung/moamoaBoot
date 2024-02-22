@@ -183,7 +183,7 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 		""")
 	public List<Map> getInvitedFundinglist(int member_no);
 	
-	
+	//이 밑은 통계 쿼리문
 	@Query(value 
 			= "SELECT "
 			+ "  SUM(nogiveup) AS nogiveup"
