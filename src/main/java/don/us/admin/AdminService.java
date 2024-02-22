@@ -37,6 +37,9 @@ public class AdminService {
 	private FundingMemberRepository fundingMemberRepo;
 	
 	@Autowired
+	private MainTotalRepository mainTotalRepo;
+	
+	@Autowired
 	private AlarmService alarmService;
 	
 	@Autowired
@@ -147,6 +150,14 @@ public class AdminService {
 		List<FundingMemberEntity> dontSettlementMemberList = fundingMemberRepo.needSettlementFundMemberList(fundingno);
 		if(dontSettlementMemberList.size() == 0) {System.out.println("확인 true"); return true;}
 		else {System.out.println("확인 false"); return false;}
+	}
+	
+	public void updateMain() {
+		MainTotalEntity main = mainTotalRepo.findById(1).get();
+		main.setTotalchallenge(fundingRepo.getTotalChallenge());
+		main.setTotalmoney(fundingRepo.getTotalMoney());
+		main.setTotalsuccess(fundingMemberRepo.getTotalSuccess());
+		mainTotalRepo.save(main);
 	}
 }
 	

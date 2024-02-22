@@ -50,6 +50,9 @@ public class AdminControllerTest {
 	@Autowired
 	private HandleDays handleDays;
 	
+	@Autowired
+	private MainTotalRepository mainTotalRepo;
+	
 	@Test
 	public void getFundMemberList() {
 		List<FundingMemberEntity> list = fundingMemberRepo.getDontAcceptRefuseInWeekMemberList();
@@ -227,5 +230,16 @@ public class AdminControllerTest {
 		List<FundingMemberEntity> dontSettlementMemberList = fundingMemberRepo.needSettlementFundMemberList(fundingno);
 		if(dontSettlementMemberList.size() == 0) {System.out.println("확인 true"); return true;}
 		else {System.out.println("확인 false"); return false;}
+	}
+	
+	@Test
+	@Transactional
+	public void updateMain() {
+		MainTotalEntity main = mainTotalRepo.findById(1).get();
+		main.setTotalchallenge(fundingRepo.getTotalChallenge());
+		main.setTotalmoney(fundingRepo.getTotalMoney());
+		main.setTotalsuccess(fundingMemberRepo.getTotalSuccess());
+		mainTotalRepo.save(main);
+		System.out.println("확인"+main);
 	}
 }

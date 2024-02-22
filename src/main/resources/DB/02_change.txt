@@ -166,3 +166,6 @@ ADD CONSTRAINT `FK_funding_TO_funding_comment_1`
   REFERENCES `moamoaDonDon`.`funding` (`no`)
   ON DELETE NO ACTION;
   
+INSERT INTO `moamoaDonDon`.`main_total` (`no`, `total_challenge`, `total_success`, `total_money`) VALUES ('1', '0', '0', '0');
+  
+  
