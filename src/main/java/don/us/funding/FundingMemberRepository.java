@@ -11,7 +11,7 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 	//List<MemberEntity> findByNameContaining(String name);
 	List<FundingMemberEntity> findByFundingno(int fund_no);
 
-	List<FundingMemberEntity> findByMemberno(int member_no);
+	List<FundingMemberEntity> findByMembernoOrderByInviteddate(int member_no);
 	
 	@Query(value = "SELECT * FROM funding_member WHERE funding_no = ?1 AND giveup = false"
 			, nativeQuery = true)
@@ -51,7 +51,8 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 				m.memberno = %?1%
 				and
 				f.state != 4
-			order by f.state desc
+			order by f.state desc,
+				f.fundingduedate asc
 		""")
 	public List<Map> getJoinedFundingList_OnGoing(String member_no);
 	

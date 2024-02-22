@@ -112,7 +112,7 @@ public class MemberApplicationTest {
 		String member_no = "4";
 		
 		List list = new ArrayList(); 
-		list = fundingmemrepo.findByMemberno(Integer.parseInt(member_no));
+		list = fundingmemrepo.findByMembernoOrderByInviteddate(Integer.parseInt(member_no));
 		System.out.println(list);
 	}
 	

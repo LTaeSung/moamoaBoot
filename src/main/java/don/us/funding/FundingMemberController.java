@@ -48,7 +48,7 @@ public class FundingMemberController {
 		List<Map> result = new ArrayList<>();
 		
 		List<Map> allFundOfMe = repo.getInvitedFundinglist(member_no);
-		
+
 		for(Map fund : allFundOfMe) {
 			if(fund.get("participationDate") != null) {
 				continue;
