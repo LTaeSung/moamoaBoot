@@ -246,8 +246,11 @@ public class AdminControllerTest {
 	
 	@Test
 	public void statistics() {
-		Map<String, Integer> map = fundingMemberRepo.getGiveupStatistics();
-		System.out.println("확인"+map.get("total"));
-		System.out.println("확인"+map.get("giveup"));
+//		Map<String, Integer> map = fundingMemberRepo.getGiveupStatistics();
+//		System.out.println("확인"+map.get("total"));
+//		System.out.println("확인"+map.get("giveup"));
+		Map<String, Integer> map = fundingMemberRepo.getSuccessFailStatistics();
+		System.out.println("확인"+map.get("success"));
+		System.out.println("확인"+map.get("fail"));
 	}
 }
