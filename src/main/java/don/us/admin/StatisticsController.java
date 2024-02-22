@@ -1,5 +1,8 @@
 package don.us.admin;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import don.us.funding.FundingMemberRepository;
 import don.us.funding.FundingRepository;
 import don.us.funding.FundingService;
 import don.us.point.FundingHistoryRepository;
+import don.us.point.PointHistoryRepository;
 import don.us.point.RepaymentRepository;
 import util.file.HandleDays;
 
@@ -23,6 +27,9 @@ import util.file.HandleDays;
 public class StatisticsController {
 	@Autowired
 	private FundingHistoryRepository fundingHistoryRepo;
+	
+	@Autowired
+	private PointHistoryRepository pointHistoryRepo;
 	
 	@Autowired
 	private RepaymentRepository repayRepo;
@@ -51,15 +58,34 @@ public class StatisticsController {
 	@Autowired
 	private HandleDays handleDays;
 	
+	@GetMapping("/default")
+	public HashMap<String, BigDecimal> defaultStatistics(){
+		HashMap<String, BigDecimal> map = new HashMap<>();
+		map.put("avgSettlement", fundingMemberRepo.getAvgSettlementStatistics()); //인당 평균 정산금액
+		map.put("avgMonthlyPayAmount", fundingRepo.getAvgMonthlyPayAmountStatistics()); //펀드당 평균 월결제금액
+		map.put("avgMonthlyCollected", fundingRepo.getAvgMonthlyCollectedStatistics()); //완료된 펀드당 평균 총 결제금액
+		map.put("monthlyNewFund", fundingRepo.getMonthlyNewFundStatistics()); //이번달 펀드 총 개최 수
+		map.put("monthlyMember", fundingMemberRepo.getMonthlyMemberStatistics()); //이번달 펀드 총 참여인원
+		BigDecimal monthlypay = fundingHistoryRepo.getMonthlyPayStatistics().add(pointHistoryRepo.getMonthlyPayStatistics());
+		map.put("monthlyPay", monthlypay); //이번달 펀드 총 금액
+		return map;
+	}
+	
 	@GetMapping("/giveup")
-	public Map<String, Integer> giveupStatistics(){
-		Map<String, Integer> map = fundingMemberRepo.getGiveupStatistics();
+	public Map<String, BigDecimal> giveupStatistics(){
+		Map<String, BigDecimal> map = fundingMemberRepo.getGiveupStatistics();
 		return map;
 	}
 	
 	@GetMapping("/successAndFail")
-	public Map<String, Integer> successAndFail(){
-		Map<String, Integer> map = fundingMemberRepo.getSuccessFailStatistics();
+	public Map<String, BigDecimal> successAndFail(){
+		Map<String, BigDecimal> map = fundingMemberRepo.getSuccessFailStatistics();
+		return map;
+	}
+	
+	@GetMapping("/personal")
+	public Map<String, BigDecimal> personal(){
+		Map<String, BigDecimal> map = fundingMemberRepo.getPersonalStatistics();
 		return map;
 	}
 }
