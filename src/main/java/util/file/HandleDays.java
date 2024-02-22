@@ -2,6 +2,7 @@ package util.file;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Map;
 
 import don.us.funding.FundingMemberEntity;
 
@@ -15,8 +16,8 @@ public class HandleDays {
 		return result;
 	}
 	
-	public boolean isExpired(FundingMemberEntity fund) {
-		Timestamp invitedDueDate = addDays(fund.getInviteddate(), 7);
+	public boolean isExpired(Map fund) {
+		Timestamp invitedDueDate = addDays((Timestamp)fund.get("invitedDate"), 7);
 		
 		Timestamp today = new Timestamp(System.currentTimeMillis());
 		

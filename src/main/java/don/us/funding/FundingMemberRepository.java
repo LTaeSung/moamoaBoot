@@ -153,4 +153,34 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 	
 	@Query(value = "SELECT COUNT(no) AS total_success FROM funding_member WHERE vote = 1", nativeQuery = true)
 	public int getTotalSuccess();
+	
+	@Query(value="""
+			select
+				m.no as fundingMemberNo,
+				m.memberno as memberNo,
+				m.fundingno as fundingNo,
+				m.startmemberno as startMemberNo,
+				m.startmembername as startMemberName,
+				m.fundtitle as fundTitle,
+				m.photo as photo,
+				m.paymentno as paymentNo,
+				m.fundingtype as fundingType,
+				m.monthlypaymentdate as monthlyPaymentDate,
+				m.monthlypaymentamount as monthlyPaymentAmmount,
+				m.totalpayamount as myPayAmount,
+				m.inviteddate as invitedDate,
+				m.participationdate as participationDate,
+				m.giveup as giveup,
+				m.vote as vote,
+				m.settlementamount as settlementAmount,
+				m.willsettlementamount as willSettlementAmount,
+				f.fundingduedate as fundingDueDate
+			from 
+				FundingMemberEntity m join FundingEntity f
+			    on m.fundingno = f.no
+			where 
+				m.memberno = %?1%
+		""")
+	public List<Map> getInvitedFundinglist(int member_no);
+
 }

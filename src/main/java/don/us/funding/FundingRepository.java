@@ -110,4 +110,5 @@ public interface FundingRepository extends JpaRepository<FundingEntity, Integer>
 	
 	@Query(value = "SELECT SUM(collected_point) AS total_money FROM funding" , nativeQuery = true)
 	public int getTotalMoney();
+
 }
