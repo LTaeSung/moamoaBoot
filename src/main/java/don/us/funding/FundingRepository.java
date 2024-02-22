@@ -104,4 +104,8 @@ public interface FundingRepository extends JpaRepository<FundingEntity, Integer>
 			+ " AND NOW() > settlement_due_date"
 			, nativeQuery = true)
 	public List<FundingEntity> getSettlementDueList();
+	
+
+	
+	
 }

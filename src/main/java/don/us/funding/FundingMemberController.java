@@ -44,21 +44,19 @@ public class FundingMemberController {
 	private FundingRepository fundrepo;
 	
 	@GetMapping("invitedList")
-	public List<FundingMemberEntity> getInvitedList(@RequestParam("member_no") int member_no) {
-		List<FundingMemberEntity> result = new ArrayList<>();
+	public List<Map> getInvitedList(@RequestParam("member_no") int member_no) {
+		List<Map> result = new ArrayList<>();
 		
-		List<FundingMemberEntity> allFundOfMe = repo.findByMemberno(member_no);
+		List<Map> allFundOfMe = repo.getInvitedFundinglist(member_no);
 		
-		for(FundingMemberEntity fund : allFundOfMe) {
-			if(fund.getParticipationdate() != null) {
+		for(Map fund : allFundOfMe) {
+			if(fund.get("participationDate") != null) {
 				continue;
 			}
 			if(handleDays.isExpired(fund)) {
 				continue;
 			}
 			
-			
-			Timestamp duedate = fundrepo.findById(fund.getFundingno()).get().getFundingduedate();
 			result.add(fund);
 		}
 		
