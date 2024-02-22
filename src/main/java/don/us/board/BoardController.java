@@ -59,6 +59,7 @@ public class BoardController {
         }
 
         BoardEntity existingReply = optionalBoardEntity.get();
+        existingReply.setTitle(updateQna.getTitle());
         existingReply.setContents(updateQna.getContents());
         existingReply.setUpdatedate(new Timestamp(System.currentTimeMillis()));
 

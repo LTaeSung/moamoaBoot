@@ -40,6 +40,9 @@ public class FundingMemberController {
 	@Autowired
 	private HandleDays handleDays;
 	
+	@Autowired
+	private FundingRepository fundrepo;
+	
 	@GetMapping("invitedList")
 	public List<FundingMemberEntity> getInvitedList(@RequestParam("member_no") int member_no) {
 		List<FundingMemberEntity> result = new ArrayList<>();
@@ -54,6 +57,8 @@ public class FundingMemberController {
 				continue;
 			}
 			
+			
+			Timestamp duedate = fundrepo.findById(fund.getFundingno()).get().getFundingduedate();
 			result.add(fund);
 		}
 		
