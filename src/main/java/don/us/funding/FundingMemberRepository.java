@@ -1,7 +1,6 @@
 package don.us.funding;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -152,6 +151,8 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 			, nativeQuery = true)
 	public List<FundingMemberEntity> getNotGaveupFund(int member_no);
 	
+	@Query(value = "SELECT COUNT(no) AS total_success FROM funding_member WHERE vote = 1", nativeQuery = true)
+	public int getTotalSuccess();
 	
 	@Query(value="""
 			select
@@ -181,5 +182,5 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 				m.memberno = %?1%
 		""")
 	public List<Map> getInvitedFundinglist(int member_no);
-	
+
 }

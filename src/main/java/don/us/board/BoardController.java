@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -25,12 +26,22 @@ public class BoardController {
 	@Autowired
 	private BoardRepository repo;
 	
-	//게시글 전체보기
-	@GetMapping("/list")
-	public List index (Model model) {
-		List <BoardEntity>  boardEntityList = repo.findAll();
+	//공지사항 게시글 전체보기
+	@GetMapping("/list/notice")
+	public List notice (Model model) {
+		Sort sort = Sort.by(Sort.Direction.DESC, "registdate");
+		List <BoardEntity>  boardEntityList = repo.findByBoardtype(false);
 		return boardEntityList;
 	}
+	
+	//qna 게시글 전체보기
+	@GetMapping("/list/qna")
+	public List qna (Model model) {
+		Sort sort = Sort.by(Sort.Direction.DESC, "registdate");
+		List <BoardEntity>  boardEntityList = repo.findByBoardtype(true);
+		return boardEntityList;
+	}
+	
 	
 	// 게시글 상세보기
 	@GetMapping("/detail")

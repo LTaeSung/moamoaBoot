@@ -151,6 +151,14 @@ CREATE TABLE `moamoaDonDon`.`repayment` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
+CREATE TABLE `moamoaDonDon`.`main_total` (
+  `no` INT NOT NULL AUTO_INCREMENT,
+  `total_challenge` INT NULL,
+  `total_success` INT NULL,
+  `total_money` INT NULL,
+  PRIMARY KEY (`no`));
+
+
 
 ALTER TABLE `payment` ADD CONSTRAINT `FK_member_TO_payment_1` FOREIGN KEY (
 	`member_no`
