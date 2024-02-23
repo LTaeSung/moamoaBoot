@@ -103,7 +103,11 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 				m.giveup as giveup,
 				m.vote as vote,
 				m.settlementamount as settlementAmount,
+				m.willsettlementamount as willsettlementamount,
 				f.state as state
+				
+				
+				
 			from 
 				FundingMemberEntity m join FundingEntity f
 			    on m.fundingno = f.no

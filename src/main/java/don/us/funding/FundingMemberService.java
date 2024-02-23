@@ -53,6 +53,7 @@ public class FundingMemberService {
 		target.put("myPayAmount", fund.get("myPayAmount"));
 		target.put("totalPayAmount", fund.get("totalPayAmount"));
 		target.put("photo", fund.get("photo"));
+		target.put("willsettlementamount", fund.get("willsettlementamount"));
 
 		
 		setDueDate(target, fund);

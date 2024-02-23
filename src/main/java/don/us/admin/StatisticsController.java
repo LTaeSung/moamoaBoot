@@ -58,6 +58,9 @@ public class StatisticsController {
 	@Autowired
 	private HandleDays handleDays;
 	
+	@Autowired 
+	private StatisticsService statisticService;
+	
 	@GetMapping("/default")
 	public HashMap<String, BigDecimal> defaultStatistics(){
 		HashMap<String, BigDecimal> map = new HashMap<>();
@@ -87,5 +90,18 @@ public class StatisticsController {
 	public Map<String, BigDecimal> personal(){
 		Map<String, BigDecimal> map = fundingMemberRepo.getPersonalStatistics();
 		return map;
+	}
+	
+	@GetMapping("/rank/joinedFund")
+	public List<Map> getRankOrderByJoinedFundNumber(){
+		return  statisticService.getRankOrderByJoinedFundNumber();
+	}
+	@GetMapping("/rank/totalPay")
+	public List<Map> getRankOrderByTotalPayAmount(){
+		return  statisticService.getRankOrderByTotalPayAmount();
+	}
+	@GetMapping("/rank/totalGet")
+	public List<Map> getRankOrderByTotalGet(){
+		return  statisticService.getRankOrderByTotalGet();
 	}
 }
