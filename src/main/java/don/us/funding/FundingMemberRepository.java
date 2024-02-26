@@ -1,5 +1,6 @@
 package don.us.funding;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -102,7 +103,11 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 				m.giveup as giveup,
 				m.vote as vote,
 				m.settlementamount as settlementAmount,
+				m.willsettlementamount as willsettlementamount,
 				f.state as state
+				
+				
+				
 			from 
 				FundingMemberEntity m join FundingEntity f
 			    on m.fundingno = f.no
@@ -182,5 +187,44 @@ public interface FundingMemberRepository extends JpaRepository<FundingMemberEnti
 				m.memberno = %?1%
 		""")
 	public List<Map> getInvitedFundinglist(int member_no);
+	
+	//이 밑은 통계 쿼리문
+	@Query(value 
+			= "SELECT "
+			+ "  SUM(nogiveup) AS nogiveup"
+			+ ", SUM(giveup) AS giveup "
+			+ "FROM (SELECT "
+			+ "        CASE WHEN participation_date IS NOT NULL AND giveup = false THEN 1 ELSE 0 END AS nogiveup"
+			+ "      , CASE WHEN giveup = true THEN 1 ELSE 0 END AS giveup "
+			+ "        FROM funding_member) t;"
+			, nativeQuery = true)
+	public Map<String, BigDecimal> getGiveupStatistics();
+	
+	@Query(value 
+			= "SELECT SUM(success) AS success, SUM(fail) AS fail "
+			+ "FROM (SELECT "
+			+ "        CASE WHEN vote = 1 THEN 1 ELSE 0 END AS success"
+			+ "      , CASE WHEN vote = 2 THEN 1 ELSE 0 END AS fail "
+			+ "      FROM funding_member) t;"
+			, nativeQuery = true)
+	public Map<String, BigDecimal> getSuccessFailStatistics();
+	
+	@Query(value = "SELECT AVG(will_settlement_amount) FROM funding_member "
+			+ "WHERE will_settlement_amount IS NOT NULL;"
+			, nativeQuery = true)
+	public BigDecimal getAvgSettlementStatistics();
+	
+	@Query(value = "SELECT COUNT(no) FROM funding_member "
+			+ "WHERE DATE_FORMAT(participation_date, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m');"
+			, nativeQuery = true)
+	public BigDecimal getMonthlyMemberStatistics();
+	
+	@Query(value = "select max(fundcount) as maxFundCount, min(fundcount) as minFundCount, avg(fundcount) as avgFundCount,"
+			+ " max(totalpay) as maxTotalpay, min(totalpay) as minTotalpay, avg(totalpay) as avgTotalpay,"
+			+ " max(totalsettlement) as maxTotalSettlement, min(totalsettlement) as minTotalSettlement, avg(totalsettlement) as avgTotalSettlement"
+			+ " from (select count(no) as fundcount, sum(total_pay_amount) as totalpay, sum(will_settlement_amount) totalsettlement "
+			+ "     from funding_member where participation_date is not null group by member_no) t"
+			, nativeQuery = true)
+	public Map<String, BigDecimal> getPersonalStatistics();
 
 }

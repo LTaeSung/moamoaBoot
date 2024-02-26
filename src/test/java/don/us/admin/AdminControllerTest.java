@@ -1,6 +1,8 @@
 package don.us.admin;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -241,5 +243,15 @@ public class AdminControllerTest {
 		main.setTotalsuccess(fundingMemberRepo.getTotalSuccess());
 		mainTotalRepo.save(main);
 		System.out.println("확인"+main);
+	}
+	
+	@Test
+	public void statistics() {
+		Map<String, BigDecimal> map = fundingMemberRepo.getGiveupStatistics();
+		System.out.println("확인"+map.get("nogiveup"));
+		System.out.println("확인"+map.get("giveup"));
+//		Map<String, BigDecimal> map = fundingMemberRepo.getSuccessFailStatistics();
+//		System.out.println("확인"+map.get("success"));
+//		System.out.println("확인"+map.get("fail"));
 	}
 }

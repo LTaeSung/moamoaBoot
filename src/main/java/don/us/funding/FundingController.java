@@ -49,7 +49,7 @@ public class FundingController {
 	private String registed_img_path;
 
 	@PostMapping("/regist")
-	public void makeFund(@RequestParam Map map, @RequestParam(name = "file", required = false) MultipartFile photo, @RequestParam int payment_no) {
+	public void makeFund(@RequestParam Map map, @RequestParam(name = "file", required = false) MultipartFile photo, @RequestParam String payment_no) {
 		System.out.println("map: " + map);
 		FundingEntity fund = new FundingEntity();
 
@@ -77,7 +77,7 @@ public class FundingController {
 //		// 임시로 payment_no를 1로 설정
 //		int payment_no = 1;
 
-		service.inviteMembers(fund, (String) map.get("memberList"), payment_no);
+		service.inviteMembers(fund, (String) map.get("memberList"), Integer.valueOf(payment_no));
 	}
 
 	@GetMapping("/host/ongoing")

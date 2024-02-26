@@ -1,9 +1,10 @@
 package don.us.funding;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.sql.Date;
-import java.time.LocalDate;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -110,5 +111,19 @@ public interface FundingRepository extends JpaRepository<FundingEntity, Integer>
 	
 	@Query(value = "SELECT SUM(collected_point) AS total_money FROM funding" , nativeQuery = true)
 	public int getTotalMoney();
+	
+	//여기서부터 통계 쿼리문
+	@Query(value = "SELECT AVG(monthly_payment_amount) FROM funding WHERE state != 0;"
+			, nativeQuery = true)
+	public BigDecimal getAvgMonthlyPayAmountStatistics();
+	
+	@Query(value = "SELECT AVG(collected_point) FROM funding WHERE state = 4;"
+			, nativeQuery = true)
+	public BigDecimal getAvgMonthlyCollectedStatistics();
+	
+	@Query(value = "SELECT COUNT(no) FROM funding "
+			+ "WHERE DATE_FORMAT(start_date, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m');"
+			, nativeQuery = true)
+	public BigDecimal getMonthlyNewFundStatistics();
 
 }
