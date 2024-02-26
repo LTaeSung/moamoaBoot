@@ -74,7 +74,7 @@ public class FundingMemberController {
 		System.out.println("fundMemberEntity: " + fundMemberEntity);
 		fundMemberEntity.setParticipationdate(new Timestamp(System.currentTimeMillis()));
 		
-		int payment_no = Integer.valueOf((String)map.get("payment_no"));
+		int payment_no = Integer.valueOf(map.get("payment_no").toString());
 		fundMemberEntity.setPaymentno(payment_no);
 		try {
 			repo.save(fundMemberEntity);
@@ -181,7 +181,7 @@ public class FundingMemberController {
 		FundingMemberEntity fundMemberEntity = repo.findByFundingnoAndMemberno(fundingNo, fundMemberNo);
 		System.out.println("fundMemberEntity: " + fundMemberEntity);
 		
-		int payment_no = Integer.valueOf((String)map.get("payment_no"));
+		int payment_no = Integer.valueOf(map.get("payment_no").toString());
 		fundMemberEntity.setPaymentno(payment_no);
 		try {
 			repo.save(fundMemberEntity);
