@@ -28,7 +28,6 @@ public class MemberEntity {
    
    private String email;
    private String name;
-   private String birthday;
    @CurrentTimestamp
    private Timestamp registerdate;
    private int point;
