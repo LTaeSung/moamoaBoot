@@ -135,6 +135,7 @@ public class FundingController {
 			if (fundMember.isGiveup() == false) {
 
 				fundMember.setGiveup(true);
+				fundMember.setSettlementamount("0");
 				fundingmemrepo.save(fundMember);
 
 				// 인원수 -1 수정후 db업데이트
