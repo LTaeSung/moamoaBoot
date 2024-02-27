@@ -73,7 +73,7 @@ public class FundingMemberService {
 				result.put("color", "red");
 				result.put("messageNo", 0);
 			}else {
-				result.put("stateMessage", "초대중이에요!");
+				result.put("stateMessage", "다른 사람들이 초대받기를 기다리고 있어요!");
 				result.put("color", "black");
 				result.put("messageNo", 1);
 			}
@@ -81,7 +81,7 @@ public class FundingMemberService {
 		case 1://진행중
 			System.out.println("fund: " + fund.get("giveup"));
 			if((boolean)fund.get("giveup") == false) {
-				result.put("stateMessage", "진행중");
+				result.put("stateMessage", "진행 중인 챌린지");
 				result.put("color", "black");
 				result.put("messageNo", 2);
 			}else {
@@ -92,22 +92,22 @@ public class FundingMemberService {
 			break;
 		case 2://투표중
 			if((int)fund.get("vote") == 0) {
-				result.put("stateMessage", "결과를 입력해주세요!");
+				result.put("stateMessage", "챌린지 결과를 확인해주세요!");
 				result.put("color", "red");
 				result.put("messageNo", 4);
 			}else {
-				result.put("stateMessage", "집계중");
+				result.put("stateMessage", "다른 사람들의 결과를 집계 중이에요!");
 				result.put("color", "black");
 				result.put("messageNo", 5);
 			}
 			break;
 		case 3://정산중
 			if(fund.get("settlementAmount") == null) {
-				result.put("stateMessage", "정산받아가세요!");
+				result.put("stateMessage", "정산금 받아가세요!");
 				result.put("color", "red");
 				result.put("messageNo", 6);
 			}else {
-				result.put("stateMessage", "정산중");
+				result.put("stateMessage", "다른 사람들이 정산받기를 기다리고 있어요");
 				result.put("color", "black");
 				result.put("messageNo", 7);
 			}
