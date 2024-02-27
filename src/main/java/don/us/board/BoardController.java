@@ -29,16 +29,16 @@ public class BoardController {
 	//공지사항 게시글 전체보기
 	@GetMapping("/list/notice")
 	public List notice (Model model) {
-		Sort sort = Sort.by(Sort.Direction.DESC, "registdate");
-		List <BoardEntity>  boardEntityList = repo.findByBoardtype(false);
+		
+		List <BoardEntity>  boardEntityList = repo.findByBoardtypeOrderByRegistdateDesc(false);
 		return boardEntityList;
 	}
 	
 	//qna 게시글 전체보기
 	@GetMapping("/list/qna")
 	public List qna (Model model) {
-		Sort sort = Sort.by(Sort.Direction.DESC, "registdate");
-		List <BoardEntity>  boardEntityList = repo.findByBoardtype(true);
+		
+		List <BoardEntity>  boardEntityList = repo.findByBoardtypeOrderByRegistdateDesc(true);
 		return boardEntityList;
 	}
 	
