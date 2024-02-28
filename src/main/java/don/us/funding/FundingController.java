@@ -50,7 +50,6 @@ public class FundingController {
 
 	@PostMapping("/regist")
 	public void makeFund(@RequestParam Map map, @RequestParam(name = "file", required = false) MultipartFile photo, @RequestParam String payment_no) {
-		System.out.println("map: " + map);
 		FundingEntity fund = new FundingEntity();
 
 		fund.setStartmemberno(Integer.valueOf((String) (map.get("member_no"))));
@@ -202,7 +201,6 @@ public class FundingController {
 		int member_no = Integer.parseInt(request.get("memberno"));
 
 		FundingMemberEntity fund_mem = fundingmemrepo.findByFundingnoAndMemberno(funding_no, member_no);
-		System.out.println("값" + fund_mem.isGiveup());
 
 		result.put("checkgiveup", fund_mem.isGiveup());
 
@@ -212,10 +210,8 @@ public class FundingController {
 	@PostMapping("/addcard")
 	public String accept(@RequestBody Map map) {
 		Map<String, String> result = new HashMap<>();
-		System.out.println("map: " + map);
 		int fundMemberNo = (int)map.get("fundingMemberNo");
 		FundingMemberEntity fundMemberEntity = fundingmemrepo.findById(fundMemberNo).get();
-		System.out.println("fundMemberEntity: " + fundMemberEntity);
 		fundMemberEntity.setParticipationdate(new Timestamp(System.currentTimeMillis()));
 		
 		int payment_no = Integer.valueOf((String)map.get("payment_no"));
@@ -228,11 +224,9 @@ public class FundingController {
 			if(service.checkStartFundingWhenAcceptFund(fund_no)) {
 				service.setFundStart(fund_no);
 			}
-			System.out.println("참여 완료");
 			
 			return "success";
 		}catch(Exception e) {
-			System.out.println("참여 실패");
 			return "fail";
 		}
 	}
@@ -241,7 +235,6 @@ public class FundingController {
 	public Map<String, Object> voteSuccess(@RequestBody Map<String, String> request) throws ParseException {
 
 		Map<String, Object> result = new HashMap<>();
-		System.out.println(request);
 
 		int funding_no = Integer.parseInt(request.get("fundingNo"));
 		int member_no = Integer.parseInt(request.get("memberNo"));
@@ -288,7 +281,6 @@ public class FundingController {
 	public Map<String, Object> doSettlement(@RequestBody Map<String, String> request) throws ParseException {
 
 		Map<String, Object> result = new HashMap<>();
-		System.out.println(request);
 
 		int funding_no = Integer.parseInt(request.get("fundingNo"));
 		int member_no = Integer.parseInt(request.get("memberNo"));
@@ -299,7 +291,6 @@ public class FundingController {
 		adminService.settlement(fund_mem);
 		result.put("result", "settlememt_success");
 		if(adminService.checkSettlementIsComplete(fund_mem.getFundingno())) {
-			System.out.println("상태 업뎃 전: "+funding.getState());
 			funding.setState(4);
 			repo.save(funding);
 			result.put("result", "settlement_success_end");

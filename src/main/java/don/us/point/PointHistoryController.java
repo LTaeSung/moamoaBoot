@@ -54,7 +54,6 @@ public class PointHistoryController {
     @GetMapping("/mypoint")
     public int memberpoint(@RequestParam(value="member_no") int member_no) {
     	MemberEntity member = memberRepo.findById(member_no).orElseThrow();
-    	System.out.println("확인"+member);
     	return member.getPoint();
     }
     

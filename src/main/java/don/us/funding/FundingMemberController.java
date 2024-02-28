@@ -68,10 +68,8 @@ public class FundingMemberController {
 	@PostMapping("accept")
 	public String accept(@RequestBody Map map) {
 		Map<String, String> result = new HashMap<>();
-		System.out.println("map: " + map);
 		int fundMemberNo = (int)map.get("fundingMemberNo");
 		FundingMemberEntity fundMemberEntity = repo.findById(fundMemberNo).get();
-		System.out.println("fundMemberEntity: " + fundMemberEntity);
 		fundMemberEntity.setParticipationdate(new Timestamp(System.currentTimeMillis()));
 		
 		int payment_no = (int)map.get("payment_no");
@@ -84,11 +82,9 @@ public class FundingMemberController {
 			if(fundingService.checkStartFundingWhenAcceptFund(fund_no)) {
 				fundingService.setFundStart(fund_no);
 			}
-			System.out.println("참여 완료");
 			
 			return "success";
 		}catch(Exception e) {
-			System.out.println("참여 실패");
 			return "fail";
 		}
 	}
@@ -102,16 +98,13 @@ public class FundingMemberController {
 		FundingMemberEntity fundMemberEntity = repo.findById(fundMemberNo).get();
 		try {
 			int fund_no = fundMemberEntity.getFundingno();
-			System.out.println("fund_no: " + fund_no);
 			repo.delete(fundMemberEntity);
 			if(fundingService.checkStartFundingWhenAcceptFund(fund_no)) {
 				fundingService.setFundStart(fund_no);
 			}
-			System.out.println("삭제 완료");
 			return "success";
 		}catch(Exception e) {
 			e.printStackTrace();
-			System.out.println("삭제 실패");
 			return "fail";
 		}
 	}
@@ -152,7 +145,6 @@ public class FundingMemberController {
 		try {
 			row = repo.getMyFundInfo(no, member_no);
 
-			System.out.println("row: " + row);
 			Map result = new HashMap<>();
 			result.put("myFundInfo", service.setMapOfFundingAndMember(row));
 			return result;	
@@ -165,32 +157,25 @@ public class FundingMemberController {
 	public List funding (@PathVariable int fund_no, Model model) {
 
 		List <FundingMemberEntity>  fundingMemberEntity = repo.findByFundingno(fund_no);
-		System.out.println("ㅎㅎ: " + fundingMemberEntity);
 		return fundingMemberEntity;
 	}
 
 	@PostMapping("modifycard")
 	public String modifycard(@RequestBody Map map) {
-		System.out.println("Map.fundingNo: " + map.get("fundingNo"));
-		System.out.println("Map.fundingNo: " + map.get("memberNo"));
  		String fundMemberNo_string = (String)map.get("memberNo");
 		int fundMemberNo = Integer.parseInt(fundMemberNo_string);
-		System.out.println("fundMemberNo: " + fundMemberNo);
 		String fundingNo_string = (String)map.get("fundingNo");
 		int fundingNo = Integer.parseInt(fundingNo_string);
 		FundingMemberEntity fundMemberEntity = repo.findByFundingnoAndMemberno(fundingNo, fundMemberNo);
-		System.out.println("fundMemberEntity: " + fundMemberEntity);
 		
 		int payment_no = (int)map.get("payment_no");
 		fundMemberEntity.setPaymentno(payment_no);
 		try {
 			repo.save(fundMemberEntity);
 			
-			System.out.println("카드 수정 완료");
 			
 			return "success";
 		}catch(Exception e) {
-			System.out.println("카드 수정 실패");
 			return "fail";
 		}
 	}

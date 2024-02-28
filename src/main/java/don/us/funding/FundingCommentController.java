@@ -48,7 +48,6 @@ public class FundingCommentController {
     @PostMapping("/add")
     public ResponseEntity<FundingCommentEntity> addReply(@RequestBody FundingCommentEntity reply) {
         reply.setRegistdate(new Timestamp(System.currentTimeMillis()));
-        System.out.println("reply: " + reply);
         FundingCommentEntity savedReply = repo.save(reply);
         return new ResponseEntity<>(savedReply, HttpStatus.CREATED);
     }

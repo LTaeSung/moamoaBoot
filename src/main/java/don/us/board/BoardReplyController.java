@@ -37,7 +37,6 @@ public class BoardReplyController {
     @PostMapping("/add")
     public ResponseEntity<BoardReplyEntity> addReply(@RequestBody BoardReplyEntity reply) {
         reply.setRegistdate(new Timestamp(System.currentTimeMillis()));
-        System.out.println("reply: " + reply);
         BoardReplyEntity savedReply = repo.save(reply);
         return new ResponseEntity<>(savedReply, HttpStatus.CREATED);
     }

@@ -66,16 +66,8 @@ public class MemberController {
 	@Autowired
 	private FundingController fundingController;
 
-	/*
-	 * @GetMapping(value = "/naver") public void naver(String code){
-	 * System.out.println("code: " + code);
-	 * 
-	 * }
-	 */
-
 	@PostMapping("devlogin")
 	public Map<String, String> myLogin(@RequestBody Map<String, String> map) {
-		System.out.println("map: " + map);
 		String input_email = map.get("email");
 		Map<String, String> result = new HashMap<>();
 		if (repo.findByEmail(input_email).isPresent()/* map.get("name").equals("myID") */) {
@@ -95,7 +87,6 @@ public class MemberController {
 		Map<String, String> result = new HashMap<>();
 
 		String responseBody = GetAccessToken(code);
-		System.out.println("리스폰스바디 액세스토큰" + responseBody);
 
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -104,8 +95,6 @@ public class MemberController {
 			// access_token 값을 추출
 			String accessToken = jsonNode.path("access_token").asText();
 
-			// 여기서 accessToken 변수에 추출된 access_token 값이 들어갑니다.
-			System.out.println("Access Token: " + accessToken);
 
 			// 토큰 값을 사용하여 NaverLogin 클래스의 get_token 메서드 호출 - 여기에 네이버로 로그인한 유저의 정보가 받아와짐
 			String user_data = naverLogin.get_token(accessToken);
@@ -114,11 +103,8 @@ public class MemberController {
 			JSONObject jsonObject = (JSONObject) parser.parse(user_data);
 			JSONObject responseObject = (JSONObject) jsonObject.get("response");
 
-			System.out.println("parse한 유저data" + jsonObject);
-			System.out.println("그거에서 response 가져와봐" + responseObject);
 
 			String user_email = responseObject.get("email").toString();
-			System.out.println("user_email: " + user_email);
 
 //			String user_name = responseObject.get("name").toString();
 //			String user_birthyear = responseObject.get("birthyear").toString();
@@ -126,7 +112,6 @@ public class MemberController {
 
 			if (repo.findByEmail(user_email).isPresent()) {
 				MemberEntity target = repo.findByEmail(user_email).get();
-				System.out.print("타겟" + target);
 
 				result.put("result", "success");
 				result.put("no", String.valueOf(target.getNo()));
@@ -134,7 +119,6 @@ public class MemberController {
 				result.put("name", target.getName());
 
 			} else {
-				System.out.println("유저없음");
 				result.put("result", "fail");
 //				result.put("email", user_email);
 //				result.put("name", user_name);
@@ -156,8 +140,6 @@ public class MemberController {
 //        String userName = (String) session.getAttribute("user_name");
 //        String userEmail = (String) session.getAttribute("user_email");
 //
-//        System.out.println("세션에있는 이름:" + userName);
-//        System.out.println("세션에 이메일: " + userEmail);
 //        return "redirect:/localhost:3000/board/list";
 //    }
 
@@ -198,7 +180,6 @@ public class MemberController {
 		Map<String, String> result = new HashMap<>();
 
 		String responseBody = GetAccessToken(code);
-		System.out.println("리스폰스바디 액세스토큰" + responseBody);
 
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -208,7 +189,6 @@ public class MemberController {
 			String accessToken = jsonNode.path("access_token").asText();
 
 			// 여기서 accessToken 변수에 추출된 access_token 값이 들어갑니다.
-			System.out.println("Access Token: " + accessToken);
 
 			// 토큰 값을 사용하여 NaverLogin 클래스의 get_token 메서드 호출 - 여기에 네이버로 로그인한 유저의 정보가 받아와짐
 			String user_data = naverLogin.get_token(accessToken);
@@ -217,35 +197,19 @@ public class MemberController {
 			JSONObject jsonObject = (JSONObject) parser.parse(user_data);
 			JSONObject responseObject = (JSONObject) jsonObject.get("response");
 
-			System.out.println("parse한 유저data" + jsonObject);
-			System.out.println("그거에서 response 가져와봐" + responseObject);
 
 			String user_email = responseObject.get("email").toString();
-			System.out.println("user_email: " + user_email);
 
 			String user_name = responseObject.get("name").toString();
-//
-//			String user_birthyear = responseObject.get("birthyear").toString();
-//			String user_birthday = responseObject.get("birthday").toString();
-
-			// DB에 넣기 전 네이버 정보 잘 받아와졌는지 체크.
-//			System.out.println("이름"+user_name);
-//			System.out.println("년도"+user_birthyear);
-//			System.out.println("날짜"+user_birthday);
-//			String full_birthday = user_birthyear + "-" + user_birthday;
-//			System.out.println("풀생일" + full_birthday);
 
 			MemberEntity mem = new MemberEntity();
 
 			// 같은 이메일로 중복 회원가입하는 것 방지(정보 DB에 넣기 전)
 			if (repo.findByEmail(user_email).isPresent()) {
-
-				System.out.println("같은 이메일이 있다.");
 				result.put("result", "fail");
 				return result;
 
 			} else {
-				System.out.println("같은 이메일 없으니까 repo.save 하겠음");
 				mem.setEmail(user_email);
 				mem.setName(user_name);
 //				mem.setBirthday(full_birthday);
@@ -257,13 +221,10 @@ public class MemberController {
 
 			// 회원정보를 DB에 넣은 다음에, 그 정보가 잘 들어갔나 체크
 			if (repo.findByEmail(user_email).isPresent()) {
-
-				System.out.println("회원가입 정보 DB에 넣기 성공!");
 				MemberEntity target = repo.findByEmail(user_email).get();
 				result.put("result", "success");
 
 			} else {
-				System.out.println("회원가입 정보 DB에 넣기 실패..");
 				result.put("result", "fail");
 			}
 			return result;
@@ -299,7 +260,6 @@ public class MemberController {
 		// 응답 내용 (JSON 형태의 문자열) - 액세스 토큰이 들어있음
 		String responseBody = response.getBody();
 
-		System.out.println(responseBody);
 
 		return responseBody;
 	}

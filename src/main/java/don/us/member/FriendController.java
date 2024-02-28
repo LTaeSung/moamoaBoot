@@ -40,23 +40,8 @@ public class FriendController {
 	@GetMapping("/list")
 	public List<FriendEntity> friendList(@RequestParam("member_no") int member_no) {
 		List<FriendEntity> friendList = frRepo.findByMemberno(member_no);
-		
-			System.out.println("친구 리스트 " + friendList.toString());
-			
 			return friendList;
 	}
-	
-	/*
-	// 친구 검색 기능 
-		// 개발 의도: 한번에 멤버 목록을 다 가져오면 시간 소요 검색한 멤버만 나오게 하려함
-		@Transactional
-		@GetMapping("/search")
-		public List<MemberEntity> searchMember(@RequestParam("name") String name) {
-		    List<MemberEntity> memberList = meRepo.findByNameContaining(name);
-		    System.out.println("검색된 멤버 리스트" + memberList.toString());
-		    return memberList;
-		}
-	*/
 	
 	// 친구 검색 기능 
 	// 개발 의도: 한번에 멤버 목록을 다 가져오면 시간 소요 검색한 멤버만 나오게 하려함
@@ -75,15 +60,6 @@ public class FriendController {
 	                                                 .setParameter("member_no", member_no)
 	                                                 .setParameter("email", email + "@naver.com")
 	                                                 .getResultList();
-		
-		if (friendList.equals(Collections.emptyList())) {
-			System.out.println("친구가 등록되어있습니다. 혹은 정보가 없습니다.");
-		}else {
-			System.out.println("친구 리스트: " + friendList);
-		}
-		
-	
-
 	    return friendList;
 	}
 	
@@ -99,7 +75,6 @@ public class FriendController {
 	    friend.setMemberno(member_no);
 	    friend.setFriend(member);
 	    
-		System.out.println("친구 출력 : " + friend);
 		FriendEntity entity = frRepo.save(friend);
 		
 		return entity;
@@ -112,7 +87,6 @@ public class FriendController {
 		
 		List <FriendEntity> friendLost = frRepo.deleteByMembernoAndFriend_No(member_no,friend_no);
 		
-		System.out.print("삭제된 친구 리스트: " + friendLost.toString());
 		
 		Map<String, Object> result = new HashMap<>();
 		result.put("result", "success");

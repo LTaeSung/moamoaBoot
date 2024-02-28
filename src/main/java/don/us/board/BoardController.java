@@ -55,7 +55,6 @@ public class BoardController {
     @PostMapping("/add")
     public ResponseEntity<BoardEntity> addQna(@RequestBody BoardEntity board) {
     	board.setRegistdate(new Timestamp(System.currentTimeMillis()));
-        System.out.println("board: " + board);
         Sort sort = Sort.by(Sort.Direction.DESC, "registdate");
         BoardEntity savedQna = repo.save(board);
         return new ResponseEntity<>(savedQna, HttpStatus.CREATED);

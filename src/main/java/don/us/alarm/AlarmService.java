@@ -22,7 +22,6 @@ public class AlarmService {
 		alarm.setLink(link);
 		alarm.setState(state);
 		repo.save(alarm);
-		System.out.println("알람 확인: "+alarm);
 	}
 	
 	public void makeInviteAlarm(FundingMemberEntity fundingMember) {

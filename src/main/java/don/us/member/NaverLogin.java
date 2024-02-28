@@ -28,7 +28,6 @@ public class NaverLogin {
         String responseBody = get(apiURL,requestHeaders);
 
 
-        System.out.println("회원데이터 ㅇㅇ: " + responseBody);
         return responseBody;
     }
 

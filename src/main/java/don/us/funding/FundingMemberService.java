@@ -41,7 +41,6 @@ public class FundingMemberService {
 			}
 		}
 		str += "}";
-		System.out.println(str);
 	}
 	
 	public Map setMapOfFundingAndMember(Map fund) {
@@ -65,8 +64,6 @@ public class FundingMemberService {
 		int state = (Integer)fund.get("state");
 		switch(state) {
 		case 0://초대중
-			System.out.println(fund.get("fundingTitle"));
-			System.out.println(fund.get("participationDate"));
 			if(fund.get("participationDate") == null) {
 				//메세지 스테이트를 추가한다?
 				result.put("stateMessage", "펀드에 참여해주세요!");
@@ -79,7 +76,6 @@ public class FundingMemberService {
 			}
 			break;
 		case 1://진행중
-			System.out.println("fund: " + fund.get("giveup"));
 			if((boolean)fund.get("giveup") == false) {
 				result.put("stateMessage", "진행 중인 챌린지");
 				result.put("color", "black");

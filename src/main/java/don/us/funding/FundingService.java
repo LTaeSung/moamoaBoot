@@ -54,7 +54,6 @@ public class FundingService {
 	
 	public boolean checkStartFundingWhenAcceptFund(int fund_no) {
 		List<FundingMemberEntity> fundingMemberList = fundingMemberRepo.findByFundingno(fund_no);
-		System.out.println(fundingMemberList);
 		
 		List<FundingMemberEntity> result = new ArrayList<>();
 		for(FundingMemberEntity e : fundingMemberList) {
@@ -159,7 +158,6 @@ public class FundingService {
 		
 		if (memberListString != null) {
 			List<String> memberList = Arrays.asList(memberListString.split(","));
-			System.out.println("memberList: " + memberList);
 
 			for (String i : memberList) {
 				int member_no = Integer.valueOf(i);

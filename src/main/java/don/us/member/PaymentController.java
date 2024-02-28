@@ -70,11 +70,9 @@ public class PaymentController {
 		int no = Integer.parseInt(request.get("no"));
 		int member_no = Integer.parseInt(request.get("memberno"));
 		
-		System.out.println(no);
 		
 		//no와 member_no가 일치하는 결제수단 삭제
 		int del_result = Payrepo.deletePay(no, member_no);
-		System.out.println("삭제행 수 " + del_result);
 		
 		Map<String, Object> result = new HashMap<>();
 		
@@ -129,7 +127,6 @@ public class PaymentController {
 		
 		List<PaymentEntity> payment_list = Payrepo.findByMemberno(member_no);
 		
-		System.out.println("유저의 결제수단 리스트" + payment_list);
 		
 		
 		return payment_list;
@@ -140,7 +137,6 @@ public class PaymentController {
 		
 		PaymentEntity payment_info = Payrepo.findByNo(no);
 		
-		System.out.println("내가 선택한 계좌/카드의 no에 대한 상세정보" + payment_info);
 		
 		
 		return payment_info;
